@@ -3,55 +3,56 @@ import Image from "next/image";
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { IoLogoYoutube } from "react-icons/io";
+
 function Footer() {
     return (
-        <footer className="bg-gradient-to-r from-[#003247] to-black py-8 border-t text-white border-black">
-            <div className="container mx-auto p-20">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+        <footer className="bg-gradient-to-r from-[#003247] to-black py-4 sm:py-6 md:py-8 border-t text-white border-black">
+            <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                     {/* 왼쪽 섹션: 회사 정보 */}
-                    <div className="space-y-6">
-                        <div className="mb-4">
+                    <div className="space-y-4 md:space-y-6">
+                        <div className="mb-2 md:mb-4">
                             <Image
                                 src="/logo/mainLogo.png"
                                 alt="DS 건설기계 로고"
-                                width={180}
-                                height={60}
+                                width={150}
+                                height={50}
                                 className="h-auto"
                             />
                         </div>
 
-                        <div className="space-y-2 text-muted-foreground text-sm">
-                            <p className="font-Rix text-lg text-foreground">DS 건설기계</p>
+                        <div className="space-y-2 text-muted-foreground text-xs sm:text-sm">
+                            <p className="font-Rix text-base sm:text-lg text-foreground">DS 건설기계 군산본점</p>
                             <div className="flex items-center gap-2">
-                                <MapPin size={16} />
-                                <p>전북특별자치도 군산시 해망로 663 선우플랜트</p>
+                                <MapPin size={14} className="flex-shrink-0" />
+                                <p className="break-words">전북특별자치도 군산시 해망로 663 선우플랜트</p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Phone size={16} />
+                                <Phone size={14} className="flex-shrink-0" />
                                 <p>대표번호: 031-123-4567</p>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Mail size={16} />
-                                <p>이메일: info@dsconstruction.co.kr</p>
+                                <Mail size={14} className="flex-shrink-0" />
+                                <p className="break-all">이메일: info@dsconstruction.co.kr</p>
                             </div>
                             <p>사업자등록번호: 792-04-01412</p>
                         </div>
 
                         {/* 약관 링크 */}
-                        <div className="pt-4 border-t border-border">
-                            <ul className="flex flex-wrap gap-4 text-sm">
+                        <div className="flex pt-3 md:pt-8">
+                            <ul className="flex flex-wrap gap-3 md:gap-4 text-xs sm:text-sm">
                                 <li>
-                                    <Link href="/company" className="text-foreground hover:text-primary transition-colors">
+                                    <Link href="/company" className="text-foreground hover:text-primary transition-colors underline">
                                         회사소개
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/privacy" className="text-foreground hover:text-primary transition-colors">
+                                    <Link href="/privacy" className="text-foreground hover:text-primary transition-colors underline">
                                         개인정보처리방침
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/terms" className="text-foreground hover:text-primary transition-colors">
+                                    <Link href="/terms" className="text-foreground hover:text-primary transition-colors underline">
                                         서비스이용약관
                                     </Link>
                                 </li>
@@ -59,42 +60,78 @@ function Footer() {
                         </div>
                     </div>
 
-                    {/* 오른쪽 섹션: SNS 및 뉴스레터 */}
-                    <div className="flex flex-col justify-between">
-                        <div className="space-y-4">
-                            <h3 className="font-medium text-lg">소셜 미디어</h3>
-                            <div className="flex gap-4">
-                                {/*<Link*/}
-                                {/*    href="https://facebook.com"*/}
-                                {/*    target="_blank"*/}
-                                {/*    rel="noopener noreferrer"*/}
-                                {/*    className="bg-secondary-foreground bg-opacity-10 p-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"*/}
-                                {/*>*/}
-                                {/*    <Facebook size={24} />*/}
-                                {/*</Link>*/}
-                                {/*<Link*/}
-                                {/*    href="https://instagram.com"*/}
-                                {/*    target="_blank"*/}
-                                {/*    rel="noopener noreferrer"*/}
-                                {/*    className="bg-secondary-foreground bg-opacity-10 p-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"*/}
-                                {/*>*/}
-                                {/*    <Instagram size={24} />*/}
-                                {/*</Link>*/}
-                                <Link
-                                    href="https://www.youtube.com/@DS_Heavyduty"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="bg-secondary-foreground bg-opacity-10 p-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
-                                >
-                                    <IoLogoYoutube size={24} />
-                                </Link>
+                    <div className="space-y-4 md:space-y-6">
+
+                        <div className="space-y-2 text-muted-foreground text-xs sm:text-sm">
+                            <p className="font-Rix text-base sm:text-lg text-foreground">DS 건설기계 김제점</p>
+                            <div className="flex items-center gap-2">
+                                <MapPin size={14} className="flex-shrink-0" />
+                                <p className="break-words">전북 김제시 황토로 919 1동</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Phone size={14} className="flex-shrink-0" />
+                                <p>연락처: 010-9590-1232</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Mail size={14} className="flex-shrink-0" />
+                                <p className="break-all">이메일: areum1438@naver.com</p>
+                            </div>
+                        </div>
+                        <div className="space-y-2 text-muted-foreground text-xs sm:text-sm">
+                            <p className="font-Rix text-base sm:text-lg text-foreground">DS 건설기계 익산점</p>
+                            <div className="flex items-center gap-2">
+                                <MapPin size={14} className="flex-shrink-0" />
+                                <p className="break-words">주소</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Phone size={14} className="flex-shrink-0" />
+                                <p>연락처: 031-123-4567</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Mail size={14} className="flex-shrink-0" />
+                                <p className="break-all">이메일: info@dsconstruction.co.kr</p>
+                            </div>
+                        </div>
+                        <div className="space-y-2 text-muted-foreground text-xs sm:text-sm">
+                            <p className="font-Rix text-base sm:text-lg text-foreground">DS 건설기계 광주점</p>
+                            <div className="flex items-center gap-2">
+                                <MapPin size={14} className="flex-shrink-0" />
+                                <p className="break-words">주소</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Phone size={14} className="flex-shrink-0" />
+                                <p>연락처: 031-123-4567</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Mail size={14} className="flex-shrink-0" />
+                                <p className="break-all">이메일: info@dsconstruction.co.kr</p>
                             </div>
                         </div>
 
                     </div>
+                    {/* 오른쪽 섹션: SNS 및 뉴스레터 */}
+                    <div className="flex flex-col justify-between mt-6 md:mt-0">
+                        <div className="space-y-3 md:space-y-4">
+                            <h3 className="font-Rix text-base md:text-lg">소셜 미디어</h3>
+                            <div className="flex gap-3 md:gap-4">
+                                <Link
+                                    href="https://www.youtube.com/@DS_Heavyduty"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-secondary-foreground bg-opacity-10 p-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-red-500 rounded-xl"
+                                    aria-label="유튜브 채널"
+                                >
+                                    <IoLogoYoutube size={22} />
+                                </Link>
+                                <Link href={'https://www.band.us/@dsce'} target={'_blank'} rel={'noopener noreferrer'} className={'flex justify-center items-center'}>
+                                    <Image src={'/footer/band.svg'} alt={'band'} width={24} height={24}/>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-border text-center text-sm text-muted-foreground">
+                <div className="mt-6 md:mt-8 pt-3 md:pt-4 border-t border-border text-center text-xs sm:text-sm text-muted-foreground">
                     <p>© {new Date().getFullYear()} DS 건설기계. All rights reserved.</p>
                 </div>
             </div>

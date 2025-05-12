@@ -7,20 +7,17 @@ export async function GET(request: Request) {
     const code = searchParams.get('code');
     const next = searchParams.get('next') ?? '/';
 
-    console.log('Auth 콜백 시작 - code 존재:', !!code);
-
     if (code) {
         try {
             // 쿠키 저장소 접근
             const cookieStore = await cookies();
-            console.log('콜백 전 쿠키:', cookieStore.getAll().map(c => c.name));
 
             // Supabase 클라이언트 생성
             const supabase = await createClient();
 
             // 코드를 세션으로 교환
             const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-            console.log('ddd:',data)
+
             if (error) {
                 console.error('세션 교환 오류:', error);
                 return NextResponse.redirect(`${origin}/auth/auth-code-error`);
