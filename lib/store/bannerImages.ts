@@ -1,12 +1,21 @@
 export const introduceImages = [
     {
-        image: "/introduce/introImage_1.jpg",
+        image: "/introduce/homeImg4.jpg",
     },
     {
-        image: "/introduce/introImage_2.jpg",
+        image: "/introduce/homeImg5.jpg",
     },
     {
-        image: "/introduce/introImage_3.jpg",
+        image: "/introduce/homeImg2.jpg",
+    },
+    {
+        image: "/introduce/homeImg7.jpg",
+    },
+    {
+        image: "/introduce/homeImg8.jpg",
+    },
+    {
+        image: "/introduce/homeImg9.jpg",
     },
 ];
 export const homeImages=[
