@@ -7,8 +7,6 @@ export async function GET(request: Request) {
     const code = searchParams.get('code');
     const next = searchParams.get('next') ?? '/';
 
-    console.log('요청 URL:', request.url); // URL 확인
-    console.log('Code 존재 여부:', !!code);
     if (code) {
         try {
             // 쿠키 저장소 접근

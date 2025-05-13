@@ -40,25 +40,25 @@ const ContentSection: React.FC = () => {
             id: 1,
             title: '부품1',
             description: '부품설명',
-            imageUrl: '/home/parts_01.jpg',
+            imageUrl: '/home/parts_02.jpg',
         },
         {
             id: 2,
             title: '부품2',
             description: '부품설명',
-            imageUrl: '/home/parts_01.jpg',
+            imageUrl: '/home/parts_03.jpg',
         },
         {
             id: 3,
             title: '부품3',
             description: '부품설명',
-            imageUrl: '/home/parts_01.jpg',
+            imageUrl: '/home/parts_04.jpg',
         },
         {
             id: 4,
             title: '부품4',
             description: '부품설명',
-            imageUrl: '/home/parts_01.jpg',
+            imageUrl: '/home/parts_05.jpg',
         },
     ];
 
