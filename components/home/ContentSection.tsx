@@ -189,29 +189,37 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({ card, index }) => {
                 scale: 1.05,
                 transition: { duration: 0.3 }
             }}
-            className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+            className="bg-slate-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group relative"
         >
             <div className="h-48 overflow-hidden">
                 <motion.img
                     src={card.imageUrl}
                     alt={card.title}
-                    className="w-full h-full object-cover"
-                    whileHover={{
-                        scale: 1.1,
-                        transition: { duration: 0.5 }
-                    }}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
             </div>
-            <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">{card.title}</h3>
-                <p className="text-gray-600">{card.description}</p>
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
-                >
-                    문의하기
-                </motion.button>
+            <div className="px-6 py-10">
+                <h3 className="text-xl font-semibold text-white mb-2">{card.title}</h3>
+                <p className="text-white mb-6">{card.description}</p>
+            </div>
+
+            {/* 그라데이션 오버레이 및 버튼 컨테이너 */}
+            <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transform translate-y-6 group-hover:translate-y-0 transition-all duration-300 ease-in-out">
+                <div className="h-32 bg-gradient-to-t from-slate-900 via-slate-800/90 to-transparent flex items-end justify-center pb-6 px-6">
+                    <motion.button
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        whileHover={{
+                            scale: 1.05,
+                            boxShadow: "0 0 15px rgba(59, 130, 246, 0.5)"
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-md font-medium transition-all duration-300"
+                    >
+                        문의하기
+                    </motion.button>
+                </div>
             </div>
         </motion.div>
     );
