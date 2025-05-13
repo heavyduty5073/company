@@ -64,12 +64,20 @@ export default function TypingText({
         return () => clearInterval(cursorInterval);
     }, []);
 
+    const renderTextWithLineBreaks = (text: string) => {
+        return text.split('\n').map((line, index, array) => (
+            <React.Fragment key={index}>
+                {line}
+                {index < array.length - 1 && <br />}
+            </React.Fragment>
+        ));
+    };
     return (
-        <div className={className}>
+        <div className={`leading-tight ${className}`}>
             <span className="inline-block">
-                {currentText}
+                {renderTextWithLineBreaks(currentText)}
                 <span
-                    className={`inline-block w-1 h-3 lg:h-7 ml-1 bg-white ${cursorVisible ? 'opacity-100' : 'opacity-0'}`}
+                    className={`inline-block w-1 h-4 lg:h-8 xl:h-10 ml-1 bg-white ${cursorVisible ? 'opacity-100' : 'opacity-0'}`}
                     style={{ transition: 'opacity 0.1s' }}
                 ></span>
             </span>

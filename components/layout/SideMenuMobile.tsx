@@ -1,7 +1,8 @@
+'use client'
 import {
     Sheet,
     SheetContent,
-    SheetDescription,
+
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -18,13 +19,13 @@ function SideMenuMobile() {
             <SheetContent className={'bg-white'}>
                 <SheetHeader>
                     <SheetTitle aria-readonly></SheetTitle>
-                    <SheetDescription>
+                    <div>
                         {menus.map((menu,index)=>(
                             <div className={'flex flex-col justify-center items-center'} key={index}>
                                 <Link href={menu.link} className={'py-3 text-lg'}>{menu.title}</Link>
                             </div>
                         ))}
-                    </SheetDescription>
+                    </div>
                 </SheetHeader>
             </SheetContent>
         </Sheet>

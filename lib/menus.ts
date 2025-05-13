@@ -41,7 +41,7 @@ export const menus: MenuItem[] = [
             {
                 id: 104,
                 title: '오시는 길',
-                link: '/introduce/location',
+                link: '/home#kakaomap',
                 description: '회사 위치 및 약도'
             }
         ]
@@ -113,7 +113,14 @@ export const menus: MenuItem[] = [
     {
         id: 4,
         title: '정비사례',
-        link: '/maintenance-cases',
+        link: '/maintenance',
         type: 'link'
     },
 ];
+
+export const truckList =['벤츠','볼보','스카니아','현대','대우','MAN']
+export const workList=[
+    {
+        category:'벤츠'
+    }
+]

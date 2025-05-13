@@ -11,6 +11,7 @@ const config: Config = {
             fontFamily: {
                 'Rix':['Rix', 'sans-serif'],
                 'Gangwon':['Gangwon', 'sans-serif'],
+                'Batang':['Batang', 'sans-serif'],
             },
             animation: {
                 fadeIn: 'fadeIn 1s ease-in-out forwards',

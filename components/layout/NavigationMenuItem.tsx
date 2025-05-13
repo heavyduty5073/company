@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils';
 import {
     NavigationMenuContent,
     NavigationMenuItem,
-    NavigationMenuLink,
     NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { MenuItem, SubMenuItem } from "@/lib/menus";
@@ -25,7 +24,7 @@ const SubMenuListItem = React.forwardRef<
                     href={item.link}
                     className="no-underline outline-none"
                 >
-                    <div className="text-sm font-medium leading-none">{item.title}</div>
+                    <div className="text-sm leading-none">{item.title}</div>
                     {item.description && (
                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                             {item.description}
@@ -44,6 +43,7 @@ interface MenuItemProps {
 }
 
 // 커스텀 드롭다운 메뉴 컴포넌트
+// CustomDropdownMenu 컴포넌트에서 버튼 부분 수정
 const CustomDropdownMenu = ({ item }: { item: MenuItem }) => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -51,12 +51,20 @@ const CustomDropdownMenu = ({ item }: { item: MenuItem }) => {
         <div className="relative inline-block">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:bg-primary/10 disabled:opacity-50 disabled:pointer-events-none bg-transparent text-white h-10 py-2 px-4 hover:bg-primary/10 data-[active]:bg-primary/10 data-[state=open]:bg-primary/10"
+                className="inline-flex items-center justify-center rounded-md text-sm transition-colors focus:outline-none focus:bg-primary/10 disabled:opacity-50 disabled:pointer-events-none bg-transparent text-white h-10 py-2 px-4 hover:bg-primary/10 data-[active]:bg-primary/10 data-[state=open]:bg-primary/10 menu-glow"
                 aria-expanded={isOpen}
-                onMouseEnter={() => setIsOpen(true)}
-                onMouseLeave={() => setIsOpen(false)}
+                onMouseEnter={(e) => {
+                    setIsOpen(true);
+                    e.currentTarget.style.color = '#00ccff';
+                    e.currentTarget.style.textShadow = '0 0 10px rgba(0, 204, 255, 0.8), 0 0 20px rgba(0, 150, 200, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                    setIsOpen(false);
+                    e.currentTarget.style.color = '';
+                    e.currentTarget.style.textShadow = '';
+                }}
             >
-                {item.title}
+                <span className={'font-Batang'}>{item.title}</span>
                 <svg
                     width="12"
                     height="12"
@@ -95,13 +103,29 @@ const CustomDropdownMenu = ({ item }: { item: MenuItem }) => {
     );
 };
 
+// components/layout/NavigationMenuItem.tsx
+
 export function MenuItemComponent({ item }: MenuItemProps) {
     // 단일 링크 메뉴인 경우
     if (item.type === 'link') {
         return (
             <NavigationMenuItem>
-                <div className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:bg-primary/10 disabled:opacity-50 disabled:pointer-events-none bg-transparent text-white h-10 py-2 px-4 hover:bg-primary/10 data-[active]:bg-primary/10 data-[state=open]:bg-primary/10">
-                    <Link href={item.link}>
+                <div className="font-Batang inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:bg-primary/10 disabled:opacity-50 disabled:pointer-events-none bg-transparent text-white h-10 py-2 px-4 hover:bg-primary/10 data-[active]:bg-primary/10 data-[state=open]:bg-primary/10">
+                    <Link
+                        href={item.link}
+                        className="menu-glow"
+                        style={{
+                            transition: 'color 0.3s ease'
+                        }}
+                        onMouseOver={(e) => {
+                            e.currentTarget.style.color = '#00ccff';
+                            e.currentTarget.style.textShadow = '0 0 10px rgba(0, 204, 255, 0.8), 0 0 20px rgba(0, 150, 200, 0.6)';
+                        }}
+                        onMouseOut={(e) => {
+                            e.currentTarget.style.color = '';
+                            e.currentTarget.style.textShadow = '';
+                        }}
+                    >
                         {item.title}
                     </Link>
                 </div>
@@ -109,7 +133,7 @@ export function MenuItemComponent({ item }: MenuItemProps) {
         );
     }
 
-    // 고객지원 메뉴는 id가 3인 경우 (이 부분은 실제 id 값에 맞게 수정해야 합니다)
+    // 고객지원 메뉴는 id가 3인 경우
     if (item.id === 3) {
         return (
             <NavigationMenuItem>
@@ -118,16 +142,31 @@ export function MenuItemComponent({ item }: MenuItemProps) {
         );
     }
 
-    // 나머지 드롭다운 메뉴인 경우 (기존 방식 유지)
+    // 나머지 드롭다운 메뉴인 경우
     return (
         <NavigationMenuItem value={`menu-${item.id}`}>
-            <NavigationMenuTrigger className="bg-transparent text-white hover:bg-primary/10 focus:bg-primary/10">
+            <NavigationMenuTrigger
+                className="bg-transparent text-white hover:bg-primary/10 focus:bg-primary/10 font-Batang menu-glow"
+                style={{
+                    transition: 'color 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                    const target = e.currentTarget;
+                    target.style.color = '#00ccff';
+                    target.style.textShadow = '0 0 10px rgba(0, 204, 255, 0.8), 0 0 20px rgba(0, 150, 200, 0.6)';
+                }}
+                onMouseOut={(e) => {
+                    const target = e.currentTarget;
+                    target.style.color = '';
+                    target.style.textShadow = '';
+                }}
+            >
                 {item.title}
             </NavigationMenuTrigger>
             <NavigationMenuContent>
                 <ul className={cn(
                     "grid gap-2 p-4",
-                    item.id === 2 ? "grid-cols-2 w-[500px]" : "w-[200px]" // 사업부문 메뉴만 2열로 표시
+                    item.id === 2 ? "grid-cols-2 w-[500px]" : "w-[200px]"
                 )}>
                     {item.subMenus?.map((subItem) => (
                         <SubMenuListItem key={subItem.id} item={subItem} />

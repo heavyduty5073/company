@@ -25,9 +25,9 @@ async function Header() {
                 <SideMenuMobile/>
             </div>
         </div>
-            {/*<div className={'w-full bg-gradient-to-r from-[#003247] to-black'}>*/}
-            {/*<HeaderNavigation/>*/}
-            {/*</div>*/}
+            <div className={'hidden lg:block w-full bg-main'}>
+            <HeaderNavigation/>
+            </div>
             </>
     );
 }

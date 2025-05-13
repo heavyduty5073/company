@@ -7,6 +7,8 @@ export async function GET(request: Request) {
     const code = searchParams.get('code');
     const next = searchParams.get('next') ?? '/';
 
+    console.log('요청 URL:', request.url); // URL 확인
+    console.log('Code 존재 여부:', !!code);
     if (code) {
         try {
             // 쿠키 저장소 접근
@@ -19,21 +21,9 @@ export async function GET(request: Request) {
             const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
             if (error) {
-                console.error('세션 교환 오류:', error);
+
                 return NextResponse.redirect(`${origin}/auth/auth-code-error`);
             }
-
-            console.log('세션 교환 성공:', !!data.session);
-
-            // 사용자 정보 로깅
-            const { data: userData } = await supabase.auth.getUser();
-            console.log('인증된 사용자:', userData.user ? {
-                id: userData.user.id,
-                email: userData.user.email,
-                provider: userData.user.app_metadata?.provider
-            } : '사용자 정보 없음');
-
-
 
             // 응답 생성 및 쿠키 설정 명시적 추가
             const response = NextResponse.redirect(`${origin}${next}`);

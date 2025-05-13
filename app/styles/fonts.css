@@ -10,3 +10,9 @@
     font-weight: normal;
     font-style: normal;
 }
+@font-face {
+    font-family: 'Batang';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}

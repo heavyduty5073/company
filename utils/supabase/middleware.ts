@@ -1,9 +1,17 @@
+// utils/supabase/middleware.ts
 import { NextResponse, type NextRequest } from "next/server";
-import {createClient} from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function updateSession(request: NextRequest) {
     try {
         const url = request.nextUrl.pathname;
+
+        // auth/callback 경로는 건너뛰기
+        if (url === '/auth/callback') {
+            console.log('미들웨어: auth/callback 경로 감지, 처리 건너뜀');
+            return NextResponse.next();
+        }
+
         // 기본 응답 생성
         let response = NextResponse.next();
 
@@ -12,18 +20,19 @@ export async function updateSession(request: NextRequest) {
             const supabase = await createClient();
 
             // 세션 확인
-            const { data: { session },error } = await supabase.auth.getSession();
+            const { data: { session }, error } = await supabase.auth.getSession();
 
-            if(error){
+            if (error) {
                 await supabase.auth.signOut()
-                return NextResponse.redirect(new URL('/login'))
+                return NextResponse.redirect(new URL('/login', request.url));
             }
+
             // 보호된 경로 처리
             if (url.startsWith("/dashboard") && !session) {
                 return NextResponse.redirect(new URL("/login", request.url));
             }
 
-            // 로그인된 사용자가 로그인/회원가입 페이지 접근 시 홈으로 리다이렉트
+            // 로그인된 사용자가 로그인/회원가입 페이지 접근 시 홈으로 리디렉트
             if ((url === "/login" || url === "/register") && session) {
                 return NextResponse.redirect(new URL("/", request.url));
             }
@@ -37,8 +46,3 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.next();
     }
 }
-
-// 미들웨어를 적용할 경로 설정
-export const config = {
-    matcher: ["/", "/login", "/register", "/dashboard/:path*", "/auth/callback"],
-};
