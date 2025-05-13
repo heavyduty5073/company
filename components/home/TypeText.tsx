@@ -73,7 +73,7 @@ export default function TypingText({
         ));
     };
     return (
-        <div className={`leading-tight ${className}`}>
+        <div className={`leading-tight translate-y-20 ${className}`}>
             <span className="inline-block">
                 {renderTextWithLineBreaks(currentText)}
                 <span

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import Banner from "@/components/introduce/Banner";
 import { homeImages } from "@/lib/store/bannerImages";
 import TypingText from "@/components/home/TypeText";
 import {typingTexts} from "@/lib/store/typeTexts";
 import KakaoMap from "@/utils/address/Kakaomap";
+import ContentSection from "@/components/home/ContentSection";
+import ImageSlider from "@/components/home/ImageSlider";
 
 
 function Page() {
@@ -27,6 +29,10 @@ function Page() {
                 </div>
             </div>
             <div className={'min-h-[30vh] bg-main'}>
+                <Suspense fallback={'로딩중...'}>
+                    {/*<ImageSlider/>*/}
+                    <ContentSection/>
+                </Suspense>
                 {'콘텐츠 영역'}
             </div>
             <div className={'bg-white w-full p-4'}>

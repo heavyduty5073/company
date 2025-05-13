@@ -12,6 +12,8 @@ const config: Config = {
                 'Rix':['Rix', 'sans-serif'],
                 'Gangwon':['Gangwon', 'sans-serif'],
                 'Batang':['Batang', 'sans-serif'],
+                'ONE':['ONE', 'sans-serif'],
+                'Paperlogy':['"Paperlogy"', 'sans-serif'],
             },
             animation: {
                 fadeIn: 'fadeIn 1s ease-in-out forwards',
