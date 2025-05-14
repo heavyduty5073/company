@@ -67,7 +67,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
             } else if (width < 1280) {
                 newCardCount = 3; // 작은 데스크탑
             } else {
-                newCardCount = 3; // 큰 화면
+                newCardCount = 4; // 큰 화면
             }
 
             setCardCount(newCardCount);
@@ -143,24 +143,24 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto w-full overflow-hidden py-10 mb-12">
-            <Link href={'/repair'} className={'flex justify-between items-center px-4 md:px-0 my-3'}>
+        <div className="w-full mx-auto w-full overflow-hidden py-10 mb-12">
+            <Link href={'/repair'} className={'flex justify-between items-center max-w-7xl mx-auto px-4 md:px-0'}>
                 <motion.h2
-                    className="text-2xl sm:text-4xl text-white text-start mb-12 font-Paperlogy"
+                    className="text-2xl sm:text-4xl text-white text-start my-3 md:my-12 font-Paperlogy"
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                 >
-                    최신 정비 사례
+                    최근 정비 사례
                 </motion.h2>
                 <motion.div
-                    className="text-white mb-12"
+                    className="text-white my-3 md:my-12"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6 }}
                     whileHover={{ x: 5 }}
                 >
-                    <IoIosArrowForward className={'w-12 h-12 text-center'} />
+                    <IoIosArrowForward className={'w-10 md:w-12 h-10 md:w-12 text-center'} />
                 </motion.div>
             </Link>
 

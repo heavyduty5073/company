@@ -10,10 +10,21 @@ import { Posts } from "@/utils/supabase/types";
 export async function getOneRepairCase(id: string) {
     const supabase = await createClient();
 
-    if (!id) {
+    const {data:{user}} = await supabase.auth.getUser()
+
+    if (!user) {
         return {
-            code: ERROR_CODES.VALIDATION_ERROR,
-            message: '데이터가 삭제되었거나 존재하지 않습니다.'
+            code: ERROR_CODES.AUTH_ERROR,
+            message: "로그인이 필요합니다."
+        };
+    }
+
+    // 관리자 권한 체크
+    const isAdmin = user.user_metadata?.role === 'admin';
+    if (!isAdmin) {
+        return {
+            code: ERROR_CODES.UNAUTHORIZED,
+            message: "관리자 권한이 필요합니다."
         };
     }
 
@@ -48,8 +59,8 @@ export async function updatePost(formData: FormData) {
         const supabase = await createClient();
 
         // 세션 체크하여 로그인 상태 확인
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
             return {
                 code: ERROR_CODES.AUTH_ERROR,
                 message: "로그인이 필요합니다."
@@ -57,7 +68,7 @@ export async function updatePost(formData: FormData) {
         }
 
         // 관리자 권한 체크
-        const isAdmin = session.user?.user_metadata?.role === 'admin';
+        const isAdmin = user.user_metadata?.role === 'admin';
         if (!isAdmin) {
             return {
                 code: ERROR_CODES.UNAUTHORIZED,
@@ -147,6 +158,83 @@ export async function updatePost(formData: FormData) {
         };
     } catch (error) {
         console.error('Unexpected error updating post:', error);
+        return {
+            code: ERROR_CODES.SERVER_ERROR,
+            message: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+        };
+    }
+}
+
+export async function deleteRepairCase(id: string) {
+    try {
+        const supabase = await createClient();
+
+        // 세션 체크하여 로그인 상태 확인
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            return {
+                code: ERROR_CODES.AUTH_ERROR,
+                message: "로그인이 필요합니다."
+            };
+        }
+
+        // 관리자 권한 체크
+        const isAdmin = user.user_metadata?.role === 'admin';
+        if (!isAdmin) {
+            return {
+                code: ERROR_CODES.UNAUTHORIZED,
+                message: "관리자 권한이 필요합니다."
+            };
+        }
+
+        // ID 검증
+        if (!id) {
+            return {
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: "삭제할 게시물 ID가 필요합니다."
+            };
+        }
+
+        // 해당 게시물이 존재하는지 확인
+        const { data: existingPost, error: fetchError } = await supabase
+            .from('posts')
+            .select('id')
+            .eq('id', id)
+            .single();
+
+        if (fetchError || !existingPost) {
+            return {
+                code: ERROR_CODES.DB_ERROR,
+                message: "삭제할 정비 사례를 찾을 수 없습니다."
+            };
+        }
+
+        // DB에서 게시물 삭제
+        const { error } = await supabase
+            .from('posts')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error deleting post:', error);
+            return {
+                code: ERROR_CODES.DB_ERROR,
+                message: "정비 사례 삭제 중 오류가 발생했습니다."
+            };
+        }
+
+        // 캐시 무효화
+        revalidatePath('/admin/posts');
+        revalidatePath('/home');
+        revalidatePath('/repair');
+
+        return {
+            code: ERROR_CODES.SUCCESS,
+            message: "정비 사례가 성공적으로 삭제되었습니다.",
+            redirect: "/admin/posts"
+        };
+    } catch (error) {
+        console.error('Unexpected error deleting post:', error);
         return {
             code: ERROR_CODES.SERVER_ERROR,
             message: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."

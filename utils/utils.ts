@@ -1,5 +1,7 @@
 // utils/format-date.ts
 
+import {categoryMap, companyColorMap} from "@/lib/store/company";
+
 /**
  * 날짜 문자열을 포맷팅하여 반환합니다.
  * @param dateString ISO 형식의 날짜 문자열 또는 Timestamp
@@ -30,3 +32,22 @@ export function formatDate(
         return '날짜 포맷 오류';
     }
 }
+// HTML 콘텐츠에서 첫 번째 이미지 URL 추출 함수
+export const extractFirstImage = (htmlContent: string): string | null => {
+    if (!htmlContent) return null;
+
+    const imgRegex = /<img[^>]+src="([^">]+)"/;
+    const match = htmlContent.match(imgRegex);
+
+    return match ? match[1] : null;
+};
+export const getCompanyStyle = (company: string | null | undefined) => {
+    if (!company) return companyColorMap['default'];
+    return companyColorMap[company] || companyColorMap['default'];
+};
+
+// 카테고리 스타일 가져오기 함수 수정
+export const getCategoryStyle = (category: string | null | undefined) => {
+    if (!category) return { name: '기타', bgColor: 'bg-gray-500', textColor: 'text-white' };
+    return categoryMap[category] || { name: category, bgColor: 'bg-gray-500', textColor: 'text-white' };
+};

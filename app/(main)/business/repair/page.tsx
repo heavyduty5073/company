@@ -1,8 +1,16 @@
 import React from 'react';
+import {getRepairCases} from "@/app/(admin)/admin/posts/actions";
+import Link from "next/link";
 
-function Page() {
+async function Page() {
+    const data = await getRepairCases()
+
+
     return (
-        <div></div>
+        <div>
+
+        </div>
+
     );
 }
 

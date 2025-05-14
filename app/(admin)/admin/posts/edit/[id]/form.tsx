@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import FormContainer from "@/components/ui/form";
 import Editor from "@/lib/editor/Editor";
-import { updatePost } from './actions';
+import {deleteRepairCase, updatePost} from './actions';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,6 +16,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { companyOptions } from "@/lib/store/company";
 import { Posts } from "@/utils/supabase/types";
+import useAlert from "@/lib/notiflix/useAlert";
+import {useRouter} from "next/navigation";
+import {ERROR_CODES} from "@/utils/ErrorMessage";
 
 interface EditPostProps {
     post: Posts;
@@ -23,7 +26,9 @@ interface EditPostProps {
 
 function EditPost({ post }: EditPostProps) {
     const [category, setCategory] = useState<string>(post.category || '');
-
+    const [isDeleting, setIsDeleting] = useState(false);
+    const { notify } = useAlert();
+    const router = useRouter();
     // 선택된 카테고리에 따라 회사 옵션 리스트 결정
     const getCompanyOptions = () => {
         switch (category) {
@@ -44,6 +49,28 @@ function EditPost({ post }: EditPostProps) {
 
         // updatePost 액션 호출
         return updatePost(formData);
+    };
+    const handleDelete = async () => {
+        try {
+            setIsDeleting(true);
+            const result = await deleteRepairCase(post.id.toString());
+
+            if (result.code===ERROR_CODES.SUCCESS) {
+                notify.success('정비 사례가 삭제되었습니다.');
+
+                // 리디렉션이 있는 경우 해당 경로로 이동
+                if (result.redirect) {
+                    router.push(result.redirect);
+                }
+            } else {
+                notify.failure('정비 사례 삭제 중 오류가 발생했습니다.');
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            notify.failure('정비 사례 삭제 중 알 수 없는 에러가 발생하였습니다.');
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     return (
@@ -129,6 +156,9 @@ function EditPost({ post }: EditPostProps) {
                     </Button>
                     <Button type="submit" className="w-full md:w-auto border border-black px-8">
                         수정하기
+                    </Button>
+                    <Button type={'button'} onClick={()=>handleDelete()} className={'bg-red-500 text-white'}>
+                        삭제하기
                     </Button>
                 </div>
             </div>

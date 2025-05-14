@@ -140,7 +140,7 @@ const ContentSection: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                 >
-                    <IoIosArrowForward className={'w-12 h-12 text-center'}/>
+                    <IoIosArrowForward className={'w-10 md:w-12 h-10 md:h-12 text-center'}/>
                 </motion.h2>
                 </Link>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
