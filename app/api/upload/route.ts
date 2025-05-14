@@ -22,7 +22,6 @@ export async function POST(request: NextRequest) {
         file = formData.get('file') as File | null;
     }
 
-    console.log('file',file)
     if (!file) {
         return NextResponse.json(
             { success: false, error: 'No file uploaded' },
@@ -91,7 +90,6 @@ async function uploadImage(file: File): Promise<States>  {
             .getPublicUrl(fileName);
 
 
-        console.log(publicUrl)
         return { success: true, data: publicUrl, error: '' };
     } catch(error: unknown) {
         const errorMessage = error instanceof Error

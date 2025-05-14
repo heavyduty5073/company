@@ -2,7 +2,11 @@
 import React, {useEffect} from 'react';
 import {FcGoogle} from "react-icons/fc";
 import {RiKakaoTalkFill} from "react-icons/ri";
-import {signInWithGoogle, signInWithKakao} from "@/app/(main)/login/actions";
+import {
+    handleUpdateSocialLogin,
+    signInWithGoogle,
+    signInWithKakao
+} from "@/app/(main)/login/actions";
 import {useRouter} from "next/navigation";
 import {ERROR_CODES} from "@/utils/ErrorMessage";
 
@@ -20,7 +24,9 @@ function SocialLogin() {
                 ? await signInWithKakao()
                 : await signInWithGoogle();
 
+
             if (result.code === ERROR_CODES.SUCCESS) {
+
                 if (result.data && typeof result.data === 'object' && 'url' in result.data) {
                     // OAuth 제공자가 반환한 URL로 리다이렉션
                     const authUrl = (result.data as SocialAuthData).url;

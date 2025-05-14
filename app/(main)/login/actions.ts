@@ -3,6 +3,7 @@
 import { FormState } from "@/components/ui/form";
 import {createClient} from "@/utils/supabase/server";
 import {ERROR_CODES} from "@/utils/ErrorMessage";
+import {AdminClient} from "@/utils/supabase/admin";
 
 export async function signIn(formData: FormData): Promise<FormState> {
     const supabase = await createClient()
@@ -23,7 +24,6 @@ export async function signIn(formData: FormData): Promise<FormState> {
         });
 
         if (error) {
-            console.log('error:',error)
             return {
                 code: ERROR_CODES.AUTH_ERROR,
                 message: "이메일 또는 비밀번호가 올바르지 않습니다."
@@ -115,6 +115,31 @@ export async function signInWithKakao(): Promise<FormState> {
             code: ERROR_CODES.SERVER_ERROR,
             message: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
         };
+    }
+}
+export async function handleUpdateSocialLogin() {
+    const supabase = await createClient()
+
+    // 현재 로그인된 유저 가져오기
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const adminSupabase = AdminClient()
+    if (userError || !user) {
+        console.error('유저 없음 또는 인증 오류:', userError)
+        return
+    }
+
+    // user_metadata에 role이 없는 경우 기본값으로 설정
+    if (!user.user_metadata?.role) {
+        const { error: updateError } = await adminSupabase.auth.admin.updateUserById(user.id, {
+            user_metadata: {
+                ...user.user_metadata,
+                role: 'user'
+            }
+        })
+
+        if (updateError) {
+            console.error('소셜 로그인 사용자 role 업데이트 실패:', updateError)
+        }
     }
 }
 // 로그아웃

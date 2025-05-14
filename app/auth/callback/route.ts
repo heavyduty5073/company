@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import {createClient} from "@/utils/supabase/server";
+import {handleUpdateSocialLogin} from "@/app/(main)/login/actions";
 
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url);
@@ -41,7 +42,7 @@ export async function GET(request: Request) {
                     });
                 }
             });
-
+            await handleUpdateSocialLogin()
             return response;
         } catch (error) {
             console.error('Auth 콜백 처리 오류:', error);

@@ -34,7 +34,6 @@ export async function createPost(formData: FormData) {
         const company = formData.get('company') as string;
         const contents = formData.get('contents') as string;
 
-        console.log(contents)
         // 필수값 검증
         if (!title || !category || !tag || !company) {
             return {

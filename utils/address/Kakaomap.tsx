@@ -111,7 +111,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ address }) => {
             script.onload = () => {
                 // 스크립트 로드 후 maps 객체 초기화
                 window.kakao.maps.load(() => {
-                    console.log('카카오맵 로드 완료');
                     initMap();
                 });
             };
@@ -130,7 +129,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ address }) => {
             if (!mapRef.current || !address) return;
 
             try {
-                console.log('지도 초기화 시작');
 
                 // 지도 생성
                 const options = {
@@ -139,7 +137,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ address }) => {
                 };
 
                 const map = new window.kakao.maps.Map(mapRef.current, options);
-                console.log('지도 생성 완료');
 
                 // 주소-좌표 변환 객체 생성
                 const geocoder = new window.kakao.maps.services.Geocoder();

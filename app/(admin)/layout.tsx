@@ -1,12 +1,8 @@
 import React, { ReactNode } from 'react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/admin/layout/AppSidebar";
-import {
-    Search,
-} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,6 +15,7 @@ import {createClient} from "@/utils/supabase/server";
 import { redirect } from 'next/navigation';
 import Link from "next/link";
 import Image from "next/image";
+import {signOut} from "@/app/(main)/login/actions";
 
 async function AdminLayout({ children }: { children: ReactNode }) {
 
@@ -66,7 +63,7 @@ async function AdminLayout({ children }: { children: ReactNode }) {
                                     <DropdownMenuItem>계정 관리</DropdownMenuItem>
                                     <DropdownMenuItem>환경 설정</DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem className="text-rose-500">로그아웃</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={signOut} className="text-rose-500">로그아웃</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
