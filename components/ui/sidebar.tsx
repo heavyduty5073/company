@@ -80,6 +80,7 @@ export function SidebarTrigger() {
               <span className="sr-only">Toggle Sidebar</span>
             </Button>
           </SheetTrigger>
+            <SidebarHeader aria-readonly></SidebarHeader>
           <SheetContent side="left" className="p-0 w-[280px]">
             <div className="w-full h-full">
               {/* 모바일 사이드바 내용은 실제 사이드바와 동일 */}

@@ -14,6 +14,7 @@ const config: Config = {
                 'Batang':['Batang', 'sans-serif'],
                 'ONE':['ONE', 'sans-serif'],
                 'Paperlogy':['"Paperlogy"', 'sans-serif'],
+                'jalnan':['"jalnan"', 'sans-serif'],
             },
             animation: {
                 fadeIn: 'fadeIn 1s ease-in-out forwards',
@@ -23,6 +24,10 @@ const config: Config = {
                     '0%': {opacity: '0'},
                     '100%': {opacity: '1'},
                 },
+                scaleIn:{
+                    '0%': {transform: 'scale(0)'},
+                    '100%': {transform: 'scale(1)'},
+                }
             },
         },
     },

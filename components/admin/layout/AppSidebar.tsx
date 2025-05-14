@@ -29,10 +29,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import { usePathname } from "next/navigation"
+import {User} from "@supabase/auth-js";
+import {signOut} from "@/app/(main)/login/actions";
 
-export function AppSidebar() {
+export function AppSidebar({user}:{user:User}) {
     const pathname = usePathname()
     const { isOpen } = useSidebar()
     const [notifications, setNotifications] = useState(5)
@@ -44,18 +45,14 @@ export function AppSidebar() {
 
     return (
         <Sidebar>
-            <SidebarHeader>
-                {/* 헤더 내용은 기본값 사용 */}
-            </SidebarHeader>
-
             <SidebarContent>
                 {/* 관리자 프로필 */}
                 {isOpen && (
                     <div className="flex flex-col items-center justify-center p-4 mb-6 border rounded-xl bg-slate-50">
                         <Avatar className="w-20 h-20 mb-4 border-4 border-white shadow-md">
-                            <AvatarImage src="/images/admin-avatar.jpg" alt="관리자" />
+                            <AvatarImage src={`${user.user_metadata.avatar_url}` || '/user/user.jpg'} alt="관리자" />
                             <AvatarFallback className="bg-primary text-primary-foreground text-xl">
-                                {userName.slice(0, 2)}
+                                {userName.slice(0, 3)}
                             </AvatarFallback>
                         </Avatar>
                         <div className="text-center">
@@ -68,33 +65,22 @@ export function AppSidebar() {
                 {/* 주요 메뉴 그룹 */}
                 <SidebarGroup title="주요 메뉴">
                     <SidebarItem
-                        href="/admin"
+                        href="/admin/deshboard"
                         icon={<LayoutDashboard size={20} />}
                         title="대시보드"
-                        active={isActive('/admin')}
-                    />
-                    <SidebarItem
-                        href="/admin/orders"
-                        icon={<Boxes size={20} />}
-                        title="주문 관리"
-                        active={isActive('/admin/orders')}
-                        badge={
-                            <Badge variant="outline" className="ml-auto bg-primary/10 border-primary/20 text-primary">
-                                {3}
-                            </Badge>
-                        }
+                        active={isActive('/admin/dashboard')}
                     />
                     <SidebarItem
                         href="/admin/products"
-                        icon={<Truck size={20} />}
+                        icon={<Boxes size={20} />}
                         title="부품 관리"
                         active={isActive('/admin/products')}
-                    />
-                    <SidebarItem
-                        href="/admin/repair"
-                        icon={<Wrench size={20} />}
-                        title="수리 서비스"
-                        active={isActive('/admin/repair')}
+                        // badge={
+                        //     <Badge variant="outline" className="ml-auto bg-primary/10 border-primary/20 text-primary">
+                        //         {3}
+                        //     </Badge>
+                        // }
+                        // 숫자 뱃지 처리시
                     />
                     <SidebarItem
                         href="/admin/customers"
@@ -102,32 +88,39 @@ export function AppSidebar() {
                         title="고객 관리"
                         active={isActive('/admin/customers')}
                     />
+                    {/*<SidebarItem*/}
+                    {/*    href="/admin/repair"*/}
+                    {/*    icon={<Wrench size={20} />}*/}
+                    {/*    title="수리 서비스"*/}
+                    {/*    active={isActive('/admin/repair')}*/}
+                    {/*/>*/}
+
                 </SidebarGroup>
 
                 {/* 콘텐츠 관리 그룹 */}
                 <SidebarGroup title="콘텐츠 관리">
                     <SidebarItem
                         href="/admin/posts"
-                        icon={<FileText size={20} />}
-                        title="게시글 관리"
+                        icon={<Wrench size={20} />}
+                        title="정비 사례"
                         active={isActive('/admin/posts')}
                     />
-                    <SidebarItem
-                        href="/admin/gallery"
-                        icon={<ImagePlus size={20} />}
-                        title="갤러리 관리"
-                        active={isActive('/admin/gallery')}
-                    />
+                    {/*<SidebarItem*/}
+                    {/*    href="/admin/gallery"*/}
+                    {/*    icon={<ImagePlus size={20} />}*/}
+                    {/*    title="갤러리 관리"*/}
+                    {/*    active={isActive('/admin/gallery')}*/}
+                    {/*/>*/}
                     <SidebarItem
                         href="/admin/inquiries"
                         icon={<MessageSquare size={20} />}
                         title="문의 관리"
                         active={isActive('/admin/inquiries')}
-                        badge={
-                            <Badge variant="outline" className="ml-auto bg-rose-500/10 border-rose-500/20 text-rose-500">
-                                {notifications}
-                            </Badge>
-                        }
+                        // badge={
+                        //     <Badge variant="outline" className="ml-auto bg-rose-500/10 border-rose-500/20 text-rose-500">
+                        //         {notifications}
+                        //     </Badge>
+                        // }
                     />
                 </SidebarGroup>
 
@@ -145,19 +138,19 @@ export function AppSidebar() {
                         title="환경 설정"
                         active={isActive('/admin/settings')}
                     />
-                    <SidebarItem
-                        href="/admin/notifications"
-                        icon={<BellRing size={20} />}
-                        title="알림 센터"
-                        active={isActive('/admin/notifications')}
-                        badge={
-                            notifications > 0 ? (
-                                <Badge variant="outline" className="ml-auto bg-rose-500/10 border-rose-500/20 text-rose-500">
-                                    {notifications}
-                                </Badge>
-                            ) : null
-                        }
-                    />
+                    {/*<SidebarItem*/}
+                    {/*    href="/admin/notifications"*/}
+                    {/*    icon={<BellRing size={20} />}*/}
+                    {/*    title="알림 센터"*/}
+                    {/*    active={isActive('/admin/notifications')}*/}
+                    {/*    badge={*/}
+                    {/*        notifications > 0 ? (*/}
+                    {/*            <Badge variant="outline" className="ml-auto bg-rose-500/10 border-rose-500/20 text-rose-500">*/}
+                    {/*                {notifications}*/}
+                    {/*            </Badge>*/}
+                    {/*        ) : null*/}
+                    {/*    }*/}
+                    {/*/>*/}
                     <SidebarItem
                         href="/admin/help"
                         icon={<HelpCircle size={20} />}
@@ -178,7 +171,7 @@ export function AppSidebar() {
                     </div>
 
                     {/* 로그아웃 버튼 */}
-                    <Button variant="outline" className="w-full flex items-center gap-2 justify-start">
+                    <Button onClick={signOut} variant="outline" className="w-full flex items-center gap-2 justify-start">
                         <LogOut className="h-4 w-4" />
                         <span>로그아웃</span>
                     </Button>

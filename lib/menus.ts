@@ -24,7 +24,7 @@ export const menus: MenuItem[] = [
                 id: 101,
                 title: '회사 소개',
                 link: '/introduce/about',
-                description: 'DS 건설기계의 역사와 비전'
+                description: ''
             },
             {
                 id: 102,
@@ -34,12 +34,6 @@ export const menus: MenuItem[] = [
             },
             {
                 id: 103,
-                title: '조직도',
-                link: '/introduce/organization',
-                description: '회사 조직 구성 안내'
-            },
-            {
-                id: 104,
                 title: '오시는 길',
                 link: '/home#kakaomap',
                 description: '회사 위치 및 약도'
@@ -73,7 +67,7 @@ export const menus: MenuItem[] = [
             {
                 id: 204,
                 title: '정비 서비스',
-                link: '/business/maintenance',
+                link: '/business/repair',
                 description: '전문 정비 서비스 안내'
             },
             {
@@ -113,7 +107,7 @@ export const menus: MenuItem[] = [
     {
         id: 4,
         title: '정비사례',
-        link: '/maintenance',
+        link: '/repair',
         type: 'link'
     },
 ];

@@ -5,12 +5,14 @@ import TypingText from "@/components/home/TypeText";
 import {typingTexts} from "@/lib/store/typeTexts";
 import KakaoMap from "@/utils/address/Kakaomap";
 import ContentSection from "@/components/home/ContentSection";
-import ImageSlider from "@/components/home/ImageSlider";
+import GlobalLoader from "@/lib/Loading/Loading";
+import {getLatestRepairCases} from "@/app/(main)/home/actions";
+import RepairCaseCarousel from "@/components/home/RepaireCaseCarousel";
 
 
-function Page() {
+async function Page() {
 
-
+    const data = await getLatestRepairCases()
     return (
         <div className="relative">
             {/* 배너 섹션 */}
@@ -28,9 +30,10 @@ function Page() {
                     />
                 </div>
             </div>
-            <div className={'min-h-[30vh] bg-main'}>
-                <Suspense fallback={'로딩중...'}>
+            <div className={'bg-main'}>
+                <Suspense fallback={<GlobalLoader/>}>
                     {/*<ImageSlider/>*/}
+                    <RepairCaseCarousel cases={data} />
                     <ContentSection/>
                 </Suspense>
                 {'콘텐츠 영역'}

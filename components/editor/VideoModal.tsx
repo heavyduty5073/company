@@ -13,7 +13,7 @@ const VideoModal = ({ show, onClose, onSubmit }: VideoModalProps) => {
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-gray-400 border border-black rounded-lg p-6 w-96">
+            <div className="bg-white border border-black rounded-lg p-6 w-96">
                 <h3 className="text-lg font-bold mb-4">동영상 URL 입력</h3>
                 <input
                     type="text"

@@ -15,30 +15,30 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import Alert from "@/components/admin/layout/Alert";
+import {createClient} from "@/utils/supabase/server";
+import { redirect } from 'next/navigation';
+import Link from "next/link";
+import Image from "next/image";
 
-function AdminLayout({ children }: { children: ReactNode }) {
+async function AdminLayout({ children }: { children: ReactNode }) {
 
+    const supabase = await createClient()
+    const {data:{user}} = await supabase.auth.getUser()
+    if(!user || user.user_metadata.role!=='admin') return redirect('/login')
     return (
         <SidebarProvider>
-            <div className="min-h-screen bg-slate-50 flex flex-col">
+            <div className="min-h-screen bg-slate-50 flex flex-col w-full">
                 {/* 상단 헤더 */}
-                <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                    <div className="container flex h-16 items-center px-4">
+                <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-full">
+                    <div className="flex h-16  justify-between items-center px-4 w-full">
                         <div className="flex items-center gap-2">
                             <SidebarTrigger />
-                            <h1 className="text-xl font-semibold">DS 건설기계 관리자</h1>
+                            <Link href={'/home'} className={'flex flex-row items-center'}>
+                            <h1 className="text-xl font-semibold">관리자 페이지</h1>
+                            </Link>
                         </div>
 
                         <div className="flex items-center ml-auto gap-4">
-                            {/* 검색창 */}
-                            <div className="relative w-64 max-w-sm hidden md:flex">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    type="search"
-                                    placeholder="검색..."
-                                    className="pl-8 w-full"
-                                />
-                            </div>
 
                             {/* 알림 */}
                             <Alert/>
@@ -47,18 +47,17 @@ function AdminLayout({ children }: { children: ReactNode }) {
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                                        <Avatar className="h-9 w-9">
-                                            <AvatarImage src="/images/admin-avatar.jpg" alt="관리자" />
-                                            <AvatarFallback>관</AvatarFallback>
+                                        <Avatar className="h-8 w-8 m-2">
+                                            <AvatarImage src={user.user_metadata.avatar_url || '/user/user.jpg'} alt="관리자" />
+                                            <AvatarFallback className={'border border-black'}><Image src={'/user/user.jpg'} alt={'userImg'} fill className={'w-full h-full'}/></AvatarFallback>
                                         </Avatar>
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
+                                <DropdownMenuContent align="end" className={'bg-white'}>
                                     <div className="flex items-center justify-start gap-2 p-2">
                                         <div className="flex flex-col space-y-0.5">
-                                            <p className="text-sm font-medium">관리자</p>
                                             <p className="text-xs text-muted-foreground">
-                                                admin@dsconstructionmachinery.com
+                                                {user.user_metadata.name ||'관리자'}
                                             </p>
                                         </div>
                                     </div>
@@ -76,7 +75,7 @@ function AdminLayout({ children }: { children: ReactNode }) {
 
                 <div className="flex flex-1 overflow-hidden">
                     {/* 사이드바 */}
-                    <AppSidebar />
+                    <AppSidebar user={user}/>
 
                     {/* 메인 콘텐츠 */}
                     <main className="flex-1 overflow-y-auto p-6">

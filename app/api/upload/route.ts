@@ -16,13 +16,36 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData();
-    const file = formData.get('files[0]') as File | null;
+    let file = formData.get('files[0]') as File | null;
+
+    if (!file) {
+        file = formData.get('file') as File | null;
+    }
+
+    console.log('file',file)
     if (!file) {
         return NextResponse.json(
             { success: false, error: 'No file uploaded' },
             { status: 400 }
         );
     }
+    // 이미지 타입 검증
+    if (!file.type.startsWith('image/')) {
+        return NextResponse.json(
+            { success: false, error: '이미지 파일만 업로드 가능합니다.' },
+            { status: 400 }
+        );
+    }
+
+    // 파일 크기 제한 (10MB)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+        return NextResponse.json(
+            { success: false, error: '파일 크기는 10MB 이하여야 합니다.' },
+            { status: 400 }
+        );
+    }
+
 
     try {
         const result = await uploadImage(file);
@@ -68,6 +91,7 @@ async function uploadImage(file: File): Promise<States>  {
             .getPublicUrl(fileName);
 
 
+        console.log(publicUrl)
         return { success: true, data: publicUrl, error: '' };
     } catch(error: unknown) {
         const errorMessage = error instanceof Error

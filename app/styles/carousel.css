@@ -1,0 +1,61 @@
+/* 캐러셀용 스타일 - styles/carousel.css */
+
+/* 기본 캐러셀 스타일 */
+.carousel {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 캐러셀 아이템 애니메이션 효과 */
+.carousel-item {
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carousel-item:hover {
+    transform: translateY(-5px);
+}
+
+/* 스크롤바 숨기기 (크로스 브라우저) */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* 카테고리별 색상 */
+.category-excavator {
+    border-left: 4px solid #3b82f6; /* blue-500 */
+}
+
+.category-loader {
+    border-left: 4px solid #10b981; /* green-500 */
+}
+
+.category-truck {
+    border-left: 4px solid #ef4444; /* red-500 */
+}
+
+/* 터치 디바이스 최적화 */
+@media (hover: none) {
+    .carousel-item:hover {
+        transform: none;
+    }
+}
+
+/* 카드 내부 콘텐츠 스타일 */
+.card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.card-content {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

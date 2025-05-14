@@ -10,8 +10,8 @@ import {MenuItem, menus} from "@/lib/menus";
 
 function HeaderNavigation() {
     return (
-        <NavigationMenu className="mx-auto">
-            <NavigationMenuList className="flex gap-6">
+        <NavigationMenu className="mx-auto py-2">
+            <NavigationMenuList className="flex gap-6 justify-center">
                 {menus.map((menuItem:MenuItem) => (
                     <MenuItemComponent key={menuItem.id} item={menuItem} />
                 ))}

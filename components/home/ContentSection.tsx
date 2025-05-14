@@ -127,7 +127,7 @@ const ContentSection: React.FC = () => {
             <div className="max-w-7xl mx-auto">
                 <Link href={'/parts'} className={'flex justify-between items-center'}>
                 <motion.h2
-                    className="text-2xl sm:text-4xl font-bold text-white text-start mb-12 font-Paperlogy"
+                    className="text-2xl sm:text-4xl text-white text-start mb-12 font-Paperlogy"
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}

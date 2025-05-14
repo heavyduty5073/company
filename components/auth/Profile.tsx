@@ -19,12 +19,13 @@ function Profile({user}:{user:User}) {
     const handleMove=(link:string)=>{
         return router.push(link);
     }
+
     return (
         <div>
             <DropdownMenu>
                 <DropdownMenuTrigger>
                     <Avatar>
-                        <AvatarImage src={user.user_metadata.avatar_url ||''} className={'w-7 h-7'}/>
+                        <AvatarImage src={user.user_metadata.avatar_url ||'/user/user.jpg'} className={'w-10 h-10'}/>
                         <AvatarFallback><FaUserCircle className={'w-7 h-7'}/></AvatarFallback>
                     </Avatar>
                 </DropdownMenuTrigger>
@@ -32,7 +33,7 @@ function Profile({user}:{user:User}) {
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuItem>Profile</DropdownMenuItem>
                     <DropdownMenuItem onClick={signOut}>로그아웃</DropdownMenuItem>
-                    {user.user_metadata.role === 'admin' && <DropdownMenuItem onClick={()=>handleMove('/dashboard')}>관리자</DropdownMenuItem>}
+                    {user.user_metadata.role === 'admin' && <DropdownMenuItem onClick={()=>handleMove('/admin/dashboard')}>관리자</DropdownMenuItem>}
                 </DropdownMenuContent>
             </DropdownMenu>
 

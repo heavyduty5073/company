@@ -64,7 +64,7 @@ const CustomDropdownMenu = ({ item }: { item: MenuItem }) => {
                     e.currentTarget.style.textShadow = '';
                 }}
             >
-                <span className={'font-Batang'}>{item.title}</span>
+                <span className={'font-jalnan'}>{item.title}</span>
                 <svg
                     width="12"
                     height="12"
@@ -110,7 +110,7 @@ export function MenuItemComponent({ item }: MenuItemProps) {
     if (item.type === 'link') {
         return (
             <NavigationMenuItem>
-                <div className="font-Batang inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:bg-primary/10 disabled:opacity-50 disabled:pointer-events-none bg-transparent text-white h-10 py-2 px-4 hover:bg-primary/10 data-[active]:bg-primary/10 data-[state=open]:bg-primary/10">
+                <div className="font-jalnan inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:bg-primary/10 disabled:opacity-50 disabled:pointer-events-none bg-transparent text-white h-10 py-2 px-4 hover:bg-primary/10 data-[active]:bg-primary/10 data-[state=open]:bg-primary/10">
                     <Link
                         href={item.link}
                         className="menu-glow"
@@ -146,7 +146,7 @@ export function MenuItemComponent({ item }: MenuItemProps) {
     return (
         <NavigationMenuItem value={`menu-${item.id}`}>
             <NavigationMenuTrigger
-                className="bg-transparent text-white hover:bg-primary/10 focus:bg-primary/10 font-Batang menu-glow"
+                className="bg-transparent text-white hover:bg-primary/10 focus:bg-primary/10 font-jalnan menu-glow"
                 style={{
                     transition: 'color 0.3s ease'
                 }}

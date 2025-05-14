@@ -16,20 +16,24 @@ export async function updateSession(request: NextRequest) {
         let response = NextResponse.next();
 
         try {
+
             // createClient 함수 사용
             const supabase = await createClient();
-
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
             // 세션 확인
-            const { data: { session }, error } = await supabase.auth.getSession();
+            // 실제 사용자 정보 검증
+            const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-            if (error) {
-                await supabase.auth.signOut()
+            if (userError || !user) {
+                await supabase.auth.signOut();
                 return NextResponse.redirect(new URL('/login', request.url));
             }
 
-            // 보호된 경로 처리
-            if (url.startsWith("/dashboard") && !session) {
-                return NextResponse.redirect(new URL("/login", request.url));
+            if (url.startsWith("/admin")) {
+                const isAdmin = user.user_metadata?.role === 'admin';
+                if (!isAdmin) {
+                    return NextResponse.redirect(new URL("/unauthorized", request.url));
+                }
             }
 
             // 로그인된 사용자가 로그인/회원가입 페이지 접근 시 홈으로 리디렉트

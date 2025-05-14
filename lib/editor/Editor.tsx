@@ -117,6 +117,10 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
                 class: 'prose prose-sm focus:outline-none max-w-full h-full p-2 overflow-visible min-h-[50vh]',
             },
         },
+        onUpdate: ({ editor }) => {
+            const newContent = editor.getHTML();
+            handleChange(newContent);
+        },
     });
 
     const handleChange = useCallback((newContent: string) => {
