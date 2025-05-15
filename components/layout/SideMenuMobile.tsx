@@ -15,7 +15,7 @@ import Link from "next/link";
 function SideMenuMobile() {
     return (
         <Sheet>
-            <SheetTrigger><RiMenu3Line className={'w-5 h-5'}/></SheetTrigger>
+            <SheetTrigger><RiMenu3Line className={'w-7 h-7'}/></SheetTrigger>
             <SheetContent className={'bg-white'}>
                 <SheetHeader>
                     <SheetTitle aria-readonly></SheetTitle>

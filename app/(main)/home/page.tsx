@@ -36,7 +36,6 @@ async function Page() {
                     <RepairCaseCarousel cases={data} />
                     <ContentSection/>
                 </Suspense>
-                {'콘텐츠 영역'}
             </div>
             <div className={'bg-white w-full p-4'}>
                 <div id={'kakaomap'} className="h-[300px] md:h-[400px] w-full">

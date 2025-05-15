@@ -4,10 +4,9 @@ import { useState, useEffect, ReactNode } from 'react';
 
 interface HeaderScrollProps {
     children: ReactNode;
-    navigationMenu: ReactNode;
 }
 
-export default function HeaderScroll({ children, navigationMenu }: HeaderScrollProps) {
+export default function HeaderScroll({ children }: HeaderScrollProps) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
@@ -93,23 +92,25 @@ export default function HeaderScroll({ children, navigationMenu }: HeaderScrollP
             <div
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-lg' : ''}`}
             >
+
                 <div
                     className={`bg-gradient-to-r from-[#003247] to-black transition-all duration-300 ${
                         (isScrolled && !isHovered) || isMobile ? 'py-1 h-16' : 'py-2 lg:py-4 h-[116px]'
                     }`}
                 >
+
                     {children}
                 </div>
             </div>
 
             {/* 네비게이션 메뉴 */}
-            <div
-                className={`w-full bg-main transition-all duration-300 fixed left-0 right-0 z-40 hidden lg:block ${
-                    (isScrolled && !isHovered) || isMobile ? 'top-16 h-0 opacity-0 overflow-hidden' : 'top-[116px] h-auto opacity-100 overflow-visible'
-                }`}
-            >
-                {navigationMenu}
-            </div>
+            {/*<div*/}
+            {/*    className={`w-full bg-main transition-all duration-300 fixed left-0 right-0 z-40 hidden lg:block ${*/}
+            {/*        (isScrolled && !isHovered) || isMobile ? 'top-16 h-0 opacity-0 overflow-hidden' : 'top-[116px] h-auto opacity-100 overflow-visible'*/}
+            {/*    }`}*/}
+            {/*>*/}
+            {/*    {navigationMenu}*/}
+            {/*</div>*/}
         </div>
     );
 }

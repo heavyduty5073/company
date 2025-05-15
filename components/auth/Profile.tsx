@@ -29,11 +29,11 @@ function Profile({user}:{user:User}) {
                         <AvatarFallback><FaUserCircle className={'w-7 h-7'}/></AvatarFallback>
                     </Avatar>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className={'bg-white'}>
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                    <DropdownMenuItem onClick={signOut}>로그아웃</DropdownMenuItem>
-                    {user.user_metadata.role === 'admin' && <DropdownMenuItem onClick={()=>handleMove('/admin/dashboard')}>관리자</DropdownMenuItem>}
+                <DropdownMenuContent className={'flex flex-col justify-end items-center bg-white'}>
+                    <DropdownMenuLabel>{`${user.user_metadata.email.slice(0,5)}님 환영합니다`}</DropdownMenuLabel>
+                    <DropdownMenuItem><button>프로필</button></DropdownMenuItem>
+                    <DropdownMenuItem className={'hover:pointer-cursor'} onClick={signOut}>로그아웃</DropdownMenuItem>
+                    {user.user_metadata.role === 'admin' && <DropdownMenuItem className={''} onClick={()=>handleMove('/admin/dashboard')}>관리자</DropdownMenuItem>}
                 </DropdownMenuContent>
             </DropdownMenu>
 

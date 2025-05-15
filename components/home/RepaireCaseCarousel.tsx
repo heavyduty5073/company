@@ -9,6 +9,8 @@ import { motion } from "framer-motion";
 import { IoIosArrowForward } from "react-icons/io";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {extractFirstImage, getCompanyStyle} from "@/utils/utils";
+import {categoryMap} from "@/lib/store/company";
 
 interface RepairCaseCarouselProps {
     cases: Posts[];
@@ -20,37 +22,6 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
     const [cardsWidth, setCardsWidth] = useState<number[]>([]);
     const [position, setPosition] = useState(0);
     const [cardCount, setCardCount] = useState(4); // 기본값 4개
-
-    // 카테고리에 따른 아이콘 및 한글 이름 매핑
-    const categoryMap: { [key: string]: { icon: React.ReactNode, name: string, bgColor: string, textColor: string } } = {
-        excavator: { icon: <FaTools className="w-3 h-3 mr-1" />, name: '굴삭기', bgColor: 'bg-blue-600', textColor: 'text-white' },
-        loader: { icon: <FaTools className="w-3 h-3 mr-1" />, name: '로더', bgColor: 'bg-green-600', textColor: 'text-white' },
-        truck: { icon: <FaTools className="w-3 h-3 mr-1" />, name: '대형트럭', bgColor: 'bg-red-500', textColor: 'text-white' },
-    };
-
-    // 회사에 따른 색상 매핑
-    const companyColorMap: { [key: string]: { bgColor: string, textColor: string } } = {
-        '두산': { bgColor: 'bg-orange-500', textColor: 'text-white' },
-        '볼보': { bgColor: 'bg-gray-300', textColor: 'text-black' },
-        '현대': { bgColor: 'bg-blue-500', textColor: 'text-white' },
-        '대우': { bgColor: 'bg-red-500', textColor: 'text-white' },
-        '고마쯔': { bgColor: 'bg-yellow-500', textColor: 'text-black' },
-        '캐터필러': { bgColor: 'bg-yellow-400', textColor: 'text-black' },
-        '스카니아': { bgColor: 'bg-blue-800', textColor: 'text-white' },
-        '다이하쯔': { bgColor: 'bg-green-600', textColor: 'text-white' },
-        // 기본 스타일 (다른 회사가 있을 경우)
-        'default': { bgColor: 'bg-white border border-gray-200', textColor: 'text-black' }
-    };
-
-    // HTML 콘텐츠에서 첫 번째 이미지 URL 추출 함수
-    const extractFirstImage = (htmlContent: string): string | null => {
-        if (!htmlContent) return null;
-
-        const imgRegex = /<img[^>]+src="([^">]+)"/;
-        const match = htmlContent.match(imgRegex);
-
-        return match ? match[1] : null;
-    };
 
     // 화면 크기에 따라 카드 개수와 너비 조정
     useEffect(() => {
@@ -137,10 +108,6 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
     const handleMouseEnter = () => setIsPaused(true);
     const handleMouseLeave = () => setIsPaused(false);
 
-    // 회사 색상 가져오기
-    const getCompanyColors = (company: string ) => {
-        return companyColorMap[company] || companyColorMap['default'];
-    };
 
     return (
         <div className="w-full mx-auto w-full overflow-hidden py-10 mb-12">
@@ -185,7 +152,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
                             const imageUrl = extractFirstImage(repairCase.contents || '');
                             const cardWidth = cardsWidth[index] || 280; // 기본값 설정
                             const categoryStyle = categoryMap[repairCase.category] || { icon: <FaTools className="w-3 h-3 mr-1" />, name: repairCase.category, bgColor: 'bg-gray-500', textColor: 'text-white' };
-                            const companyStyle = getCompanyColors(repairCase.company ||'');
+                            const companyStyle = getCompanyStyle(repairCase.company ||'');
 
                             return (
                                 <div
@@ -200,7 +167,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
                                                     <Badge
                                                         className={`flex items-center ${categoryStyle.bgColor} ${categoryStyle.textColor}`}
                                                     >
-                                                        {categoryStyle.icon}
+                                                        <FaTools className="w-3 h-3 mr-1" />
                                                         {categoryStyle.name}
                                                     </Badge>
                                                     <Badge
@@ -218,7 +185,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
 
                                                 {/* 이미지 표시 영역 */}
                                                 {imageUrl && (
-                                                    <div className="relative w-full h-44 lg:h-52 mb-3 overflow-hidden rounded-md">
+                                                    <div className="relative w-full h-44 lg:h-[25vh] mb-3 overflow-hidden rounded-md">
                                                         <Image
                                                             src={imageUrl}
                                                             alt={repairCase.title}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
     Sidebar,
     SidebarContent,
@@ -27,7 +27,6 @@ import {
     AlertCircle
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
 import {User} from "@supabase/auth-js";
@@ -45,6 +44,7 @@ export function AppSidebar({user}:{user:User}) {
 
     return (
         <Sidebar>
+            <SidebarHeader aria-readonly></SidebarHeader>
             <SidebarContent>
                 {/* 관리자 프로필 */}
                 {isOpen && (

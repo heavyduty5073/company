@@ -4,6 +4,7 @@ import { Posts } from '@/utils/supabase/types';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RepairCaseCard } from "@/components/admin/post/repair/RepairCaseCard";
+import {companyOptions} from "@/lib/store/company";
 
 // 드롭다운 대신 버튼 그룹을 사용한 버전
 export default function RepairCaseList({ repairList = [] }: {repairList: Posts[]}) {
@@ -44,12 +45,6 @@ export default function RepairCaseList({ repairList = [] }: {repairList: Posts[]
         }
     };
 
-    // 임시 회사 옵션 (companyOptions가 정의되지 않은 경우를 위한 예시)
-    const companyOptions = {
-        excavator: ['현대', '두산', '볼보', '얀마', '케타'],
-        loader: ['현대', '두산', '볼보', '얀마', '케타'],
-        truck: ['벤츠', '볼보', '스카니아', '현대', '대우', 'MAN']
-    };
 
     // 필터링된 리스트
     const filteredList = useMemo(() => {

@@ -11,6 +11,7 @@ import {
   SheetContent,
   SheetTrigger
 } from '@/components/ui/sheet'
+import {DialogTitle} from "@radix-ui/react-dialog";
 
 // 사이드바 컨텍스트 정의
 type SidebarContextType = {
@@ -81,10 +82,11 @@ export function SidebarTrigger() {
             </Button>
           </SheetTrigger>
             <SidebarHeader aria-readonly></SidebarHeader>
-          <SheetContent side="left" className="p-0 w-[280px]">
+            <DialogTitle aria-readonly></DialogTitle>
+          <SheetContent side="left" className="p-0 w-[280px] bg-white">
             <div className="w-full h-full">
               {/* 모바일 사이드바 내용은 실제 사이드바와 동일 */}
-              <Sidebar className="border-none" />
+              <Sidebar className="border-none text-black" />
             </div>
           </SheetContent>
         </Sheet>
@@ -142,7 +144,7 @@ export function SidebarHeader({
   return (
       <div
           className={cn(
-              "px-4 mb-6 flex items-center",
+              "px-2 lg:px-4 mb-0 lg:mb-6 flex items-center",
               isOpen ? "justify-between" : "justify-center",
               className
           )}
