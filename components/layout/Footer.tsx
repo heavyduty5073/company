@@ -33,7 +33,7 @@ function Footer() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <Mail size={14} className="flex-shrink-0" />
-                                <p className="break-all">이메일: info@dsconstruction.co.kr</p>
+                                <p className="break-all">이메일: heavyduty5073@gmail.com</p>
                             </div>
                             <p>사업자등록번호: 792-04-01412</p>
                         </div>
@@ -89,7 +89,7 @@ function Footer() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <Mail size={14} className="flex-shrink-0" />
-                                <p className="break-all">이메일: info@dsconstruction.co.kr</p>
+                                <p className="break-all">이메일: heavyduty5073@gmail.com</p>
                             </div>
                         </div>
                         <div className="space-y-2 text-muted-foreground text-xs sm:text-sm">
@@ -104,7 +104,7 @@ function Footer() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <Mail size={14} className="flex-shrink-0" />
-                                <p className="break-all">이메일: info@dsconstruction.co.kr</p>
+                                <p className="break-all">이메일: heavyduty5073@gmail.com</p>
                             </div>
                         </div>
 

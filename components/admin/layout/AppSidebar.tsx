@@ -26,12 +26,14 @@ import {
     BarChart3,
     AlertCircle
 } from "lucide-react"
+import { HiOutlineChatAlt2 } from "react-icons/hi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
 import {User} from "@supabase/auth-js";
 import {signOut} from "@/app/(main)/login/actions";
-
+import { IoInformationCircleSharp } from "react-icons/io5";
+import { FaQuora } from "react-icons/fa";
 export function AppSidebar({user}:{user:User}) {
     const pathname = usePathname()
     const { isOpen } = useSidebar()
@@ -105,22 +107,23 @@ export function AppSidebar({user}:{user:User}) {
                         title="정비 사례"
                         active={isActive('/admin/posts')}
                     />
-                    {/*<SidebarItem*/}
-                    {/*    href="/admin/gallery"*/}
-                    {/*    icon={<ImagePlus size={20} />}*/}
-                    {/*    title="갤러리 관리"*/}
-                    {/*    active={isActive('/admin/gallery')}*/}
-                    {/*/>*/}
                     <SidebarItem
-                        href="/admin/inquiries"
-                        icon={<MessageSquare size={20} />}
-                        title="문의 관리"
-                        active={isActive('/admin/inquiries')}
-                        // badge={
-                        //     <Badge variant="outline" className="ml-auto bg-rose-500/10 border-rose-500/20 text-rose-500">
-                        //         {notifications}
-                        //     </Badge>
-                        // }
+                        href="/admin/support?type=faq"
+                        icon={<FaQuora size={20} />}
+                        title="FAQ 관리"
+                        active={isActive('/admin/support?type=faq')}
+                    />
+                    <SidebarItem
+                        href="/admin/support?type=notice"
+                        icon={<IoInformationCircleSharp size={20} />}
+                        title="공지사항 관리"
+                        active={isActive('/admin/support?type=notice')}
+                    />
+                    <SidebarItem
+                        href="/admin/support?type=inquiry"
+                        icon={<HiOutlineChatAlt2 size={20} />}
+                        title="문의사항 관리"
+                        active={isActive('/admin/support?type=inquiry')}
                     />
                 </SidebarGroup>
 

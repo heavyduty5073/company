@@ -51,3 +51,40 @@ export const getCategoryStyle = (category: string | null | undefined) => {
     if (!category) return { name: '기타', bgColor: 'bg-gray-500', textColor: 'text-white' };
     return categoryMap[category] || { name: category, bgColor: 'bg-gray-500', textColor: 'text-white' };
 };
+
+// 날짜 포멧함수
+export const formatDateString = (dateString: string | null) => {
+    if (!dateString) return '-';
+    return formatDate(new Date(dateString));
+};
+
+/**
+ * 날짜를 YYYY-MM-DD 형식으로 포맷팅
+ */
+export function formatYMD(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
+/**
+ * 날짜를 YYYY-MM-DD HH:MM 형식으로 포맷팅
+ */
+export function formatDateTime(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
+/**
+ * 숫자에 천 단위 쉼표 추가
+ */
+export function formatNumber(num: number): string {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

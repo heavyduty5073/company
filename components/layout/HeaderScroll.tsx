@@ -86,7 +86,7 @@ export default function HeaderScroll({ children }: HeaderScrollProps) {
         <div
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            className="header-container"
+            className={`header-container ${(isScrolled && !isHovered) || isMobile ? "mb-[50px]" : "mb-[100px]"}`}
         >
             {/* 헤더 */}
             <div
@@ -102,15 +102,6 @@ export default function HeaderScroll({ children }: HeaderScrollProps) {
                     {children}
                 </div>
             </div>
-
-            {/* 네비게이션 메뉴 */}
-            {/*<div*/}
-            {/*    className={`w-full bg-main transition-all duration-300 fixed left-0 right-0 z-40 hidden lg:block ${*/}
-            {/*        (isScrolled && !isHovered) || isMobile ? 'top-16 h-0 opacity-0 overflow-hidden' : 'top-[116px] h-auto opacity-100 overflow-visible'*/}
-            {/*    }`}*/}
-            {/*>*/}
-            {/*    {navigationMenu}*/}
-            {/*</div>*/}
         </div>
     );
 }

@@ -87,19 +87,19 @@ export const menus: MenuItem[] = [
             {
                 id: 301,
                 title: 'FAQ',
-                link: '/support/faq',
+                link: '/support?type=faq',
                 description: '자주 묻는 질문 안내'
             },
             {
                 id: 302,
                 title: '공지사항',
-                link: '/support/notice',
+                link: '/support?type=notice',
                 description: '회사 소식 및 공지'
             },
             {
                 id: 303,
                 title: '문의하기',
-                link: '/support/inquiry',
+                link: '/support?type=inquiry',
                 description: '견적 및 기술 문의'
             }
         ]
