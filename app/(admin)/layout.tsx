@@ -29,7 +29,7 @@ async function AdminLayout({ children }: { children: ReactNode }) {
                 <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-full">
                     <div className="flex h-16  justify-between items-center px-4 w-full">
                         <div className="flex items-center gap-2">
-                            <SidebarTrigger />
+                            <SidebarTrigger><AppSidebar user={user}/></SidebarTrigger>
                             <Link href={'/home'} className={'flex flex-row items-center'}>
                             <h1 className="text-xl font-semibold">관리자 페이지</h1>
                             </Link>

@@ -3,7 +3,11 @@ import {notFound} from "next/navigation";
 import {getSupportDetail} from "@/app/(admin)/admin/support/actions";
 import EditSupportForm from "@/app/(admin)/admin/support/edit/[id]/form";
 
-async function Page({params, searchParams}:{params:Promise<{id:string;}> ; searchParams:Promise<{type:string}>}) {
+// searchParams를 Promise가 아닌 일반 객체로 수정
+async function Page({params, searchParams}:{
+    params: Promise<{id: string}>;
+    searchParams: Promise<{type?: string, page?: string}>
+}) {
     const {id} = await params;
     const {type} = await searchParams;
     if(!id || !type) return notFound()

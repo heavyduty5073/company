@@ -99,24 +99,31 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ address }) => {
     useEffect(() => {
         // 카카오맵 로딩 함수
         const loadKakaoMap = () => {
-            // 이미 kakao maps 객체가 있는지 확인
+            console.log("loadKakaoMap 호출됨");
+
+            // API 키 확인
+            const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAPS_JS_KEY;
+            console.log("API 키 존재 여부:", !!apiKey);
+
             if (window.kakao && window.kakao.maps) {
+                console.log("이미 카카오맵이 로드되어 있음");
                 return initMap();
             }
 
             const script = document.createElement('script');
-            script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAPS_JS_KEY!}&libraries=services&autoload=false`;
+            script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services&autoload=false`;
             script.async = true;
 
             script.onload = () => {
-                // 스크립트 로드 후 maps 객체 초기화
+                console.log("스크립트 로드 성공");
                 window.kakao.maps.load(() => {
+                    console.log("카카오맵 로드 성공");
                     initMap();
                 });
             };
 
-            script.onerror = () => {
-                console.error('카카오맵 스크립트 로드 실패');
+            script.onerror = (e) => {
+                console.error('카카오맵 스크립트 로드 실패', e);
                 setError('카카오맵을 불러오는 중 오류가 발생했습니다');
                 setIsLoading(false);
             };

@@ -1,9 +1,10 @@
 'use server'
 import { createClient } from "@/utils/supabase/server";
-import { Posts } from "@/utils/supabase/types";
+import { InquiryWithUser, Posts} from "@/utils/supabase/types";
 import { revalidatePath } from "next/cache";
 import { ERROR_CODES } from "@/utils/ErrorMessage";
 import {FormState} from "@/components/ui/form";
+import {AdminClient} from "@/utils/supabase/admin";
 
 
 /**
@@ -147,8 +148,6 @@ export async function createPost(formData: FormData): Promise<FormState> {
     const tag = formData.get('tag') as string;
     const category = formData.get('category') as string;
 
-    console.log(title,contents,tag,category)
-
     // 필수값 확인
     if (!title || !contents || !tag || !category) {
         return {
@@ -247,5 +246,45 @@ export async function updatePost(formData: FormData): Promise<FormState> {
             code: ERROR_CODES.SERVER_ERROR,
             message: '게시물 수정 중 서버 에러가 발생하였습니다.'
         };
+    }
+}
+
+export async function getAdminInquiry(): Promise<InquiryWithUser[]> {
+    const supabase = AdminClient();
+
+    try {
+        const { data, error } = await supabase
+            .rpc('get_admin_inquiries');
+
+        if (error) {
+            console.error('문의 내역 조회 오류:', error);
+            return [];
+        }
+
+        // 명시적인 타입 변환
+        return (data as unknown as InquiryWithUser[]) || [];
+    } catch (error) {
+        console.error('서버 오류:', error);
+        return [];
+    }
+}
+
+export async function getSearchAdminInquiry(searchTerm: string): Promise<InquiryWithUser[]> {
+    const supabase = AdminClient();
+
+    try {
+        const { data, error } = await supabase
+            .rpc('search_admin_inquiries', { search_term: searchTerm });
+
+        if (error) {
+            console.error('문의 내역 검색 오류:', error);
+            return [];
+        }
+
+        // 명시적인 타입 변환
+        return (data as unknown as InquiryWithUser[]) || [];
+    } catch (error) {
+        console.error('서버 오류:', error);
+        return [];
     }
 }

@@ -1,6 +1,4 @@
 'use client'
-
-import { useState } from 'react'
 import {
     Sidebar,
     SidebarContent,
@@ -15,14 +13,9 @@ import {
     Users,
     Boxes,
     Settings,
-    FileText,
     HelpCircle,
-    BellRing,
     LogOut,
     Wrench,
-    Truck,
-    ImagePlus,
-    MessageSquare,
     BarChart3,
     AlertCircle
 } from "lucide-react"
@@ -37,16 +30,13 @@ import { FaQuora } from "react-icons/fa";
 export function AppSidebar({user}:{user:User}) {
     const pathname = usePathname()
     const { isOpen } = useSidebar()
-    const [notifications, setNotifications] = useState(5)
-    const [userName, setUserName] = useState("관리자")
-    const [userRole, setUserRole] = useState("Super Admin")
 
     // 현재 경로에 따라 활성 메뉴 아이템 결정
     const isActive = (path: string) => pathname === path
 
     return (
         <Sidebar>
-            <SidebarHeader aria-readonly></SidebarHeader>
+            <SidebarHeader aria-readonly={true} className={'hidden'}></SidebarHeader>
             <SidebarContent>
                 {/* 관리자 프로필 */}
                 {isOpen && (
@@ -54,12 +44,12 @@ export function AppSidebar({user}:{user:User}) {
                         <Avatar className="w-20 h-20 mb-4 border-4 border-white shadow-md">
                             <AvatarImage src={`${user.user_metadata.avatar_url}` || '/user/user.jpg'} alt="관리자" />
                             <AvatarFallback className="bg-primary text-primary-foreground text-xl">
-                                {userName.slice(0, 3)}
+                                {user?.user_metadata.email.slice(0, 5)}
                             </AvatarFallback>
                         </Avatar>
                         <div className="text-center">
-                            <h3 className="font-semibold text-base">{userName}</h3>
-                            <p className="text-xs text-muted-foreground">{userRole}</p>
+                            <h3 className="font-semibold text-base">{user?.user_metadata.email.slice(0,5)}</h3>
+                            <p className="text-xs text-muted-foreground">{user?.user_metadata.role}</p>
                         </div>
                     </div>
                 )}
@@ -162,14 +152,13 @@ export function AppSidebar({user}:{user:User}) {
                     />
                 </SidebarGroup>
             </SidebarContent>
-
             <SidebarFooter>
                 <div className="space-y-4">
                     {/* 알림 요약 */}
                     <div className="flex items-center p-3 bg-orange-50 text-orange-700 rounded-lg">
                         <AlertCircle className="h-5 w-5 mr-2 text-orange-500" />
                         <div className="text-xs">
-                            <span className="font-medium">{notifications}개</span>의 새로운 알림이 있습니다
+                            <span className="font-medium">{0}개</span>의 새로운 알림이 있습니다
                         </div>
                     </div>
 

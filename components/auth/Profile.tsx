@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import {User} from "@supabase/auth-js";
+import {User} from "@supabase/supabase-js";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { FaUserCircle } from "react-icons/fa";
 import {signOut} from "@/app/(main)/login/actions";

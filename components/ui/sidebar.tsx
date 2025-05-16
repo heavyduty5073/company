@@ -11,7 +11,7 @@ import {
   SheetContent,
   SheetTrigger
 } from '@/components/ui/sheet'
-import {DialogTitle} from "@radix-ui/react-dialog";
+import {DialogDescription, DialogTitle} from "@radix-ui/react-dialog";
 
 // 사이드바 컨텍스트 정의
 type SidebarContextType = {
@@ -69,68 +69,64 @@ export function useSidebar() {
 }
 
 // 사이드바 토글 버튼
-export function SidebarTrigger() {
-  const { isOpen, setIsOpen, isMobile } = useSidebar()
+export function SidebarTrigger({ children }: { children?: React.ReactNode }) {
+    const { isOpen, setIsOpen, isMobile } = useSidebar();
 
-  if (isMobile) {
+    if (isMobile) {
+        return (
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="outline" size="icon">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Toggle Sidebar</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="p-0 w-[280px] bg-white">
+                    <DialogTitle className="sr-only">네비게이션 메뉴</DialogTitle>
+                    <DialogDescription className="sr-only">사이트 내비게이션을 위한 메뉴입니다.</DialogDescription>
+                    {children}
+                </SheetContent>
+            </Sheet>
+        );
+    }
+
     return (
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="lg:hidden">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle Sidebar</span>
-            </Button>
-          </SheetTrigger>
-            <SidebarHeader aria-readonly></SidebarHeader>
-            <DialogTitle aria-readonly></DialogTitle>
-          <SheetContent side="left" className="p-0 w-[280px] bg-white">
-            <div className="w-full h-full">
-              {/* 모바일 사이드바 내용은 실제 사이드바와 동일 */}
-              <Sidebar className="border-none text-black" />
-            </div>
-          </SheetContent>
-        </Sheet>
-    )
-  }
-
-  return (
-      <Button
-          variant="outline"
-          size="icon"
-          className="hidden lg:flex"
-          onClick={() => setIsOpen(!isOpen)}
-      >
-        <Menu className="h-5 w-5" />
-        <span className="sr-only">Toggle Sidebar</span>
-      </Button>
-  )
+        <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setIsOpen(!isOpen)}
+        >
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle Sidebar</span>
+        </Button>
+    );
 }
 
 // 메인 사이드바 컴포넌트
 export function Sidebar({
-                          className,
-                          children,
-                          ...props
+                            className,
+                            children,
+                            ...props
                         }: React.HTMLAttributes<HTMLDivElement>) {
-  const { isOpen, isMobile } = useSidebar()
+    const { isOpen, isMobile } = useSidebar();
 
-  // 모바일에서는 별도로 Sheet에 렌더링되므로 여기서는 숨김
-  if (isMobile) {
-    return null
-  }
+    // 모바일에서는 Sheet에 내용이 렌더링되므로, 데스크톱에서만 표시
+    if (isMobile) {
+        return null;
+    }
 
-  return (
-      <aside
-          className={cn(
-              "group py-4 border-r bg-background/95 backdrop-blur-sm relative duration-300 ease-in-out",
-              isOpen ? "w-[280px]" : "w-[70px]",
-              className
-          )}
-          {...props}
-      >
-        {children}
-      </aside>
-  )
+    return (
+        <aside
+            className={cn(
+                "group py-4 border-r bg-background/95 backdrop-blur-sm relative duration-300 ease-in-out",
+                isOpen ? "w-[280px]" : "w-[70px]",
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </aside>
+    );
 }
 
 // 사이드바 헤더

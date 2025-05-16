@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { IoLogoYoutube } from "react-icons/io";
+import BusinessNumber from "@/components/layout/BusinessNumber";
 
 function Footer() {
     return (
@@ -29,30 +30,30 @@ function Footer() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <Phone size={14} className="flex-shrink-0" />
-                                <p>대표번호: 031-123-4567</p>
+                                <p>대표번호: 010-2036-5073</p>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Mail size={14} className="flex-shrink-0" />
                                 <p className="break-all">이메일: heavyduty5073@gmail.com</p>
                             </div>
-                            <p>사업자등록번호: 792-04-01412</p>
+                            <BusinessNumber/>
                         </div>
 
                         {/* 약관 링크 */}
                         <div className="flex pt-3 md:pt-8">
                             <ul className="flex flex-wrap gap-3 md:gap-4 text-xs sm:text-sm">
                                 <li>
-                                    <Link href="/company" className="text-foreground hover:text-primary transition-colors underline">
+                                    <Link href="/introduce/about" className="text-foreground hover:text-primary transition-colors underline">
                                         회사소개
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/privacy" className="text-foreground hover:text-primary transition-colors underline">
+                                    <Link href="/privacy/secure" className="text-foreground hover:text-primary transition-colors underline">
                                         개인정보처리방침
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/terms" className="text-foreground hover:text-primary transition-colors underline">
+                                    <Link href="/privacy/terms" className="text-foreground hover:text-primary transition-colors underline">
                                         서비스이용약관
                                     </Link>
                                 </li>

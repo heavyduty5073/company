@@ -45,11 +45,8 @@ export async function GET(request: Request) {
             await handleUpdateSocialLogin()
             return response;
         } catch (error) {
-            console.error('Auth 콜백 처리 오류:', error);
             return NextResponse.redirect(`${origin}/auth/auth-code-error`);
         }
     }
-
-    console.log('코드 없음 - 오류 페이지로 리디렉트');
     return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }

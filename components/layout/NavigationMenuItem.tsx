@@ -53,15 +53,11 @@ const CustomDropdownMenu = ({ item }: { item: MenuItem }) => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="inline-flex items-center justify-center rounded-md text-sm transition-colors focus:outline-none focus:bg-primary/10 disabled:opacity-50 disabled:pointer-events-none bg-transparent text-white h-10 py-2 px-4 hover:bg-primary/10 data-[active]:bg-primary/10 data-[state=open]:bg-primary/10 menu-glow"
                 aria-expanded={isOpen}
-                onMouseEnter={(e) => {
+                onMouseEnter={() => {
                     setIsOpen(true);
-                    e.currentTarget.style.color = '#00ccff';
-                    e.currentTarget.style.textShadow = '0 0 10px rgba(0, 204, 255, 0.8), 0 0 20px rgba(0, 150, 200, 0.6)';
                 }}
-                onMouseLeave={(e) => {
+                onMouseLeave={() => {
                     setIsOpen(false);
-                    e.currentTarget.style.color = '';
-                    e.currentTarget.style.textShadow = '';
                 }}
             >
                 <span className={'font-jalnan'}>{item.title}</span>
@@ -114,17 +110,6 @@ export function MenuItemComponent({ item }: MenuItemProps) {
                     <Link
                         href={item.link}
                         className="menu-glow"
-                        style={{
-                            transition: 'color 0.3s ease'
-                        }}
-                        onMouseOver={(e) => {
-                            e.currentTarget.style.color = '#00ccff';
-                            e.currentTarget.style.textShadow = '0 0 10px rgba(0, 204, 255, 0.8), 0 0 20px rgba(0, 150, 200, 0.6)';
-                        }}
-                        onMouseOut={(e) => {
-                            e.currentTarget.style.color = '';
-                            e.currentTarget.style.textShadow = '';
-                        }}
                     >
                         {item.title}
                     </Link>
@@ -147,19 +132,6 @@ export function MenuItemComponent({ item }: MenuItemProps) {
         <NavigationMenuItem value={`menu-${item.id}`}>
             <NavigationMenuTrigger
                 className="bg-transparent text-white hover:bg-primary/10 focus:bg-primary/10 font-jalnan menu-glow"
-                style={{
-                    transition: 'color 0.3s ease'
-                }}
-                onMouseOver={(e) => {
-                    const target = e.currentTarget;
-                    target.style.color = '#00ccff';
-                    target.style.textShadow = '0 0 10px rgba(0, 204, 255, 0.8), 0 0 20px rgba(0, 150, 200, 0.6)';
-                }}
-                onMouseOut={(e) => {
-                    const target = e.currentTarget;
-                    target.style.color = '';
-                    target.style.textShadow = '';
-                }}
             >
                 {item.title}
             </NavigationMenuTrigger>

@@ -25,7 +25,7 @@ const NoticeHeader: React.FC<NoticeHeaderProps> = ({ type }) => {
             break;
         default:
             title = '지원 센터';
-            description = '도움이 필요하신가요? 필요한 정보를 찾아보세요.';
+            description = '도움이 필요하신가요? 문의를 남겨주세요.';
     }
 
     return (
