@@ -15,6 +15,7 @@ export async function updateSession(request: NextRequest) {
             '/repair',
             '/about',
             '/unautorized',
+            '/support',
             '/support/faq',
             '/support/inquiry',
             '/support/notice',
@@ -76,8 +77,6 @@ export async function updateSession(request: NextRequest) {
             return response;
 
         } catch (authError) {
-            console.error('미들웨어 인증 처리 오류:', authError);
-            // 인증 오류가 발생해도 원래 요청은 계속 진행
             return response;
         }
     } catch (e) {

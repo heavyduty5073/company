@@ -1,4 +1,3 @@
-// components/common/InquiryTable.tsx
 "use client";
 
 import React from 'react';
@@ -47,8 +46,8 @@ const InquiryTable: React.FC<InquiryTableProps> = ({ inquiries, user }) => {
                             <td className="py-3 px-6">
                                 <Link
                                     href={isAdmin
-                                        ? `/admin/support/edit/${inquiry.id}?type=inquiry`
-                                        : `/support/detail?id=${inquiry.id}&type=inquiry`}
+                                        ? `/admin/support/detail?id=${inquiry.id}&type=inquiry`
+                                        : `/support/${inquiry.id}?type=inquiry`}
                                     className="hover:text-blue-500"
                                 >
                                     {inquiry.title}

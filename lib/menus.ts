@@ -48,34 +48,29 @@ export const menus: MenuItem[] = [
         subMenus: [
             {
                 id: 201,
-                title: '건설 장비',
+                title: '운영 장비',
                 link: '/business/construction',
-                description: '굴삭기, 로더, 크레인 등 건설현장 장비'
+                description: '굴삭기, 로더, 크레인 등 운영장비'
             },
             {
                 id: 202,
-                title: '산업용 장비',
-                link: '/business/industrial',
-                description: '지게차, 집게차 등 산업용 중장비'
-            },
-            {
-                id: 203,
-                title: '특수 장비',
-                link: '/business/special',
-                description: '특수 목적 건설기계 장비'
-            },
-            {
-                id: 204,
                 title: '정비 서비스',
                 link: '/business/repair',
                 description: '전문 정비 서비스 안내'
             },
             {
-                id: 205,
+                id: 203,
                 title: '부품 공급',
                 link: '/business/parts',
                 description: '정품 부품 공급 서비스'
-            }
+            },
+            {
+                id: 204,
+                title: '출장 정비 서비스',
+                link: '/business/trip',
+                description: '전국 어디든 출장 정비 서비스'
+            },
+
         ]
     },
     {

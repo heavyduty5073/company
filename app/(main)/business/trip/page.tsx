@@ -2,7 +2,7 @@ import React from 'react';
 
 function Page() {
     return (
-        <div></div>
+        <div>출장 정비 서비스</div>
     );
 }
 

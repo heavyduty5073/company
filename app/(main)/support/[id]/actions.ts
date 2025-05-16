@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
  * @param type 게시물 타입 (inquiry 또는 기타)
  * @returns 게시물 객체 또는 에러 발생 시 null
  */
+
 export async function getSupportDetail(id: string, type: string = 'notice'): Promise<Posts | Inquiry | null> {
     const supabase = await createClient();
 
@@ -57,6 +58,35 @@ export async function getSupportDetail(id: string, type: string = 'notice'): Pro
         return data as Posts;
     } catch (error) {
         console.error('서버 오류:', error);
+        return null;
+    }
+}
+/**
+ * 특정 사용자의 문의 상세 정보를 가져옵니다.
+ * @param id 문의 ID
+ * @param userId 사용자 ID
+ * @returns 문의 객체 또는 에러 발생 시 null
+ */
+export async function getDetailInquiry(id: string, userId: string): Promise<Inquiry | null> {
+    const supabase = await createClient();
+
+    try {
+        // 문의 상세 정보 조회 (단일 항목)
+        const { data, error } = await supabase
+            .from('inquiry')
+            .select('*')
+            .eq('id', id)
+            .eq('user_id', userId)
+            .single();
+
+        if (error) {
+
+            return null;
+        }
+
+        return data as Inquiry;
+    } catch (error) {
+
         return null;
     }
 }

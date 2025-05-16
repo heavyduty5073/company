@@ -1,6 +1,6 @@
 import React from 'react';
-import { notFound } from "next/navigation";
-import { getSupportDetail } from "@/app/(main)/support/[id]/actions";
+import {notFound, redirect} from "next/navigation";
+import {getDetailInquiry, getSupportDetail} from "@/app/(main)/support/[id]/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -9,6 +9,7 @@ import { ArrowLeft, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Inquiry, Posts } from "@/utils/supabase/types";
+import {createClient} from "@/utils/supabase/server";
 
 async function Page({ params, searchParams }: {
     params: Promise<{ id: string }>;
@@ -28,8 +29,12 @@ async function Page({ params, searchParams }: {
 
     // inquiry 타입인 경우 다른 레이아웃 사용
     if (type === 'inquiry') {
-        const inquiry = data as Inquiry;
+        const supabase = await createClient();
+        const {data:{user}} = await supabase.auth.getUser()
+        if(!user) return redirect('/login')
+        const inquiry = await getDetailInquiry(id,user.id)
 
+        if(!inquiry) return notFound()
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">

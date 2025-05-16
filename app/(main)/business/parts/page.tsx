@@ -2,7 +2,7 @@ import React from 'react';
 
 function Page() {
     return (
-        <div></div>
+        <div>부품 공급</div>
     );
 }
 
