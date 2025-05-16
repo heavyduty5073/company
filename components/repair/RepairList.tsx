@@ -69,7 +69,7 @@ function RepairList({ repairList, showFilters = true }: RepairListProps) {
             )}
 
             {/* 정비 사례 리스트 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                 {repairList.map((item, index) => {
                     const imageUrl = extractFirstImage(item.contents || '');
                     const categoryStyle = getCategoryStyle(item.category);
@@ -77,8 +77,8 @@ function RepairList({ repairList, showFilters = true }: RepairListProps) {
 
                     return (
                         <Link href={`/repair/${item.id}`} key={item.id}>
-                            <Card className="h-full bg-white transition-all duration-300 hover:shadow-xl hover:border-blue-300">
-                                <CardHeader className="p-3 pb-2">
+                            <Card className="h-full bg-subMain transition-all duration-300 hover:shadow-xl hover:border-blue-300">
+                                <CardHeader className="px-3">
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <Badge className={`flex items-center ${categoryStyle.bgColor} ${categoryStyle.textColor}`}>
                                             <FaTools className="w-3 h-3 mr-1" />
@@ -90,14 +90,14 @@ function RepairList({ repairList, showFilters = true }: RepairListProps) {
                                     </div>
                                 </CardHeader>
 
-                                <CardContent className="p-3 pt-0">
-                                    <h3 className="text-lg font-jalnan text-black mb-2 truncate">
+                                <CardContent className="px-3">
+                                    <h3 className="text-lg font-Gangwon text-white mb-2 truncate">
                                         {item.title}
                                     </h3>
 
                                     {/* 이미지 표시 영역 */}
                                     {imageUrl ? (
-                                        <div className="relative w-full h-40 mb-3 overflow-hidden rounded-md bg-gray-100">
+                                        <div className="relative w-full h-80 mb-2 overflow-hidden rounded-md">
                                             <Image
                                                 src={imageUrl}
                                                 alt={item.title}
@@ -112,10 +112,10 @@ function RepairList({ repairList, showFilters = true }: RepairListProps) {
                                         </div>
                                     )}
 
-                                    <div className="h-20 overflow-hidden text-sm text-black">
+                                    <div className="h-10 overflow-hidden text-sm text-black pb-2">
                                         {item.contents ? (
                                             <div
-                                                className="line-clamp-2"
+                                                className="line-clamp-2 text-white"
                                                 dangerouslySetInnerHTML={{
                                                     __html: item.contents.replace(/<[^>]*>/g, ' ').slice(0, 100) + '...'
                                                 }}
@@ -126,7 +126,7 @@ function RepairList({ repairList, showFilters = true }: RepairListProps) {
                                     </div>
                                 </CardContent>
 
-                                <CardFooter className="p-3 pt-0 flex items-center text-sm text-gray-500">
+                                <CardFooter className="px-3 flex items-center text-sm text-white">
                                     <FaCalendarAlt className="mr-1" />
                                     {new Date(item.created_at).toLocaleDateString('ko-KR')}
                                 </CardFooter>

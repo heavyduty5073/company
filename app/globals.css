@@ -87,7 +87,9 @@ input[type="number"]::-webkit-inner-spin-button {
 .bg-main {
   @apply bg-gradient-to-r from-[#003247] to-black;
 }
-
+.bg-subMain{
+  @apply bg-[#0A192F]
+}
 /* 메인 메뉴 글로우 효과 - 고급스러운 어두운 버전 */
 .menu-glow {
   position: relative;

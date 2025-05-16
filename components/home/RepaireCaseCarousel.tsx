@@ -157,13 +157,13 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
                             return (
                                 <div
                                     key={`${repairCase.id}-${index}`}
-                                    className="flex-shrink-0 mx-4 bg-white rounded-lg"
+                                    className="flex-shrink-0 mx-4 bg-subMain rounded-lg"
                                     style={{ width: `${cardWidth}px` }}
                                 >
                                     <Link href={`/repair/${repairCase.id}`}>
                                         <Card className="h-full justify-between transition-all duration-300 hover:shadow-xl hover:border-blue-300">
-                                            <CardHeader className="p-3">
-                                                <div className="flex items-center gap-2 flex-wrap">
+                                            <CardHeader className="px-3">
+                                                <div className="flex items-center gap-1 flex-wrap">
                                                     <Badge
                                                         className={`flex items-center ${categoryStyle.bgColor} ${categoryStyle.textColor}`}
                                                     >
@@ -177,14 +177,14 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
                                                     </Badge>
                                                 </div>
                                             </CardHeader>
-                                            <CardContent className="p-3 pt-0">
-                                                <h3 className="text-lg font-jalnan text-gray-800 mb-2 truncate">
+                                            <CardContent className="px-3">
+                                                <h3 className="text-lg md:text-xl font-bold text-white mb-2 truncate">
                                                     {repairCase.title}
                                                 </h3>
 
                                                 {/* 이미지 표시 영역 */}
                                                 {imageUrl && (
-                                                    <div className="relative w-full h-44 lg:h-[20vh] mb-3 overflow-hidden rounded-md">
+                                                    <div className="relative w-full h-44 lg:h-80 mb-3 overflow-hidden rounded-md">
                                                         <Image
                                                             src={imageUrl}
                                                             alt={repairCase.title}
@@ -195,7 +195,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
                                                     </div>
                                                 )}
 
-                                                <div className="h-10 overflow-hidden text-sm text-black">
+                                                <div className="h-10 overflow-hidden text-sm text-white">
                                                     {repairCase.contents ? (
                                                         <div
                                                             className="line-clamp-2"
@@ -209,8 +209,8 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
                                                 </div>
                                             </CardContent>
 
-                                            <CardFooter className="p-3">
-                                                <div className="text-sm text-gray-500 w-full">
+                                            <CardFooter className="px-3">
+                                                <div className="text-sm text-white w-full">
                                                     {new Date(repairCase.created_at).toLocaleDateString('ko-KR')}
                                                 </div>
                                             </CardFooter>

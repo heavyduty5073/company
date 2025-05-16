@@ -94,7 +94,7 @@ const ContentSection: React.FC = () => {
                 initial="hidden"
                 animate={videoControls}
                 variants={videoVariants}
-                className="max-w-7xl mx-auto mb-20"
+                className="max-w-7xl mx-auto mt-32"
             >
                 <div className="flex flex-col lg:flex-row items-center justify-between bg-gray-900 rounded-xl overflow-hidden shadow-xl">
                     <div className="p-8 lg:p-12 lg:w-1/2">
@@ -124,7 +124,7 @@ const ContentSection: React.FC = () => {
             </motion.div>
 
             {/* 제품 카드 섹션 */}
-            <div className="max-w-7xl mx-auto mb-20 mt-40">
+            <div className="max-w-7xl mx-auto mb-20 my-40">
                 <Link href={'/parts'} className={'flex justify-between items-center'}>
                 <motion.h2
                     className="text-2xl sm:text-4xl text-white text-start mb-12 font-Paperlogy"
@@ -189,9 +189,9 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({ card, index }) => {
                 scale: 1.05,
                 transition: { duration: 0.3 }
             }}
-            className="bg-slate-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group relative"
+            className="bg-subMain rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group relative"
         >
-            <div className="h-48 overflow-hidden">
+            <div className="h-80 overflow-hidden">
                 <motion.img
                     src={card.imageUrl}
                     alt={card.title}
