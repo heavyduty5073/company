@@ -110,7 +110,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
 
 
     return (
-        <div className="w-full mx-auto w-full overflow-hidden py-10 mb-12">
+        <div className="w-full mx-auto w-full overflow-hidden py-4 mb-12">
             <Link href={'/repair'} className={'flex justify-between items-center max-w-7xl mx-auto px-4 md:px-0'}>
                 <motion.h2
                     className="text-2xl sm:text-4xl text-white text-start my-3 md:my-12 font-Paperlogy"
@@ -177,7 +177,6 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
                                                     </Badge>
                                                 </div>
                                             </CardHeader>
-
                                             <CardContent className="p-3 pt-0">
                                                 <h3 className="text-lg font-jalnan text-gray-800 mb-2 truncate">
                                                     {repairCase.title}
@@ -185,7 +184,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
 
                                                 {/* 이미지 표시 영역 */}
                                                 {imageUrl && (
-                                                    <div className="relative w-full h-44 lg:h-[25vh] mb-3 overflow-hidden rounded-md">
+                                                    <div className="relative w-full h-44 lg:h-[20vh] mb-3 overflow-hidden rounded-md">
                                                         <Image
                                                             src={imageUrl}
                                                             alt={repairCase.title}
@@ -196,7 +195,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
                                                     </div>
                                                 )}
 
-                                                <div className="h-12 overflow-hidden text-sm text-black">
+                                                <div className="h-10 overflow-hidden text-sm text-black">
                                                     {repairCase.contents ? (
                                                         <div
                                                             className="line-clamp-2"
@@ -210,7 +209,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
                                                 </div>
                                             </CardContent>
 
-                                            <CardFooter className="p-3 pt-0">
+                                            <CardFooter className="p-3">
                                                 <div className="text-sm text-gray-500 w-full">
                                                     {new Date(repairCase.created_at).toLocaleDateString('ko-KR')}
                                                 </div>

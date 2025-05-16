@@ -37,7 +37,7 @@ async function Page() {
                     <ContentSection/>
                 </Suspense>
             </div>
-            <div className={'bg-white w-full p-4'}>
+            <div className={'bg-main w-full p-4'}>
                 <div id={'kakaomap'} className="h-[300px] md:h-[400px] w-full">
                     <KakaoMap address={'전북특별자치도 군산시 해망로 663'}/>
                 </div>

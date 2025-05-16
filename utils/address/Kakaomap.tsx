@@ -140,7 +140,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ address }) => {
                 // 지도 생성
                 const options = {
                     center: new window.kakao.maps.LatLng(37.566826, 126.9786567),
-                    level: 3
+                    level: 5
                 };
 
                 const map = new window.kakao.maps.Map(mapRef.current, options);

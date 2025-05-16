@@ -69,7 +69,7 @@ function RepairList({ repairList, showFilters = true }: RepairListProps) {
             )}
 
             {/* 정비 사례 리스트 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {repairList.map((item, index) => {
                     const imageUrl = extractFirstImage(item.contents || '');
                     const categoryStyle = getCategoryStyle(item.category);

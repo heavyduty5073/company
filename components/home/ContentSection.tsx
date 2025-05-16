@@ -124,7 +124,7 @@ const ContentSection: React.FC = () => {
             </motion.div>
 
             {/* 제품 카드 섹션 */}
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto mb-20 mt-40">
                 <Link href={'/parts'} className={'flex justify-between items-center'}>
                 <motion.h2
                     className="text-2xl sm:text-4xl text-white text-start mb-12 font-Paperlogy"
