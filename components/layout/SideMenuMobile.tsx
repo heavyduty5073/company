@@ -35,7 +35,6 @@ function SideMenuMobile() {
             prevPathRef.current !== currentPath ||
             prevSearchParamsRef.current !== currentSearchParams
         ) {
-            console.log('Route changed, closing menu');
             setIsOpen(false);
 
             // 현재 값을 저장

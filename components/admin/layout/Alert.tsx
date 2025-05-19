@@ -1,21 +1,20 @@
-'use client'
-import React, {useState} from 'react';
+import React from 'react';
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
 import {Bell} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 
-function Alert() {
-    const [notifications, setNotifications] = useState(5);
+function Alert({dataCount}:{dataCount:number}) {
+
     return (
         <Popover>
             <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full relative">
                     <Bell className="h-5 w-5" />
-                    {notifications > 0 && (
+                    {dataCount > 0 && (
                         <Badge className="absolute -top-1 -right-1 h-5 min-w-[20px] p-0 flex items-center justify-center bg-rose-500">
-                            {notifications}
+                            {dataCount}
                         </Badge>
                     )}
                     <span className="sr-only">알림</span>
@@ -25,9 +24,6 @@ function Alert() {
                 <div className="p-4 border-b">
                     <div className="flex items-center justify-between">
                         <h4 className="font-semibold">알림</h4>
-                        <Button variant="ghost" size="sm" className="text-xs h-auto px-2">
-                            모두 읽음 표시
-                        </Button>
                     </div>
                 </div>
                 <div className="max-h-80 overflow-auto">

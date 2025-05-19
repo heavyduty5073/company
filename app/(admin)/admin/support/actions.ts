@@ -1,6 +1,6 @@
 'use server'
 import { createClient } from "@/utils/supabase/server";
-import { InquiryWithUser, Posts} from "@/utils/supabase/types";
+import {Inquiry, InquiryWithUser, Posts} from "@/utils/supabase/types";
 import { revalidatePath } from "next/cache";
 import { ERROR_CODES } from "@/utils/ErrorMessage";
 import {FormState} from "@/components/ui/form";
@@ -286,5 +286,27 @@ export async function getSearchAdminInquiry(searchTerm: string): Promise<Inquiry
     } catch (error) {
         console.error('서버 오류:', error);
         return [];
+    }
+}
+
+export async function getUnansweredInquiryCount(): Promise<number> {
+    const supabase = AdminClient();
+
+    try {
+        const { count, error } = await supabase
+            .from('inquiry')
+            .select('id', { count: 'exact', head: true })
+            .is('answer', null)
+            .is('admin_id', null);
+
+        if (error) {
+            console.error('미답변 문의 내역 조회 오류:', error);
+            return 0;
+        }
+
+        return count || 0;
+    } catch (error) {
+        console.error('서버 오류:', error);
+        return 0;
     }
 }

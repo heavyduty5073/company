@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react';
+import GlobalLoader from "@/lib/Loading/Loading";
 
 interface KakaoMapProps {
     address: string;
@@ -99,14 +100,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ address }) => {
     useEffect(() => {
         // 카카오맵 로딩 함수
         const loadKakaoMap = () => {
-            console.log("loadKakaoMap 호출됨");
 
             // API 키 확인
             const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAPS_JS_KEY;
-            console.log("API 키 존재 여부:", !!apiKey);
 
             if (window.kakao && window.kakao.maps) {
-                console.log("이미 카카오맵이 로드되어 있음");
                 return initMap();
             }
 
@@ -115,15 +113,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ address }) => {
             script.async = true;
 
             script.onload = () => {
-                console.log("스크립트 로드 성공");
                 window.kakao.maps.load(() => {
-                    console.log("카카오맵 로드 성공");
                     initMap();
                 });
             };
 
             script.onerror = (e) => {
-                console.error('카카오맵 스크립트 로드 실패', e);
                 setError('카카오맵을 불러오는 중 오류가 발생했습니다');
                 setIsLoading(false);
             };
@@ -167,7 +162,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ address }) => {
 
                         // 지도 중심을 결과값으로 받은 위치로 이동
                         map.setCenter(coords);
-                        console.log('지도 위치 설정 완료');
                     } else {
                         setError('주소를 찾을 수 없습니다');
                     }
@@ -175,7 +169,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ address }) => {
                     setIsLoading(false);
                 });
             } catch (error) {
-                console.error('지도 초기화 중 오류 발생:', error);
                 setError('지도를 초기화하는 중 오류가 발생했습니다');
                 setIsLoading(false);
             }
@@ -203,9 +196,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({ address }) => {
             ></div>
 
             {isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-70">
-                    지도를 불러오는 중...
-                </div>
+                <GlobalLoader/>
             )}
 
             {error && (

@@ -16,17 +16,19 @@ import { redirect } from 'next/navigation';
 import Link from "next/link";
 import Image from "next/image";
 import {signOut} from "@/app/(main)/login/actions";
+import {getUnansweredInquiryCount} from "@/app/(admin)/admin/support/actions";
 
 async function AdminLayout({ children }: { children: ReactNode }) {
 
     const supabase = await createClient()
     const {data:{user}} = await supabase.auth.getUser()
+    const data = await getUnansweredInquiryCount()
     if(!user || user.user_metadata.role!=='admin') return redirect('/login')
     return (
         <SidebarProvider>
             <div className="min-h-screen bg-slate-50 flex flex-col w-full">
                 {/* 상단 헤더 */}
-                <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-full">
+                <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 w-full">
                     <div className="flex h-16  justify-between items-center px-4 w-full">
                         <div className="flex items-center gap-2">
                             <SidebarTrigger><AppSidebar user={user}/></SidebarTrigger>
@@ -38,7 +40,7 @@ async function AdminLayout({ children }: { children: ReactNode }) {
                         <div className="flex items-center ml-auto gap-4">
 
                             {/* 알림 */}
-                            <Alert/>
+                            <Alert dataCount={data}/>
 
                             {/* 사용자 프로필 */}
                             <DropdownMenu>

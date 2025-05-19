@@ -28,6 +28,7 @@ import { FaAlignLeft } from "react-icons/fa6";
 import { FaAlignRight } from "react-icons/fa6";
 import VideoModal from "@/components/editor/VideoModal";
 import {FONT_FAMILIES} from "@/lib/editor/fonts/Fonts";
+import useLoading from "@/app/hooks/useLoading";
 const Video = Node.create({
     name: 'video',
     group: 'block',
@@ -82,7 +83,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
     const [showVideoModal, setShowVideoModal] = useState(false);
     const [stickerLink, setStickerLink] = useState("");
     const [imageLinks, setImageLinks] = useState<string[]>([]);
-
+    const {isLoading,setLoading} =useLoading()
     const { notify } = useAlert();
     const contentRef = useRef(defaultValue || '');
 
@@ -168,11 +169,12 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
         }
     }));
 
-
     const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file && editor) {
             try {
+                setLoading(true)
+
                 const formData = new FormData();
                 formData.append('files[0]', file);
 
@@ -191,8 +193,11 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
                 }
             } catch (error) {
                 notify.failure('이미지 업로드에 실패했습니다.');
+            }finally {
+                setLoading(false)
+                e.target.value = '';
             }
-            e.target.value = '';
+
         }
     }, [editor]);
 
