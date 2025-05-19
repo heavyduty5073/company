@@ -353,7 +353,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
 
             {!readOnly && renderToolbar()}
 
-            <div className="w-full h-[40vh] lg:h-full max-h-[55vh] overflow-y-auto">
+            <div className="w-full h-auto lg:h-full overflow-y-auto">
                 <EditorContent editor={editor} className="w-full h-full"/>
             </div>
 
