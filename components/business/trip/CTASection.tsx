@@ -16,7 +16,7 @@ export default function CTASection() {
         >
             <div className="bg-blue-700 text-white p-8 rounded-lg text-center relative z-10">
                 <motion.h2
-                    className="text-3xl font-bold mb-4"
+                    className="text-2xl lg:text-3xl font-bold mb-4"
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -34,7 +34,7 @@ export default function CTASection() {
                     장비 가동 중단으로 인한 손실을 최소화하고, 전문가의 신속한 해결책을 경험해보세요.
                 </motion.p>
                 <motion.div
-                    className="space-x-4"
+                    className="flex flex-row items-center justify-center space-x-4"
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}

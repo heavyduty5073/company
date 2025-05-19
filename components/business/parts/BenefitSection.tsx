@@ -31,7 +31,7 @@ const benefits = [
 export default function BenefitSection() {
     return (
         <section className="mb-16">
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">에프터마켓 부품의 장점</h2>
+            <h2 className="text-2xl lg:text-3xl font-bold mb-6 text-gray-800">에프터마켓 부품의 장점</h2>
             <p className="text-lg mb-8 text-gray-700">
                 정품과 동일한 제조사의 에프터마켓 부품을 선택함으로써 얻을 수 있는 다양한 이점을 확인하세요.
             </p>

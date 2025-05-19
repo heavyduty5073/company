@@ -36,7 +36,7 @@ const processSteps = [
 export default function ServiceProcess() {
     return (
         <section className="mb-16">
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">출장 정비 서비스 프로세스</h2>
+            <h2 className="text-2xl lg:text-3xl font-bold mb-6 text-gray-800">출장 정비 서비스 프로세스</h2>
 
             <div className="space-y-4">
                 {processSteps.map((step, index) => (

@@ -34,15 +34,15 @@ export default function ServiceAreas() {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.6 }}
             >
-                <h2 className="text-3xl font-bold mb-6 text-gray-800">서비스 지역</h2>
+                <h2 className="text-2xl lg:text-3xl font-bold mb-6 text-gray-800">서비스 지역</h2>
                 <p className="text-lg mb-4 text-gray-700">
                     수도권 및 인근 지역 어디든 출장 서비스가 가능합니다. 원거리 지역은 사전 협의가 필요할 수 있습니다.
                 </p>
 
-                <Tabs defaultValue="areas" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="areas">지역 목록</TabsTrigger>
-                        <TabsTrigger value="response-time">대응 시간</TabsTrigger>
+                <Tabs defaultValue="areas" className="w-full gap-0">
+                    <TabsList className="grid w-full grid-cols-2 rounded-b-none">
+                        <TabsTrigger className={'bg-blue-300 rounded-r-none'} value="areas">지역 목록</TabsTrigger>
+                        <TabsTrigger className={'bg-green-300 rounded-l-none'} value="response-time">대응 시간</TabsTrigger>
                     </TabsList>
                     <TabsContent value="areas">
                         <Card>
@@ -80,7 +80,7 @@ export default function ServiceAreas() {
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">
                                         <span>수도권</span>
-                                        <span className="font-semibold text-blue-700">1-3시간 이내</span>
+                                        <span className="font-semibold text-blue-700">3-5시간 이내</span>
                                     </div>
                                     <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                                         <motion.div
@@ -94,7 +94,7 @@ export default function ServiceAreas() {
 
                                     <div className="flex justify-between items-center">
                                         <span>인근 지역 (충청/강원)</span>
-                                        <span className="font-semibold text-blue-700">3-5시간 이내</span>
+                                        <span className="font-semibold text-blue-700">1-3시간 이내</span>
                                     </div>
                                     <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                                         <motion.div

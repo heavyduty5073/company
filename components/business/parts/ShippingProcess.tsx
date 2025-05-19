@@ -38,7 +38,7 @@ const processSteps = [
 export default function ShippingProcess() {
     return (
         <section className="mb-16">
-            <h2 className="text-3xl font-bold mb-6 text-gray-800">제품 포장 및 배송 프로세스</h2>
+            <h2 className="text-2xl lg:text-3xl font-bold mb-6 text-gray-800">제품 포장 및 배송 프로세스</h2>
             <p className="text-lg mb-8 text-gray-700">
                 부품의 안전한 배송과 신속한 장비 복구를 위해 전문적인 포장 및 배송 시스템을 운영하고 있습니다.
                 모든 제품은 최적의 상태로 고객에게 전달됩니다.

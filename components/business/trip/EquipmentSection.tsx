@@ -34,7 +34,7 @@ export default function EquipmentSection() {
                 variants={fadeIn}
                 className="bg-gray-100 p-8 rounded-lg"
             >
-                <h2 className="text-3xl font-bold mb-6 text-gray-800">최첨단 진단 장비와 전문 공구 보유</h2>
+                <h2 className="text-2xl lg:text-3xl font-bold mb-6 text-gray-800">최첨단 진단 장비와 전문 공구 보유</h2>
                 <p className="text-lg mb-8 text-gray-700">
                     저희는 다양한 건설기계의 문제를 정확히 진단하고 수리할 수 있는 최신 장비와 전문 공구를 갖추고 있습니다.
                     특수 제작된 진단 차량으로 어떤 현장에서도 공장급 정비 서비스를 제공합니다.

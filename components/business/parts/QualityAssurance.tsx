@@ -27,7 +27,7 @@ export default function QualityAssurance() {
                         </motion.div>
                     </div>
                     <div className="md:w-2/3 md:pl-8">
-                        <h2 className="text-3xl font-bold mb-4 text-gray-800">정품과 동일한 제조사의 품질 보증</h2>
+                        <h2 className="text-2xl lg:text-3xl font-bold mb-4 text-gray-800">정품과 동일한 제조사의 품질 보증</h2>
                         <p className="text-lg text-gray-700">
                             저희가 공급하는 모든 부품은 정품(OEM)과 동일한 제조사에서 생산된 에프터마켓 제품입니다.
                             정품과 동일한 품질 기준으로 제작되어 성능과 내구성을 보장하면서도, 불필요한 마케팅 비용이
@@ -67,8 +67,8 @@ export default function QualityAssurance() {
                                 <div className="flex items-start">
                                     <Award className="h-6 w-6 text-amber-600 mr-3 flex-shrink-0 mt-1" />
                                     <div>
-                                        <h3 className="font-semibold text-lg mb-2">품질 보증 프로그램</h3>
-                                        <p className="text-gray-700">모든 부품에 6개월 또는 1,000시간 품질 보증을 제공하여 고객의 안심 구매를 보장합니다.</p>
+                                        <h3 className="font-semibold text-lg mb-2">정품과 동일한 제조사</h3>
+                                        <p className="text-gray-700">정품과 동일한 제조사에서 공급받은 제품을 판매합니다.</p>
                                     </div>
                                 </div>
                             </CardContent>

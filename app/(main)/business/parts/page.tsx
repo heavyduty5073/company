@@ -33,7 +33,7 @@ function Page() {
             <main className="max-w-6xl mx-auto py-12 px-4">
                 {/* 소개 섹션 */}
                 <section className="mb-16">
-                    <h2 className="text-3xl font-bold mb-6 text-gray-800">건설기계 정품 수준의 부품 공급</h2>
+                    <h2 className=" text-2xl lg:text-3xl font-bold mb-6 text-gray-800">건설기계 정품 수준의 부품 공급</h2>
                     <p className="text-lg mb-8 text-gray-700">
                         당사는 건설기계 부품 시장에서 2019년 시작해 지금까지 경험을 바탕으로, 정품과 동일한 제조사에서 생산된
                         고품질 에프터마켓 부품을 합리적인 가격에 제공합니다. 엄격한 품질 관리와 신속한 배송 서비스로

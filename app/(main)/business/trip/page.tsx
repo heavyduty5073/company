@@ -31,7 +31,7 @@ function Page() {
             <main className="max-w-6xl mx-auto py-12 px-4">
                 {/* 서비스 소개 */}
                 <section className="mb-16">
-                    <h2 className="text-3xl font-bold mb-6 text-gray-800">고객의 현장으로 찾아가는 정비 서비스</h2>
+                    <h2 className="text-2xl lg:text-3xl font-bold mb-6 text-gray-800">현장으로 찾아가는 정비 서비스</h2>
                     <p className="text-lg mb-8 text-gray-700">
                         건설 현장에서 장비 고장은 공정 지연과 비용 손실로 이어집니다.
                         저희는 고객의 시간과 비용을 절약해드리기 위해 전문 기술자가 직접 현장을 방문하여
