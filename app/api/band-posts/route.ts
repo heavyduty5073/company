@@ -5,7 +5,7 @@ import axios from 'axios';
 export async function GET() {
     try {
         // 액세스 토큰 사용
-        const accessToken = 'ZQAAAR7xgwxvhq1JWh5RzQpM8Q0t9NbsbOIQ8Q6fkWP1ToLWyauToR9Ck0XAp11gqtegZjPSSrhG_gMAZdevZ2pvU_TZtymfPthRPd7QmNgEmaoE';
+        const accessToken = process.env.BAND_ACCESS_TOKEN!
 
         // 1. 사용자 정보 확인
         const userResponse = await axios.get('https://openapi.band.us/v2/profile', {

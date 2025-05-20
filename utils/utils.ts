@@ -88,3 +88,47 @@ export function formatDateTime(date: Date): string {
 export function formatNumber(num: number): string {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+/** 타임스탬프를 날짜로 변환하는 함수**/
+export const formatRelativeDate = (dateValue: string | number) => {
+    const timestamp = typeof dateValue === 'string' ? Number(dateValue) : dateValue;
+    const date = new Date(timestamp);
+    const now = new Date();
+
+    if (isNaN(date.getTime())) {
+        return '날짜 정보 없음';
+    }
+
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    // 오늘
+    if (date.toDateString() === now.toDateString()) {
+        return '오늘';
+    }
+
+    // 어제
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    if (date.toDateString() === yesterday.toDateString()) {
+        return '어제';
+    }
+
+    // 7일 이내
+    if (diffDays < 7) {
+        return `${diffDays}일 전`;
+    }
+
+    // 30일 이내
+    if (diffDays < 30) {
+        const weeks = Math.floor(diffDays / 7);
+        return `${weeks}주 전`;
+    }
+
+    // 그 외에는 날짜 표시
+    return new Intl.DateTimeFormat('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    }).format(date);
+};

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { FaCalendarAlt, FaUser, FaComments, FaThumbsUp, FaExternalLinkAlt, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
 import useLoading from "@/app/hooks/useLoading";
+import {formatRelativeDate} from "@/utils/utils";
 
 interface Author {
     name: string;
@@ -72,16 +73,6 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
     // 더보기 버튼 클릭 처리
     const handleShowMorePosts = () => {
         setVisiblePostCount(prev => Math.min(prev + incrementPostCount, posts.length));
-    };
-
-    // 날짜 형식화 함수
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat('ko-KR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        }).format(date);
     };
 
     // 콘텐츠에서 HTML 태그 제거
@@ -172,7 +163,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
                                                     </div>
                                                     <span className="mx-2">|</span>
                                                     <FaCalendarAlt className="mr-1" />
-                                                    <span>{formatDate(post.date)}</span>
+                                                    <span>{formatRelativeDate(post.date)}</span>
                                                 </div>
 
                                                 <div className="text-white mb-4 flex-grow">
@@ -194,7 +185,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
                                                     </div>
 
                                                     <Link
-                                                        href={post.postUrl || `${bandUrl}/post/${post.id}`}
+                                                        href={`${bandUrl}/96686413`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-blue-400 hover:text-blue-300 text-sm flex items-center transition-colors"
