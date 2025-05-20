@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+        <title>DS건설기계 정비사례 RSS</title>
+        <link>https://deasung.kr</link>
+        <description>건설기계 수리, 부품판매, 출장정비에 대한 정기 업데이트</description>
+        <language>ko-kr</language>
+        <lastBuildDate>Fri, 17 May 2025 09:00:00 +0900</lastBuildDate>
+
+        <item>
+            <title>HX140 녹스센서 출구녹스 불량교환</title>
+            <link>https://deasung.kr/repair/785ad6f7-8b26-449c-a85a-17f91a5bce62</link>
+            <description>막힘된 DPF와 SCR 클리닝 후 재가동 성공 사례</description>
+            <pubDate>Thu, 16 May 2025 13:00:00 +0900</pubDate>
+        </item>
+
+        <item>
+            <title>볼보덤프트럭 후처리장치 클리닝</title>
+            <link>https://deasung.kr/repair/f1d0caf3-8bfd-433f-8069-46fb3cde2aed</link>
+            <description>볼보 460후처리장치 클리닝을 진행</description>
+            <pubDate>Wed, 15 May 2025 08:30:00 +0900</pubDate>
+        </item>
+    </channel>
+</rss>
