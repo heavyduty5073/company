@@ -109,7 +109,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
     const handleMouseLeave = () => setIsPaused(false);
 
     return (
-        <section className="py-8 md:py-12 bg-main">
+        <section className="py-8 md:py-12">
             <div className="container mx-auto px-4">
                 {/* 섹션 헤더 */}
                 <div className="flex justify-between items-center mb-6 md:mb-10">

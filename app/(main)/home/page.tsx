@@ -8,6 +8,7 @@ import ContentSection from "@/components/home/ContentSection";
 import GlobalLoader from "@/lib/Loading/Loading";
 import { getLatestRepairCases } from "@/app/(main)/home/actions";
 import RepairCaseCarousel from "@/components/home/RepaireCaseCarousel";
+import NaverBandSection from "@/components/home/NaverBandSection";
 
 async function Page() {
     const data = await getLatestRepairCases();
@@ -48,7 +49,10 @@ async function Page() {
                     </Suspense>
                 </div>
             </section>
-
+            <Suspense fallback={<GlobalLoader/>}>
+                <NaverBandSection
+                    bandUrl="https://www.band.us/band"
+                /></Suspense>
             {/* 콘텐츠 섹션 */}
             <section className="bg-main w-full">
                 <div className="container mx-auto px-4 py-8 md:py-12">

@@ -91,7 +91,7 @@ const ContentSection: React.FC = () => {
     };
 
     return (
-        <section className="py-16 bg-main">
+        <section className="py-16">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* 유튜브 동영상 섹션 */}
                 <motion.div
@@ -101,23 +101,19 @@ const ContentSection: React.FC = () => {
                     variants={videoVariants}
                     className="mb-24 mt-12"
                 >
-                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-Paperlogy text-white mb-8 text-center">
-                        건설기계 전문 서비스
-                    </h2>
-
                     <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl overflow-hidden shadow-2xl">
                         <div className="flex flex-col lg:flex-row items-stretch">
                             {/* 텍스트 섹션 */}
-                            <div className="p-6 sm:p-8 lg:p-10 lg:w-1/2 flex flex-col justify-center">
-                                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-4">
-                                    건설기계 진단 차량 보유
-                                </h3>
-                                <div className="h-1 w-20 bg-blue-600 mb-6 rounded-full"></div>
+                            <div className="p-6 lg:p-8 lg:w-1/2 flex flex-col justify-center">
+                                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-Paperlogy text-white mb-8 text-start">
+                                    건설기계 전문 서비스
+                                </h2>
+                                <div className="h-1 w-full bg-blue-600 mb-6 rounded-full"></div>
                                 <p className="text-gray-300 text-sm lg:text-base mb-8 leading-relaxed">
                                     최고의 품질과 서비스로 고객의 성공을 위한 최적의 솔루션을 제공합니다.
                                     혁신적인 기술과 전문가의 노하우가 결합된 DS 건설기계와 함께 더 효율적인 작업 환경을 경험해보세요.
                                 </p>
-                                <Link href="/business/repair" className="inline-block">
+                                <Link href="/business/trip" className="inline-block">
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
