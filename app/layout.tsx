@@ -103,10 +103,10 @@ export default function RootLayout({
                     "@context": "https://schema.org",
                     "@type": "LocalBusiness",
                     "name": "DS 건설기계",
-                    "image": "", //실제 이미지 링크
-                    "@id": "", //회사 url
-                    "url": "", //회사 url
-                    "telephone": "+82-10-1234-5678", // 실제 전화번호로 변경 필요
+                    "image": "/logo/mainLogo.png", //실제 이미지 링크
+                    "@id": "https://deasung.kr", //회사 url
+                    "url": "https://deasung.kr", //회사 url
+                    "telephone": "+82-10-2036-5073", // 실제 전화번호로 변경 필요
                     "address": {
                         "@type": "PostalAddress",
                         "streetAddress": "해망로 663", // 실제 주소로 변경 필요
