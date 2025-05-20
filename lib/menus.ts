@@ -28,12 +28,6 @@ export const menus: MenuItem[] = [
             },
             {
                 id: 102,
-                title: 'CEO 인사말',
-                link: '/introduce/ceo',
-                description: '경영진 소개 및 인사말'
-            },
-            {
-                id: 103,
                 title: '오시는 길',
                 link: '/home#kakaomap',
                 description: '회사 위치 및 약도'

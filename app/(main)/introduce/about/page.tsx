@@ -52,7 +52,7 @@ const companyData: CompanyData = {
             id: 3,
             title: "기술 컨설팅",
             description: "건설기계 관련 전문적인 기술 자문을 제공합니다.",
-            imageUrl: "/images/services/consulting.jpg"
+            imageUrl: "/introduce/talktotalk.jpg"
         }
     ],
     videoUrl: "/videos/company-intro.mp4",

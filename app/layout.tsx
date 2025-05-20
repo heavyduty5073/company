@@ -30,22 +30,22 @@ export const metadata: Metadata = {
         email: true,
         address: true,
     },
-    metadataBase: new URL("https://company-eight-green.vercel.app"),
+    metadataBase: new URL("https://deasung.kr"),
     alternates: {
         canonical: "/",
     },
     openGraph: {
         title: "DS 건설기계 | 전북 군산 건설장비 수리 및 부품 전문",
         description: "전북 군산 지역 덤프트럭, 포크레인 등 건설장비 출장수리 및 부품 전문업체. 20년 이상의 노하우로 신속하고 정확한 수리 서비스와 품질 좋은 건설기계 부품을 제공합니다.",
-        url: "https://company-eight-green.vercel.app",
+        url: "https://deasung.kr",
         siteName: "DS 건설기계",
         locale: "ko_KR",
         type: "website",
         images: [
             {
-                url: "/images/ds-construction-machinery-og.jpg", // 추가해야 할 OG 이미지
-                width: 1200,
-                height: 630,
+                url: "/logo/mainLogo.png", // 추가해야 할 OG 이미지
+                width: 400,
+                height: 400,
                 alt: "DS 건설기계 - 건설장비 수리 및 부품 전문",
             },
         ],
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "DS 건설기계 | 전북 군산 건설장비 수리 및 부품 전문",
         description: "전북 군산 지역 덤프트럭, 포크레인 등 건설장비 출장수리 및 부품 전문업체. 신속하고 정확한 수리 서비스를 제공합니다.",
-        images: ["/images/ds-construction-machinery-og.jpg"], // 트위터용 이미지
+        images: ["/logo/mainLogo.png"], // 트위터용 이미지
     },
     robots: {
         index: true,
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     category: "건설기계",
     verification: {
         // 구글 서치 콘솔 확인용 태그 (실제 값으로 교체 필요)
-        google: "google-site-verification-code",
+        google: "Y3ZInLrjSDmqy0yY0h-r3ycaC9kcca5I-8UgzpY4gRw",
     },
 };
 
@@ -91,15 +91,10 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ko" className={inter.variable}>
-        <head>
-            {/* 네이버 사이트 맵 제출용 태그 */}
-            <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-
-            {/* 파비콘 설정 */}
-            <link rel="icon" href="/favicon.ico" sizes="any" />
-            <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        </head>
         <body>
+        <head>
+            <meta name="naver-site-verification" content="3a47e48d2c526516d7e98cd936fdd517e12f0459" />
+        </head>
         {/* JSON-LD 스키마 마크업 */}
         <script
             type="application/ld+json"
@@ -148,7 +143,7 @@ export default function RootLayout({
                         "@type": "ReservationAction",
                         "target": {
                             "@type": "EntryPoint",
-                            "urlTemplate": "https://company-eight-green.vercel.app/contact",
+                            "urlTemplate": "https://deasung.kr/construction",
                             "inLanguage": "ko",
                             "actionPlatform": [
                                 "http://schema.org/DesktopWebPlatform",

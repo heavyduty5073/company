@@ -17,7 +17,7 @@ export async function GET(request: Request) {
             const supabase = await createClient();
 
             // 코드를 세션으로 교환
-            const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+            const { error } = await supabase.auth.exchangeCodeForSession(code);
 
             if (error) {
 
