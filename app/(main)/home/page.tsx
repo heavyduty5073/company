@@ -45,7 +45,7 @@ async function Page() {
                     </Suspense>
                 </div>
             </section>
-            <NaverBandSection bandUrl="https://www.band.us/band" />
+            <NaverBandSection bandUrl="https://www.band.us/band/96686413" />
             {/* 콘텐츠 섹션 */}
             <section className="bg-main w-full">
                 <div className="container mx-auto px-4 py-8 md:py-12">
