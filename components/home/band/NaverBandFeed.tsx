@@ -4,10 +4,10 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaCalendarAlt, FaUser, FaComments, FaThumbsUp, FaExternalLinkAlt, FaChevronDown } from 'react-icons/fa';
+import { FaCalendarAlt, FaComments, FaThumbsUp, FaExternalLinkAlt, FaChevronDown } from 'react-icons/fa';
 import axios from 'axios';
 import useLoading from "@/app/hooks/useLoading";
-import {formatRelativeDate} from "@/utils/utils";
+import { formatRelativeDate } from "@/utils/utils";
 
 interface Author {
     name: string;
@@ -44,30 +44,40 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
     // 더 보여줄 게시글이 있는지 확인
     const hasMorePosts = visiblePostCount < posts.length;
 
-    useEffect(() => {
-        const fetchBandPosts = async () => {
-            try {
-                setLoading(true);
-                const response = await axios.get('/api/band-posts');
+    // 데이터 가져오기 함수
+    const fetchBandPosts = async () => {
+        try {
+            setLoading(true);
+            console.log('밴드 게시글 로딩 시작');
 
-                if (response.data.error) {
-                    throw new Error(response.data.error);
-                }
+            const response = await axios.get('/api/band-posts');
 
-                if (response.data.posts) {
-                    setPosts(response.data.posts);
-                } else {
-                    setPosts([]);
-                }
-            } catch (err: any) {
-                console.error('밴드 게시글 로딩 중 오류:', err);
-                setError(err.message || '게시글을 불러올 수 없습니다.');
-            } finally {
-                setLoading(false);
+            if (response.data.error) {
+                throw new Error(response.data.error);
             }
-        };
 
+            if (response.data.posts) {
+                console.log(`밴드 게시글 ${response.data.posts.length}개 로드 성공`);
+                setPosts(response.data.posts);
+            } else {
+                setPosts([]);
+            }
+        } catch (err: any) {
+            console.error('밴드 게시글 로딩 중 오류:', err);
+            setError(err.message || '게시글을 불러올 수 없습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        // 컴포넌트 마운트 시 데이터 로드
         fetchBandPosts();
+
+        // 클린업 함수
+        return () => {
+            // 필요한 경우 API 요청 취소 로직 추가
+        };
     }, []);
 
     // 더보기 버튼 클릭 처리
@@ -75,8 +85,10 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
         setVisiblePostCount(prev => Math.min(prev + incrementPostCount, posts.length));
     };
 
-    // 콘텐츠에서 HTML 태그 제거
+    // 콘텐츠에서 HTML 태그 제거 (클라이언트 사이드에서만 실행)
     const stripHtml = (html: string) => {
+        if (typeof window === 'undefined') return html;
+
         const tmp = document.createElement('DIV');
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || '';
@@ -141,7 +153,9 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
                                                         src={post.imageUrl}
                                                         alt="게시글 이미지"
                                                         fill
+                                                        sizes="(max-width: 768px) 100vw, 33vw"
                                                         className="object-cover"
+                                                        loading="lazy"
                                                     />
                                                 </div>
                                             )}
@@ -157,6 +171,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
                                                                 height={24}
                                                                 alt={post.author.name}
                                                                 className="rounded-full mr-2"
+                                                                loading="lazy"
                                                             />
                                                         )}
                                                         <span>{post.author.name}</span>
@@ -185,7 +200,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
                                                     </div>
 
                                                     <Link
-                                                        href={`${bandUrl}/96686413`}
+                                                        href={post.postUrl || `${bandUrl}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="text-blue-400 hover:text-blue-300 text-sm flex items-center transition-colors"
