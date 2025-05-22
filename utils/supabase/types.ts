@@ -19,3 +19,24 @@ export interface States<T=unknown> {
     data: T | null;
     error: string | null;
 }
+export interface Service {
+    id: number;
+    title: string;
+    description: string;
+    imageUrl: string;
+}
+
+export interface CompanyData {
+    name: string;
+    establishedYear: string;
+    vision: string;
+    mission: string;
+    services: Service[];
+    videoUrl: string;
+    videoDetails: VideoDetail[];
+}
+
+export interface VideoDetail {
+    title: string;
+    content: string;
+}

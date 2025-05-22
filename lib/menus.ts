@@ -44,7 +44,7 @@ export const menus: MenuItem[] = [
                 id: 201,
                 title: '운영 장비',
                 link: '/business/construction',
-                description: '굴삭기, 로더, 크레인 등 운영장비'
+                description: '정비 운영 장비 안내'
             },
             {
                 id: 202,

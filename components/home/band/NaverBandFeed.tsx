@@ -1,4 +1,3 @@
-// components/band/NaverBandFeed.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -27,12 +26,20 @@ interface BandPost {
 
 interface NaverBandFeedProps {
     bandUrl: string;
+    prefetchedPosts?: BandPost[]; // 선택적 프리로드된 포스트 데이터
+    prefetchedError?: string | null; // 선택적 프리로드된 에러
+    skipFetching?: boolean; // API 호출 건너뛰기 옵션
 }
 
-const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
+const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
+                                                         bandUrl,
+                                                         prefetchedPosts = [],
+                                                         prefetchedError = null,
+                                                         skipFetching = false
+                                                     }) => {
     const { isLoading, setLoading } = useLoading();
-    const [error, setError] = useState<string | null>(null);
-    const [posts, setPosts] = useState<BandPost[]>([]);
+    const [error, setError] = useState<string | null>(prefetchedError);
+    const [posts, setPosts] = useState<BandPost[]>(prefetchedPosts);
 
     // 초기에 표시할 게시글 수와 한 번에 추가할 게시글 수
     const initialPostCount = 5;
@@ -48,7 +55,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
     const fetchBandPosts = async () => {
         try {
             setLoading(true);
-            console.log('밴드 게시글 로딩 시작');
+            console.log('밴드 게시글 로딩 시작 (NaverBandFeed)');
 
             const response = await axios.get('/api/band-posts');
 
@@ -57,13 +64,13 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
             }
 
             if (response.data.posts) {
-                console.log(`밴드 게시글 ${response.data.posts.length}개 로드 성공`);
+                console.log(`밴드 게시글 ${response.data.posts.length}개 로드 성공 (NaverBandFeed)`);
                 setPosts(response.data.posts);
             } else {
                 setPosts([]);
             }
         } catch (err: any) {
-            console.error('밴드 게시글 로딩 중 오류:', err);
+            console.error('밴드 게시글 로딩 중 오류 (NaverBandFeed):', err);
             setError(err.message || '게시글을 불러올 수 없습니다.');
         } finally {
             setLoading(false);
@@ -71,14 +78,23 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
     };
 
     useEffect(() => {
-        // 컴포넌트 마운트 시 데이터 로드
-        fetchBandPosts();
+        // 프리로드된 데이터가 있고 API 호출을 건너뛰는 옵션이 활성화되어 있으면
+        // API 호출을 수행하지 않음
+        if (skipFetching) {
+            console.log('프리로드된 데이터 사용 중, API 호출 건너뜀');
+            return;
+        }
+
+        // 프리로드된 데이터가 없으면 API 호출
+        if (prefetchedPosts.length === 0) {
+            fetchBandPosts();
+        }
 
         // 클린업 함수
         return () => {
             // 필요한 경우 API 요청 취소 로직 추가
         };
-    }, []);
+    }, [skipFetching, prefetchedPosts.length]);
 
     // 더보기 버튼 클릭 처리
     const handleShowMorePosts = () => {
@@ -93,6 +109,9 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || '';
     };
+
+    // 프리로드된 데이터가 있는 경우 로딩 상태 비활성화
+    const showLoading = isLoading && (!skipFetching || posts.length === 0);
 
     return (
         <section className="py-10 md:py-16 bg-main">
@@ -116,7 +135,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
                 </div>
 
                 <div className="w-full max-w-5xl mx-auto">
-                    {isLoading && (
+                    {showLoading && (
                         <div className="flex justify-center items-center py-20">
                             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                         </div>
@@ -137,7 +156,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
                         </div>
                     )}
 
-                    {!isLoading && !error && (
+                    {!showLoading && !error && (
                         <>
                             <div className="grid grid-cols-1 gap-6 md:gap-8">
                                 {posts.slice(0, visiblePostCount).map((post) => (
@@ -217,7 +236,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({ bandUrl }) => {
                                 ))}
                             </div>
 
-                            {posts.length === 0 && !isLoading && !error && (
+                            {posts.length === 0 && !showLoading && !error && (
                                 <div className="text-center py-10">
                                     <p className="text-white mb-4">표시할 게시글이 없습니다.</p>
                                 </div>

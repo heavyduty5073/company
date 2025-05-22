@@ -212,6 +212,7 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
                                                                 src={imageUrl}
                                                                 alt={repairCase.title || '정비 사례 이미지'}
                                                                 fill
+                                                                loading="lazy"
                                                                 sizes={`(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw`}
                                                                 className={`object-cover transition-transform duration-500 ${hoveredCard === index ? 'scale-110' : 'scale-100'}`}
                                                             />
