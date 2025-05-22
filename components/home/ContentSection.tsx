@@ -200,6 +200,7 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({ card, index }) => {
     };
 
     return (
+        <div className="relative group h-80">
         <motion.div
             ref={ref}
             initial="hidden"
@@ -230,25 +231,23 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({ card, index }) => {
                 <p className="text-gray-300 text-sm">{card.description}</p>
             </div>
 
-            {/* 호버 시 나타나는 버튼 영역 */}
-            <div className="absolute inset-x-0 bottom-0 opacity-0 group-hover:opacity-100 transform translate-y-6 group-hover:translate-y-0 transition-all duration-300 ease-in-out">
-                <div className="h-24 bg-gradient-to-t from-blue-900/90 via-gray-900/80 to-transparent flex items-end justify-center pb-6 px-6">
-                    <Link href="/support/inquiry" className="w-full">
-                        <motion.button
-                            whileHover={{
-                                scale: 1.05,
-                                boxShadow: "0 0 15px rgba(59, 130, 246, 0.5)"
-                            }}
-                            whileTap={{ scale: 0.95 }}
-                            className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium shadow-lg hover:shadow-blue-600/50 transition-all duration-300 flex items-center justify-center"
-                        >
-                            문의하기
-                            <IoIosArrowForward className="ml-1" />
-                        </motion.button>
-                    </Link>
-                </div>
-            </div>
         </motion.div>
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-4/5 opacity-0 group-hover:opacity-100 transform translate-y-12 group-hover:translate-y-0 transition-all duration-500 ease-out z-20">
+                <Link href="/support/inquiry" className="block">
+                    <motion.button
+                        whileHover={{
+                            scale: 1.05,
+                            boxShadow: "0 8px 25px rgba(59, 130, 246, 0.4)"
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium shadow-xl hover:shadow-blue-600/50 transition-all duration-300 flex items-center justify-center backdrop-blur-sm border border-blue-500/30"
+                    >
+                        문의하기
+                        <IoIosArrowForward className="ml-1" />
+                    </motion.button>
+                </Link>
+            </div>
+            </div>
     );
 };
 

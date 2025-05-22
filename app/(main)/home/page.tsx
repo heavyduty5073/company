@@ -61,18 +61,30 @@ async function Page() {
                     <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 md:mb-8 text-center">
                         오시는 길
                     </h2>
-
+                    <div className={'grid grid-cols-1 md:grid-cols-2 gap-4'}>
                     <div className="rounded-lg overflow-hidden shadow-lg">
                         <div id="kakaomap" className="h-[300px] md:h-[450px] w-full">
                             <KakaoMap address={'전북특별자치도 군산시 해망로 663'} />
                         </div>
+                        <div className="mt-4 text-center text-white">
+                            <p className="text-lg font-medium">DS 건설기계 군산본점</p>
+                            <p className="text-sm mt-1">전북특별자치도 군산시 해망로 663 선우플랜트</p>
+                            <p className="text-sm mt-1">대표번호: 010-2036-5073</p>
+                        </div>
+                    </div>
+                        <div className="rounded-lg overflow-hidden shadow-lg">
+                            <div id="kakaomap" className="h-[300px] md:h-[450px] w-full">
+                                <KakaoMap address={'전북특별자치도 김제시 황토로 919'} />
+                            </div>
+                            <div className="mt-4 text-center text-white">
+                                <p className="text-lg font-medium">DS 건설기계 김제점</p>
+                                <p className="text-sm mt-1">전북특별자치도 김제시 황토로 919 1동</p>
+                                <p className="text-sm mt-1">대표번호: 010-9590-1232</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="mt-4 text-center text-white">
-                        <p className="text-lg font-medium">DS 건설기계 군산본점</p>
-                        <p className="text-sm mt-1">전북특별자치도 군산시 해망로 663 선우플랜트</p>
-                        <p className="text-sm mt-1">대표번호: 010-2036-5073</p>
-                    </div>
+
                 </div>
             </section>
         </main>
