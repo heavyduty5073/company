@@ -115,7 +115,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
         content: defaultValue,
         editorProps: {
             attributes: {
-                class: 'prose prose-sm focus:outline-none max-w-full h-full p-2 overflow-visible min-h-[50vh]',
+                class: 'prose prose-sm focus:outline-none min-h-screen border border-black max-w-full h-full p-2 overflow-visible',
             },
         },
         onUpdate: ({ editor }) => {

@@ -81,7 +81,6 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
         // 프리로드된 데이터가 있고 API 호출을 건너뛰는 옵션이 활성화되어 있으면
         // API 호출을 수행하지 않음
         if (skipFetching) {
-            console.log('프리로드된 데이터 사용 중, API 호출 건너뜀');
             return;
         }
 

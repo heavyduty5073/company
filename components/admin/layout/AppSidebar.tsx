@@ -57,7 +57,7 @@ export function AppSidebar({user}:{user:User}) {
                 {/* 주요 메뉴 그룹 */}
                 <SidebarGroup title="주요 메뉴">
                     <SidebarItem
-                        href="/admin/deshboard"
+                        href="/admin/dashboard"
                         icon={<LayoutDashboard size={20} />}
                         title="대시보드"
                         active={isActive('/admin/dashboard')}
@@ -96,12 +96,6 @@ export function AppSidebar({user}:{user:User}) {
                         icon={<Wrench size={20} />}
                         title="정비 사례"
                         active={isActive('/admin/posts')}
-                    />
-                    <SidebarItem
-                        href="/admin/support?type=faq"
-                        icon={<FaQuora size={20} />}
-                        title="FAQ 관리"
-                        active={isActive('/admin/support?type=faq')}
                     />
                     <SidebarItem
                         href="/admin/support?type=notice"
