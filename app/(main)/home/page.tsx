@@ -11,6 +11,7 @@ import GlobalLoader from "@/lib/Loading/Loading";
 import { getLatestRepairCases } from "@/app/(main)/home/actions";
 import CountView from "@/components/home/CountView";
 import InAppButton from "@/components/home/inApp/InAppButton";
+import WorkTime from "@/components/home/WorkTime";
 
 // 동적 임포트 (서버 컴포넌트에서는 ssr: false 옵션 제거)
 const RepairCaseCarousel = dynamic(
@@ -94,7 +95,10 @@ async function Page() {
                     <CountView/>
                 </div>
             </section>
-
+            {/*영업 시간*/}
+            <section className={'bg-main w-full'}>
+            <WorkTime/>
+            </section>
             {/* 지도 섹션 */}
             <section id='kakaomap' className="bg-main w-full">
                 <div className="container mx-auto px-4 py-8 md:py-20 lg:py-32">
