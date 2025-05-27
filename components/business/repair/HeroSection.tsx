@@ -10,10 +10,14 @@ import Image from "next/image";
 const HeroSection = () => {
     // 이미지 배열 (실제 이미지 경로로 변경 필요)
     const constructionImages = [
-        '/business/workBanner.png',
-        '/introduce/package1.jpg',
-        '/introduce/package2.jpg',
-        '/introduce/package3.jpg',
+        '/introduce/hero/heroImg1.jpg',
+        '/introduce/hero/heroImg2.jpg',
+        '/introduce/hero/heroImg3.jpg',
+        '/introduce/hero/heroImg4.jpg',
+        '/introduce/hero/heroImg5.jpg',
+        '/introduce/hero/heroImg6.jpg',
+        '/introduce/hero/heroImg7.jpg',
+        '/introduce/hero/heroImg8.jpg',
     ];
 
     // 각 이미지의 애니메이션 설정
@@ -192,12 +196,12 @@ const HeroSection = () => {
                                         zIndex: constructionImages.length - index
                                     }}
                                 >
-                                    <div className="relative w-80 h-60 rounded-2xl overflow-hidden shadow-2xl">
+                                    <div className="relative w-200 h-180 rounded-2xl overflow-hidden shadow-2xl">
                                         <Image
                                             src={imageSrc}
                                             alt={`건설기계 ${index + 1}`}
-                                            width={320}
-                                            height={240}
+                                            width={500}
+                                            height={300}
                                             className="w-full h-full object-cover"
                                         />
                                         {/* 이미지 오버레이 */}
