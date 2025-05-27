@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const areas = [
     "서울", "경기도", "인천", "충청도",
-    "강원도", "전라도", "경상도", "제주도"
+    "강원도", "전라도", "경상도"
 ];
 
 const container = {
@@ -45,11 +45,11 @@ export default function ServiceAreas() {
                         <TabsTrigger className={'bg-green-300 rounded-l-none'} value="response-time">대응 시간</TabsTrigger>
                     </TabsList>
                     <TabsContent value="areas">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-xl text-blue-700">주요 서비스 지역</CardTitle>
+                        <Card className="backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl shadow-blue-500/10">
+                            <CardHeader className="backdrop-blur-sm bg-white/5 border-b border-white/10">
+                                <CardTitle className="text-xl text-blue-700 font-bold">주요 서비스 지역</CardTitle>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="p-6">
                                 <motion.div
                                     className="grid grid-cols-2 md:grid-cols-4 gap-4"
                                     variants={container}
@@ -60,7 +60,7 @@ export default function ServiceAreas() {
                                     {areas.map((area, index) => (
                                         <motion.div
                                             key={index}
-                                            className="p-3 bg-gray-100 rounded text-center hover:bg-blue-50 transition-colors"
+                                            className="p-3 bg-gradient-to-r from-blue-200 to-green-200 text-black/80 font-jalnan text-black drop-shadow-lg rounded text-center hover:bg-blue-50/30 transition-colors"
                                             variants={item}
                                             whileHover={{ scale: 1.05 }}
                                         >

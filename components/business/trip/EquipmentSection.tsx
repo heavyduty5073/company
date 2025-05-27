@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Image from "next/image";
 
 const diagnosticTools = [
     "컴퓨터화된 진단 시스템",
@@ -39,7 +40,10 @@ export default function EquipmentSection() {
                     저희는 다양한 건설기계의 문제를 정확히 진단하고 수리할 수 있는 최신 장비와 전문 공구를 갖추고 있습니다.
                     특수 제작된 진단 차량으로 어떤 현장에서도 공장급 정비 서비스를 제공합니다.
                 </p>
-
+                <div className={'flex flex-col lg:flex-row items-center justify-center gap-4'}>
+                    <Image src={'/introduce/car2.jpg'} alt={'car2'} width={550} height={400} className={'rounded-lg'}/>
+                    <Image src={'/introduce/car1.jpg'} alt={'car2'} width={550} height={400} className={'rounded-lg'}/>
+                </div>
                 <div className="grid md:grid-cols-2 gap-8 mt-8">
                     <Card className="h-full">
                         <CardHeader>

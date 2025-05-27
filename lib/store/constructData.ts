@@ -24,10 +24,10 @@ export const equipmentData = [
         features: ["자동 냉매 회수", "진공 펌프 내장", "누설 검사 기능"]
     },
     {
-        title: "VGT",
-        description: "VGT(Variable Geometry Turbocharger)는 터보차저의 베인 각도를 조절하여 다양한 엔진 회전수에서도 최적의 부스트 압력을 제공하는 장치입니다.",
+        title: "부품세척기",
+        description: "각종 부품, 엔진, 터보차저등 여러가지 부품을 세척하는 용도의 장비입니다.",
         imageUrl: "/business/VGT.jpg",
-        features: ["가변 베인 기술로 부스트 압력 최적화", "엔진 응답성 향상", "배출가스 저감 효과"]
+        features: ["부품의 노폐물 제거", "특수 약물사용으로 유지효과증대"]
     },
     {
         title: "건식",
@@ -46,5 +46,19 @@ export const equipmentData = [
         description: "커민스 엔진 시뮬레이터는 커민스 디젤 엔진의 작동 원리와 고장 진단을 교육하기 위한 시뮬레이션 장비입니다.",
         imageUrl: "/business/커민스시뮬레이터.jpg",
         features: ["엔진 작동 시뮬레이션", "고장 진단 교육용 시나리오 제공", "실시간 데이터 모니터링"]
+    },
+    {
+        title: "인젝터 테스트기",
+        description:
+            "인젝터의 밸브 작동 상태, 전자석 작동 등을 검사하여 인젝터의 정상적인 작동 여부를 확인합니다.",
+        imageUrl: "/business/인젝터테스터.jpg",
+        features: ["분사량 측정", "분사 압력 측정", "누출 검사","작동 상태 검사"]
+    },
+    {
+        title: "엔진 시뮬레이터",
+        description:
+            "엔진 시뮬레이터는 특정 엔진의 작동 방식이나 성능을 모의적으로 표현하는 소프트웨어 또는 장치입니다. 실제 엔진을 사용하지 않고도 다양한 조건 하에서의 작동 상태를 시뮬레이션하여 분석 및 테스트할 수 있습니다",
+        imageUrl: "/business/엔진시뮬레이터.jpg",
+        features: ["엔진 설계 및 개발", "엔진 성능 테스트", "엔진 교육 및 훈련","엔진 연구 및 개발"]
     }
 ];

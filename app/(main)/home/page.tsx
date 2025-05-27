@@ -10,6 +10,7 @@ import ContentSection from "@/components/home/ContentSection";
 import GlobalLoader from "@/lib/Loading/Loading";
 import { getLatestRepairCases } from "@/app/(main)/home/actions";
 import CountView from "@/components/home/CountView";
+import InAppButton from "@/components/home/inApp/InAppButton";
 
 // 동적 임포트 (서버 컴포넌트에서는 ssr: false 옵션 제거)
 const RepairCaseCarousel = dynamic(
@@ -100,6 +101,9 @@ async function Page() {
                     <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 md:mb-8 text-center">
                         오시는 길
                     </h2>
+                    <div className={'w-full max-w-3xl mx-auto mb-12'}>
+                    <InAppButton/>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="rounded-lg overflow-hidden shadow-lg">
                             <div className="h-[300px] md:h-[450px] w-full">

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import {
     ClipboardList, Package, TruckIcon, CheckCheck
 } from 'lucide-react';
+import Image from "next/image";
 
 const processSteps = [
     {
@@ -43,7 +44,10 @@ export default function ShippingProcess() {
                 부품의 안전한 배송과 신속한 장비 복구를 위해 전문적인 포장 및 배송 시스템을 운영하고 있습니다.
                 모든 제품은 최적의 상태로 고객에게 전달됩니다.
             </p>
-
+            <div className={'flex flex-col items-center justify-center items-center lg:flex-row gap-4 py-4'}>
+                <Image src={'/introduce/package1.jpg'} alt={'package1'} width={550} height={400} className={'rounded-lg'}/>
+                <Image src={'/introduce/package2.jpg'} alt={'package1'} width={550} height={400} className={'rounded-lg'}/>
+            </div>
             <div className="space-y-4">
                 {processSteps.map((step, index) => (
                     <motion.div

@@ -56,7 +56,7 @@ export const menus: MenuItem[] = [
                 id: 203,
                 title: '부품 공급',
                 link: '/business/parts',
-                description: '정품 부품 공급 서비스'
+                description: '에프터 제품 부품 공급 서비스'
             },
             {
                 id: 204,
