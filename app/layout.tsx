@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import Script from "next/script";
 // 폰트 설정
 const inter = Inter({
     subsets: ["latin"],
@@ -446,6 +447,20 @@ export default function RootLayout({
             {/* 네이버 블로그, 카페 공유 최적화 */}
             <meta name="NaverBot" content="All" />
             <meta name="DaumBot" content="All" />
+
+            {/*구글검색태그*/}
+            <Script
+                src="https://www.googletagmanager.com/gtag/js?id=AW-17117153661"
+                strategy="afterInteractive"
+            />
+            <Script id="google-ads" strategy="afterInteractive">
+                {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-17117153661');
+          `}
+            </Script>
         </head>
         <body className="antialiased">
         {children}

@@ -1,61 +1,62 @@
-'use client'
+'use client';
 import React from 'react';
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { RiKakaoTalkFill } from "react-icons/ri";
-import Image from "next/image";
 import { FaMapMarkerAlt } from "react-icons/fa";
+import Image from "next/image";
+
 function InAppButton() {
-
-    // 주소 정보
     const businessAddress = "군산시 해망로 663";
-    const fullAddress = "전라북도 군산시 해망로 663";
+    const lat = 35.978404;
+    const lng = 126.670992;
 
-    // 카카오맵 열기 함수
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    // 카카오맵
     const openKakaoMap = () => {
-        const kakaoMapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(businessAddress)},37.5665,126.9780`;
-        // 모바일에서는 앱, 데스크톱에서는 웹으로 열기
-        if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            // 모바일: 카카오맵 앱 시도 후 웹으로 폴백
-            window.location.href = `kakaomap://look?p=37.5665,126.9780`;
+        if (isMobile) {
+            window.location.href = `kakaomap://route?ep=${lat},${lng}&by=CAR`;
             setTimeout(() => {
-                window.open(kakaoMapUrl, '_blank');
+                window.open(`https://map.kakao.com/link/to/${encodeURIComponent(businessAddress)},${lat},${lng}`, '_blank');
             }, 1000);
         } else {
-            // 데스크톱: 웹에서 열기
-            window.open(kakaoMapUrl, '_blank');
+            window.open(`https://map.kakao.com/link/to/${encodeURIComponent(businessAddress)},${lat},${lng}`, '_blank');
         }
     };
 
-    // T맵 열기 함수
+    // T맵
     const openTMap = () => {
-        const tmapUrl = `https://apis.openapi.sk.com/tmap/app/routes?appKey=${process.env.TMAP_API_KEY}&goalname=${encodeURIComponent(businessAddress)}&goalx=126.9780&goaly=37.5665`;
-        const tmapAppUrl = `tmap://route?goalname=${encodeURIComponent(businessAddress)}&goalx=126.9780&goaly=37.5665`;
-
-        // 모바일에서는 앱, 데스크톱에서는 웹으로 열기
-        if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            // 모바일: T맵 앱 시도 후 웹으로 폴백
-            window.location.href = tmapAppUrl;
+        const tmapUrl = `tmap://route?goalx=${lng}&goaly=${lat}&goalname=${encodeURIComponent(businessAddress)}`;
+        if (isMobile) {
+            window.location.href = tmapUrl;
             setTimeout(() => {
-                window.open(`https://tmapapi.sktelecom.com/main.html#webservice/docs/tmapWebServiceGuide`, '_blank');
+                window.open(`https://apis.openapi.sk.com/tmap/app/routes?goalx=${lng}&goaly=${lat}&goalname=${encodeURIComponent(businessAddress)}`, '_blank');
             }, 1000);
         } else {
-            // 데스크톱: 웹에서 T맵 사이트로 이동
             window.open('https://www.tmap.co.kr/', '_blank');
         }
     };
 
-    // 네이버 지도 열기 함수
+    // 네이버 지도
     const openNaverMap = () => {
-        const naverMapUrl = `https://map.naver.com/v5/directions/-/-/-/car?c=14.00,0,0,0,dh&pinType=place&lng=126.9780&lat=37.5665&placePath=${encodeURIComponent(fullAddress)}`;
-        window.open(naverMapUrl, '_blank');
+        const naverMapUrl = `nmap://route/car?dlat=${lat}&dlng=${lng}&dname=${encodeURIComponent(businessAddress)}&appname=com.yourapp.name`;
+        if (isMobile) {
+            window.location.href = naverMapUrl;
+            setTimeout(() => {
+                window.open(`https://map.naver.com/v5/directions/-/-/${lng},${lat},${encodeURIComponent(businessAddress)}/car`, '_blank');
+            }, 1000);
+        } else {
+            window.open(`https://map.naver.com/v5/directions/-/-/${lng},${lat},${encodeURIComponent(businessAddress)}/car`, '_blank');
+        }
     };
+
     return (
         <div className="space-y-2">
             <Button
                 onClick={openKakaoMap}
                 className="w-full bg-yellow-400 hover:bg-yellow-700 text-black font-semibold text-sm py-2"
             >
-                <FaMapMarkerAlt className={'text-blue-500'} size={16} />
+                <FaMapMarkerAlt className="mr-2 text-blue-600" size={16} />
                 카카오맵으로 길찾기
             </Button>
 
@@ -63,7 +64,7 @@ function InAppButton() {
                 onClick={openTMap}
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold text-sm py-2"
             >
-                <Image src={'/logo/tmapimg.webp'} alt={'tmap'} width={50} height={50} className={'w-5 h-5 rounded-lg'}/>
+                <Image src="/logo/tmapimg.webp" alt="tmap" width={20} height={20} className="mr-2 rounded-md" />
                 T맵으로 길찾기
             </Button>
 
