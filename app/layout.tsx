@@ -450,7 +450,7 @@ export default function RootLayout({
 
             {/*구글검색태그*/}
             <Script
-                src="https://www.googletagmanager.com/gtag/js?id=AW-17117153661"
+                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_ID}`}
                 strategy="afterInteractive"
             />
             <Script id="google-ads" strategy="afterInteractive">
@@ -458,8 +458,24 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'AW-17117153661');
+            gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_ID}');
           `}
+            </Script>
+            <Script id="google-ads-conversion" strategy="afterInteractive">
+                {`
+    function gtag_report_conversion(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'conversion', {
+          'send_to': '${process.env.NEXT_PUBLIC_GOOGLE_CONVERSION_ID}/${process.env.NEXT_PUBLIC_GOOGLE_EVENT_ID}',
+          'event_callback': callback
+      });
+      return false;
+    }
+  `}
             </Script>
         </head>
         <body className="antialiased">
