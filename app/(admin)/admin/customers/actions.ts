@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { ERROR_CODES } from '@/utils/ErrorMessage'
 import {AdminClient} from "@/utils/supabase/admin";
+import {FormState} from "@/components/ui/form";
 
 /**
  * 유저 목록 조회 (auth.admin.listUsers 사용)
@@ -119,10 +120,31 @@ export async function getUserDetail(userId: string) {
 /**
  * 유저 역할 변경 (user_metadata.role 업데이트)
  */
-export async function changeUserRole(userId: string, role: string) {
+export async function changeUserRole(formData: FormData): Promise<FormState> {
     try {
+        const userId = formData.get('userId') as string
+        const role = formData.get('role') as string
+
+        // 입력 유효성 검사
+        if (!userId || !role) {
+            return {
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: '사용자 ID와 역할을 모두 입력해주세요.',
+            }
+        }
+
+        // 허용된 역할인지 확인
+        const allowedRoles = ['user', 'manager', 'admin']
+        if (!allowedRoles.includes(role)) {
+            return {
+                code: ERROR_CODES.VALIDATION_ERROR,
+                message: '유효하지 않은 역할입니다.',
+            }
+        }
+
         const supabase = await createClient()
         const adminSupabase = AdminClient()
+
         const { data: { user }, error: userError } = await supabase.auth.getUser()
         if (userError || !user) {
             return {
@@ -131,13 +153,15 @@ export async function changeUserRole(userId: string, role: string) {
             }
         }
 
-        if (user.user_metadata?.role !== 'admin') {
+        const userRole = user.app_metadata?.role || user.user_metadata?.role
+        if (userRole !== 'admin') {
             return {
                 code: ERROR_CODES.UNAUTHORIZED,
                 message: '관리자 권한이 필요합니다.',
             }
         }
 
+        // 본인의 역할 변경 방지
         if (user.id === userId) {
             return {
                 code: ERROR_CODES.VALIDATION_ERROR,
@@ -145,8 +169,9 @@ export async function changeUserRole(userId: string, role: string) {
             }
         }
 
+        // app_metadata에 role 업데이트 (더 안전함)
         const { error } = await adminSupabase.auth.admin.updateUserById(userId, {
-            user_metadata: { role },
+            app_metadata: { role },
         })
 
         if (error) {
