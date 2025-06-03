@@ -12,6 +12,8 @@ import { getLatestRepairCases } from "@/app/(main)/home/actions";
 import CountView from "@/components/home/CountView";
 import InAppButton from "@/components/home/inApp/InAppButton";
 import WorkTime from "@/components/home/WorkTime";
+import UreaPopup from '@/components/home/popup/UreaPopup';
+import ContactBanner from "@/components/home/ContactBanner";
 
 // 동적 임포트 (서버 컴포넌트에서는 ssr: false 옵션 제거)
 const RepairCaseCarousel = dynamic(
@@ -46,6 +48,8 @@ async function Page() {
 
     return (
         <main className="flex flex-col w-full">
+            {/* 요소수 첨가제 홍보 팝업 */}
+            <UreaPopup />
             {/* 히어로 섹션: 배너 + 타이핑 텍스트 */}
             <section className="relative w-full">
                 {/* 배너 섹션 */}
@@ -67,7 +71,6 @@ async function Page() {
                     </div>
                 </div>
             </section>
-
             {/* 정비 사례 캐러셀 섹션 */}
             <section className="bg-main w-full">
                 <div className="container mx-auto px-4 py-8 md:py-12 lg:py-24">
