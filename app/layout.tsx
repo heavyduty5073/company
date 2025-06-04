@@ -63,32 +63,46 @@ export const metadata: Metadata = {
         type: "website",
         images: [
             {
-                url: "/logo/mainLogo.png",
-                width: 1200,
-                height: 630,
+                url: "https://deasung.kr/logo/mainLogo.png",
+                width: 500,
+                height: 500,
                 alt: "DS 건설기계 - 건설장비 수리 및 부품 전문",
                 type: "image/png"
             },
             {
-                url: "/business/workBanner.png",
+                url: "https://deasung.kr/business/fix.png",
                 width: 1200,
                 height: 630,
                 alt: "DS 건설기계 작업 현장",
                 type: "image/png"
-            }
+            },
+            {
+                url: "https://deasung.kr/home/mainBanner1.jpg",
+                width: 500,
+                height: 500,
+                alt: "DS 건설기계 메인",
+                type: "image/jpeg"
+            },
+            {
+                url: "https://deasung.kr/home/mainBanner4.jpg",
+                width: 500,
+                height: 500,
+                alt: "DS 건설기계 메인2",
+                type: "image/jpeg"
+            },
         ],
     },
     // 트위터 카드
     twitter: {
         card: "summary_large_image",
-        site: "@DS건설기계",
-        creator: "@DS건설기계",
         title: "DS 건설기계 | 전북 군산 건설장비 수리 및 부품 전문",
         description: "전북 군산 지역 덤프트럭, 포크레인 등 건설장비 출장수리 및 부품 전문업체. 신속하고 정확한 수리 서비스를 제공합니다.",
-        images: {
-            url: "/logo/mainLogo.png",
-            alt: "DS 건설기계"
-        }
+        images: [
+            {
+                url: "https://deasung.kr/logo/mainLogo.png",
+                alt: "DS 건설기계 대표 이미지"
+            }
+        ]
     },
     // 로봇 설정 (검색엔진 크롤링)
     robots: {
@@ -141,7 +155,7 @@ export const metadata: Metadata = {
         "subject": "건설기계 수리 및 부품",
         "abstract": "전북 군산 건설장비 출장수리 전문",
         "topic": "건설기계, 건설장비, 수리, 부품"
-    }
+    },
 };
 
 // 뷰포트 설정
