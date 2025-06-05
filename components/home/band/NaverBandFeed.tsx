@@ -55,7 +55,6 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
     const fetchBandPosts = async () => {
         try {
             setLoading(true);
-            console.log('밴드 게시글 로딩 시작 (NaverBandFeed)');
 
             const response = await axios.get('/api/band-posts');
 
@@ -64,7 +63,6 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
             }
 
             if (response.data.posts) {
-                console.log(`밴드 게시글 ${response.data.posts.length}개 로드 성공 (NaverBandFeed)`);
                 setPosts(response.data.posts);
             } else {
                 setPosts([]);

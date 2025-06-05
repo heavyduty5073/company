@@ -16,20 +16,26 @@ import useAlert from "@/lib/notiflix/useAlert";
 
 function InquiryCreateForm({ user }: { user: User }) {
     const router = useRouter();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const {isLoading,setLoading} =useLoading()
+    const {isLoading,startLoading,stopLoading} =useLoading()
     const {notify} = useAlert();
     const handleCancel=()=>{
         router.back();
     }
     const handleResult=(formState:FormState)=>{
-        setLoading(true)
-        if(formState.code===ERROR_CODES.SUCCESS){
-            router.push('/support?type=inquiry&page=1')
-            notify.success(formState.message || '문의가 성공적으로 작성되었습니다.')
-        }else{
-            notify.failure(formState.message || '문의 중 오류가 발생했습니다.');
+        startLoading()
+        try{
+            if(formState.code===ERROR_CODES.SUCCESS){
+                router.push('/support?type=inquiry&page=1')
+                notify.success(formState.message || '문의가 성공적으로 작성되었습니다.')
+            }else{
+                notify.failure(formState.message || '문의 중 오류가 발생했습니다.');
+            }
+        }catch(error){
+            console.error(error)
+        }finally {
+            stopLoading()
         }
+
     }
     return (
         <div className="container mx-auto py-8 px-4">
@@ -64,15 +70,15 @@ function InquiryCreateForm({ user }: { user: User }) {
                         type="button"
                         variant="outline"
                         onClick={handleCancel}
-                        disabled={isSubmitting}
+                        disabled={isLoading}
                     >
                         취소
                     </Button>
                     <Button
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isLoading}
                     >
-                        {isSubmitting ? '제출 중...' : '문의하기'}
+                        {isLoading ? '제출 중...' : '문의하기'}
                     </Button>
                 </div>
             </FormContainer>

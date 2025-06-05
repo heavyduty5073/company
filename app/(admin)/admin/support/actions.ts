@@ -15,11 +15,32 @@ import {AdminClient} from "@/utils/supabase/admin";
 export async function getSupportList(type: string): Promise<Posts[]> {
     const supabase = await createClient();
     try {
-        const { data, error } = await supabase
+        // 사용자 정보 가져오기
+        const { data: { user } } = await supabase.auth.getUser();
+
+        // 관리자 권한 확인
+        const isAdmin = user?.user_metadata?.role === 'admin';
+
+        let query = supabase
             .from('posts')
             .select('*')
-            .eq('tag', type)
             .order('created_at', { ascending: false });
+
+        // notice 타입일 때 권한에 따라 필터링
+        if (type === 'notice') {
+            if (isAdmin) {
+                // 관리자: notice와 adminNotice 모두 조회
+                query = query.in('tag', ['notice', 'adminNotice']);
+            } else {
+                // 일반 사용자: notice만 조회
+                query = query.eq('tag', 'notice');
+            }
+        } else {
+            // 다른 타입들 (faq, qna 등)은 기존대로
+            query = query.eq('tag', type);
+        }
+
+        const { data, error } = await query;
 
         if (error) {
             console.error('데이터 조회 오류:', error);
@@ -46,6 +67,7 @@ export async function getSupportDetail(id: string): Promise<Posts | null> {
             .select('*')
             .eq('id', id)
             .single();
+
 
         if (error) {
             console.error('데이터 조회 오류:', error);
@@ -135,18 +157,13 @@ export async function deletePost(id:string): Promise<FormState> {
         };
     }
 }
-
-/**
- * 게시물을 생성합니다.
- * @param formData 게시물 폼 데이터
- * @returns 생성 결과
- */
 export async function createPost(formData: FormData): Promise<FormState> {
     const supabase = await createClient();
     const title = formData.get('title') as string;
     const contents = formData.get('contents') as string;
     const tag = formData.get('tag') as string;
     const category = formData.get('category') as string;
+    const attachmentsData = formData.get('attachments') as string;
 
     // 필수값 확인
     if (!title || !contents || !tag || !category) {
@@ -157,6 +174,16 @@ export async function createPost(formData: FormData): Promise<FormState> {
     }
 
     try {
+        // 첨부파일 JSON 파싱 (빈 문자열이면 빈 배열로 처리)
+        let attachments: any[] = [];
+
+        try {
+            attachments = attachmentsData ? JSON.parse(attachmentsData) : [];
+        } catch (e) {
+            console.warn('첨부파일 데이터 파싱 실패:', e);
+            attachments = [];
+        }
+
         const { data, error } = await supabase
             .from('posts')
             .insert({
@@ -164,6 +191,7 @@ export async function createPost(formData: FormData): Promise<FormState> {
                 contents,
                 tag,
                 category,
+                attachments,
             })
             .select('id')
             .single();
@@ -204,6 +232,7 @@ export async function updatePost(formData: FormData): Promise<FormState> {
     const contents = formData.get('contents') as string;
     const tag = formData.get('tag') as string;
     const category = formData.get('category') as string;
+    const attachmentsData = formData.get('attachments') as string;
 
     if (!id || !title || !contents || !tag || !category) {
         return {
@@ -213,6 +242,16 @@ export async function updatePost(formData: FormData): Promise<FormState> {
     }
 
     try {
+        // 첨부파일 JSON 파싱 (빈 문자열이면 빈 배열로 처리)
+        let attachments: any[] = [];
+
+        try {
+            attachments = attachmentsData ? JSON.parse(attachmentsData) : [];
+        } catch (e) {
+            console.warn('첨부파일 데이터 파싱 실패:', e);
+            attachments = [];
+        }
+
         const { error } = await supabase
             .from('posts')
             .update({
@@ -220,6 +259,7 @@ export async function updatePost(formData: FormData): Promise<FormState> {
                 contents,
                 tag,
                 category,
+                attachments,
                 updated_at: new Date().toISOString()
             })
             .eq('id', id);

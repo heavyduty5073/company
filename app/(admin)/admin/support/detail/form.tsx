@@ -10,25 +10,35 @@ import { formatDate } from "@/utils/utils";
 import {submitInquiryAnswer} from "@/app/(admin)/admin/support/detail/actions";
 import {ERROR_CODES} from "@/utils/ErrorMessage";
 import useAlert from "@/lib/notiflix/useAlert";
+import useLoading from "@/app/hooks/useLoading";
 
 function InquiryAnswerForm({ inquiry, admin }: { inquiry: Inquiry; admin: User }) {
     const router = useRouter();
     const { notify } = useAlert();
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const {isLoading,stopLoading} = useLoading();
 
     const handleResult = (formState: FormState) => {
-        setIsSubmitting(false);
-
         if (formState.code === ERROR_CODES.SUCCESS) {
-            router.push(`/admin/support?type=inquiry&page=1`);
             notify.success('답변이 등록되었습니다.');
+            // 성공 시에는 페이지 이동하므로 setLoading(false) 불필요
+            router.push(`/admin/support?type=inquiry&page=1`);
         } else {
             notify.failure(`${formState.message}`);
+            // 실패 시에만 로딩 상태 해제
+            stopLoading();
         }
     };
 
+    const handleSubmit = () => {
+        stopLoading();
+    };
+
     return (
-        <FormContainer action={submitInquiryAnswer} onResult={handleResult}>
+        <FormContainer
+            action={submitInquiryAnswer}
+            onResult={handleResult}
+            onSubmit={handleSubmit}
+        >
             {/* 히든 필드 */}
             <input type="hidden" name="id" value={inquiry.id} />
             <input type="hidden" name="admin_id" value={admin.id} />
@@ -67,15 +77,15 @@ function InquiryAnswerForm({ inquiry, admin }: { inquiry: Inquiry; admin: User }
                     type="button"
                     variant="outline"
                     onClick={() => router.push('/admin/support?type=inquiry')}
-                    disabled={isSubmitting}
+                    disabled={isLoading}
                 >
                     취소
                 </Button>
                 <Button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isLoading}
                 >
-                    {isSubmitting ? '저장 중...' : '답변 등록'}
+                    {isLoading ? '저장 중...' : '답변 등록'}
                 </Button>
             </div>
         </FormContainer>

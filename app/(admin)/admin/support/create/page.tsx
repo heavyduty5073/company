@@ -1,6 +1,7 @@
 import React from 'react';
 import CreateSupportForm from "@/app/(admin)/admin/support/create/form";
 import {notFound} from "next/navigation";
+import Link from "next/link";
 
 async function Page({searchParams}:{searchParams:Promise<{type:string}>}) {
     const {type} = await searchParams

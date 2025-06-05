@@ -56,17 +56,6 @@ const NoticeTable: React.FC<NoticeTableProps> = ({
     // 삭제 확인 다이얼로그 상태
     const [deletePostId, setDeletePostId] = useState<string | null>(null);
 
-    // 상세 페이지 링크 생성
-    const createDetailLink = (postId: string) => {
-        // 현재 검색 쿼리 파라미터 유지
-        const queryParams = new URLSearchParams();
-        if (type) queryParams.set('type', type);
-        if (search) queryParams.set('search', search);
-
-        const queryString = queryParams.toString();
-        return `${pathname}/${postId}${queryString ? `?${queryString}` : ''}`;
-    };
-
     // 수정 페이지 링크 생성
     const createEditLink = (postId: string) => {
         const queryParams = new URLSearchParams();
@@ -130,7 +119,7 @@ const NoticeTable: React.FC<NoticeTableProps> = ({
                             >
                                 <TableCell>
                                     <Link
-                                        href={createDetailLink(post.id)}
+                                        href={createEditLink(post.id)}
                                         className="hover:text-blue-600 transition-colors"
                                     >
                                         {post.title}

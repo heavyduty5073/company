@@ -15,6 +15,8 @@ import { ItalicIcon } from "@/utils/icons/Italic";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { LuSticker } from "react-icons/lu";
 import { HiStrikethrough } from "react-icons/hi2";
+import { MdAttachFile } from "react-icons/md";
+import { IoClose } from "react-icons/io5";
 import EmojiPicker from "@/lib/editor/EmojiPicker";
 import TextStyle from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
@@ -29,6 +31,7 @@ import { FaAlignRight } from "react-icons/fa6";
 import VideoModal from "@/components/editor/VideoModal";
 import {FONT_FAMILIES} from "@/lib/editor/fonts/Fonts";
 import useLoading from "@/app/hooks/useLoading";
+
 const Video = Node.create({
     name: 'video',
     group: 'block',
@@ -70,6 +73,13 @@ export interface EditorRef {
     setContent: (content: string) => void;
 }
 
+interface AttachmentFile {
+    name: string;
+    url: string;
+    size: number;
+    type: string;
+}
+
 const Editor = forwardRef<EditorRef, EditorProps>(({
                                                        name,
                                                        placeholder = '텍스트를 입력해주세요.',
@@ -83,7 +93,8 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
     const [showVideoModal, setShowVideoModal] = useState(false);
     const [stickerLink, setStickerLink] = useState("");
     const [imageLinks, setImageLinks] = useState<string[]>([]);
-    const {isLoading,setLoading} =useLoading()
+    const [attachments, setAttachments] = useState<AttachmentFile[]>([]);
+    const {isLoading,setLoading} = useLoading()
     const { notify } = useAlert();
     const contentRef = useRef(defaultValue || '');
 
@@ -154,11 +165,11 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
     }, [editor]);
 
     useEffect(() => {
-        const imagesInput = document.getElementById('images') as HTMLInputElement;
-        if (imagesInput) {
-            imagesInput.value = JSON.stringify(imageLinks);
+        const attachmentsInput = document.getElementById('attachments') as HTMLInputElement;
+        if (attachmentsInput) {
+            attachmentsInput.value = JSON.stringify(attachments);
         }
-    }, [imageLinks]);
+    }, [attachments]);
 
     useImperativeHandle(ref, () => ({
         setContent: (newContent: string) => {
@@ -201,12 +212,96 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
         }
     }, [editor]);
 
-    useEffect(() => {
-        const imagesInput = document.getElementById('images') as HTMLInputElement;
-        if (imagesInput) {
-            imagesInput.value = JSON.stringify(imageLinks);
+    const handleFileUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            // 파일 크기 제한 (예: 10MB)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                notify.failure('파일 크기는 10MB를 초과할 수 없습니다.');
+                e.target.value = '';
+                return;
+            }
+
+            // 허용된 파일 타입 체크
+            const allowedTypes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.hancom.hwp',
+                'application/x-hwp',
+                'text/plain',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'application/zip',
+                'application/x-zip-compressed',
+                'image/jpeg',
+                'image/png',
+                'image/gif'
+            ];
+
+            // 파일 확장자로도 체크 (한글파일의 경우 MIME 타입이 정확하지 않을 수 있음)
+            const fileName = file.name.toLowerCase();
+            const allowedExtensions = ['.pdf', '.doc', '.docx', '.hwp', '.txt', '.xls', '.xlsx', '.ppt', '.pptx', '.zip', '.jpg', '.jpeg', '.png', '.gif'];
+            const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
+
+            if (!allowedTypes.includes(file.type) && !hasValidExtension) {
+                notify.failure('지원하지 않는 파일 형식입니다. (PDF, 워드, 한글, 엑셀, 파워포인트, 텍스트, 이미지, ZIP 파일만 가능)');
+                e.target.value = '';
+                return;
+            }
+
+            try {
+                setLoading(true);
+
+                const formData = new FormData();
+                formData.append('files[0]', file);
+
+                const response = await fetch('/api/upload/?action=fileUpload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const newAttachment: AttachmentFile = {
+                        name: file.name,
+                        url: result.data,
+                        size: file.size,
+                        type: file.type
+                    };
+
+                    setAttachments(prev => [...prev, newAttachment]);
+                    notify.success('파일이 업로드되었습니다.');
+                } else {
+                    notify.failure('업로드 할 수 없는 형식입니다. 서버에서 해당 파일 타입을 지원하지 않습니다.');
+                    console.error('Upload failed:', result);
+                }
+            } catch (error) {
+                notify.failure('파일 업로드에 실패했습니다.');
+                console.error('Upload error:', error);
+            } finally {
+                setLoading(false);
+                e.target.value = '';
+            }
         }
-    }, [imageLinks]);
+    }, []);
+
+    const removeAttachment = useCallback((index: number) => {
+        setAttachments(prev => prev.filter((_, i) => i !== index));
+    }, []);
+
+    const formatFileSize = (bytes: number) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
     const insertEmoji = (emoji: string) => {
         if (editor) {
             editor.chain().focus().insertContent(emoji).run();
@@ -233,6 +328,15 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
                         className="hidden"
                     />
                     <SlPicture className="w-5 h-5"/>
+                </label>
+                <label className="rounded hover:bg-white/10 cursor-pointer p-1 mr-1" title="첨부파일">
+                    <input
+                        type="file"
+                        accept="*/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                    />
+                    <MdAttachFile className="w-5 h-5"/>
                 </label>
                 <button
                     type="button"
@@ -315,7 +419,6 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
             </div>
             {/*두번째 줄*/}
             <div className="flex w-full mb-2">
-
                 <select
                     className="border border-gray-300 rounded px-1 py-1 text-sm w-full"
                     onChange={(e) => editor?.chain().focus().setFontFamily(e.target.value).run()}
@@ -339,6 +442,37 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
         </div>
     );
 
+    // 첨부파일 목록 렌더링
+    const renderAttachments = () => {
+        if (attachments.length === 0) return null;
+
+        return (
+            <div className="border-t border-gray-200 p-2">
+                <h4 className="text-sm font-medium mb-2">첨부파일 ({attachments.length})</h4>
+                <div className="space-y-2">
+                    {attachments.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                            <div className="flex items-center space-x-2">
+                                <MdAttachFile className="w-4 h-4 text-gray-500" />
+                                <div>
+                                    <span className="text-sm font-medium">{file.name}</span>
+                                    <span className="text-xs text-gray-500 ml-2">({formatFileSize(file.size)})</span>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => removeAttachment(index)}
+                                className="text-red-500 hover:text-red-700 p-1"
+                                title="삭제"
+                            >
+                                <IoClose className="w-4 h-4" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="rounded relative w-full border border-gray-300">
@@ -351,9 +485,9 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
             />
             <input
                 type="hidden"
-                id="images"
-                name="images"
-                value={JSON.stringify(imageLinks)}
+                id="attachments"
+                name="attachments"
+                value={JSON.stringify(attachments)}
             />
 
             {!readOnly && renderToolbar()}
@@ -361,6 +495,8 @@ const Editor = forwardRef<EditorRef, EditorProps>(({
             <div className="w-full h-auto lg:h-full overflow-y-auto">
                 <EditorContent editor={editor} className="w-full h-full"/>
             </div>
+
+            {!readOnly && renderAttachments()}
 
             <Sticker
                 show={showSticker}

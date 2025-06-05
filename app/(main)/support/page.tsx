@@ -1,6 +1,6 @@
 import React from 'react';
 import { notFound, redirect } from "next/navigation";
-import { getSupportList, searchSupport, getInquiry, searchInquiry } from "@/app/(main)/support/actions";
+import { searchSupport, getInquiry, searchInquiry } from "@/app/(main)/support/actions";
 import {Posts, InquiryWithUser} from "@/utils/supabase/types";
 import NoticeHeader from "@/components/common/SupportHeader";
 import NoticeSearch from '@/components/common/NoticeSearch';
@@ -8,6 +8,7 @@ import NoticeTable from '@/components/common/NoticeTable';
 import Pagination from "@/components/common/Pagination";
 import { createClient } from "@/utils/supabase/server";
 import InquiryTable from "@/components/support/InquiryTable";
+import { getSupportList } from '@/app/(admin)/admin/support/actions';
 
 async function Page({ searchParams }: { searchParams: Promise<{ type: string; page?: string; search?: string }> }) {
     const { type, page = "1", search } = await searchParams;

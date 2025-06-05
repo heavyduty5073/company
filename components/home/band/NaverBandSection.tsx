@@ -57,7 +57,6 @@ const NaverBandSection: React.FC<NaverBandSectionProps> = ({ bandUrl }) => {
             }
 
             if (response.data.posts) {
-                console.log(`밴드 게시글 ${response.data.posts.length}개 로드 성공 (NaverBandSection)`);
                 setPosts(response.data.posts);
                 setIsDataReady(true);
             } else {
@@ -65,7 +64,6 @@ const NaverBandSection: React.FC<NaverBandSectionProps> = ({ bandUrl }) => {
                 setIsDataReady(true);
             }
         } catch (err: any) {
-            console.error('밴드 게시글 로딩 중 오류 (NaverBandSection):', err);
             setError(err.message || '게시글을 불러올 수 없습니다.');
             setIsDataReady(true); // 에러가 발생해도 데이터 로딩 시도는 완료됨
         }
