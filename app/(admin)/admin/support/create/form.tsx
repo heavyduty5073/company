@@ -55,7 +55,7 @@ function CreateSupportForm({type}:{type:string}) {
                 {/* 공지사항일 때만 관리자 전용 옵션 표시 */}
                 {type === 'notice' && (
                     <div>
-                        <Label className={'mb-2'}>권한 설정</Label>
+                        <Label className={'mb-2'}>공지글 권한 설정</Label>
                     <div className={'flex items-center py-3 border border-black rounded-lg'}>
                         <Label
                             htmlFor="adminOnly"

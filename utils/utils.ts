@@ -132,3 +132,19 @@ export const formatRelativeDate = (dateValue: string | number) => {
         day: 'numeric',
     }).format(date);
 };
+
+export function parseAttachments(attachments: any): any[] {
+    if (!attachments) return [];
+    if (Array.isArray(attachments)) return attachments;
+
+    try {
+        if (typeof attachments === 'string') {
+            const parsed = JSON.parse(attachments);
+            return Array.isArray(parsed) ? parsed : [];
+        }
+        return [];
+    } catch (error) {
+        console.error('첨부파일 파싱 실패:', error);
+        return [];
+    }
+}
