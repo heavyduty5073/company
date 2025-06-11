@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Phone, Calendar } from 'lucide-react';
 import { Schedules } from "@/utils/supabase/types";
+import {useScheduleStore} from "@/lib/store/useScheduleStore";
 
 interface ScheduleCalendarPopupProps {
     schedules: Schedules[];
@@ -18,6 +19,7 @@ const ScheduleCalendarPopup: React.FC<ScheduleCalendarPopupProps> = ({
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
+    const reservationStatusMap = useScheduleStore((state) => state.reservationStatus);
     useEffect(() => {
         // 모바일 감지
         const checkMobile = () => {
@@ -46,6 +48,13 @@ const ScheduleCalendarPopup: React.FC<ScheduleCalendarPopupProps> = ({
             window.removeEventListener('resize', checkMobile);
         };
     }, []);
+    useEffect(() => {
+        const map = new Map<string, boolean>();
+        schedules.forEach((schedule) => {
+            map.set(schedule.schedule_date, schedule.is_open); // true면 예약 가능
+        });
+        useScheduleStore.getState().bulkSetReservationStatus(map);
+    }, [schedules]);
 
     // 현재 달의 스케줄만 필터링
     const getCurrentMonthSchedules = () => {
@@ -91,9 +100,13 @@ const ScheduleCalendarPopup: React.FC<ScheduleCalendarPopupProps> = ({
     };
 
     // 예약 가능 여부 확인
-    const isDateAvailable = (day: number) => {
-        const daySchedules = getSchedulesForDate(day);
-        return daySchedules.some(s => s.is_available);
+    const getReservationStatus = (day: number) => {
+        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+            .toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+        const isOpen = reservationStatusMap.get(dateString);
+        if (isOpen === undefined) return true; // 기본값: 예약 가능
+        return isOpen; // true = 예약 가능, false = 마감
     };
 
     const handleClose = () => {
@@ -196,33 +209,34 @@ const ScheduleCalendarPopup: React.FC<ScheduleCalendarPopupProps> = ({
                             <div className="grid grid-cols-7 gap-1">
                                 {days.map((day, index) => {
                                     if (day === null) {
-                                        return <div key={`empty-${index}`} className="p-2 h-12" />;
+                                        return <div key={`empty-${index}`} className="p-2 h-14" />;
                                     }
 
-                                    const isAvailable = isDateAvailable(day);
+                                    const isOpen = getReservationStatus(day);
                                     const daySchedules = getSchedulesForDate(day);
 
                                     return (
                                         <div
                                             key={`day-${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`}
                                             onClick={() => handleDateClick(day)}
-                                            className={`p-2 border rounded-md h-12 text-center text-sm cursor-pointer transition-colors relative ${
+                                            className={`p-2 border rounded-md h-14 text-center cursor-pointer transition-colors relative flex flex-col justify-center ${
                                                 index % 7 === 0 ? 'text-red-400' : index % 7 === 6 ? 'text-blue-400' : 'text-gray-200'
                                             } ${
-                                                isAvailable ? 'border-green-500 bg-green-900/30 hover:bg-green-800/50' :
+                                                isOpen ? 'border-green-500 bg-green-900/30 hover:bg-green-800/50' :
                                                     daySchedules.length > 0 ? 'border-red-500 bg-red-900/30' : 'border-gray-600 hover:bg-gray-700'
                                             }`}
                                         >
-                                            <div className="text-xs font-medium">{day}</div>
-                                            {isAvailable && (
-                                                <div className="absolute bottom-0 left-0 right-0 h-1 bg-green-400 rounded-b"></div>
+                                            <div className="text-sm font-medium">{day}</div>
+                                            {isOpen && (
+                                                <div className="text-xs text-green-400 font-bold">○</div>
                                             )}
-                                            {daySchedules.length > 0 && !isAvailable && (
-                                                <div className="absolute bottom-0 left-0 right-0 h-1 bg-red-400 rounded-b"></div>
+                                            {daySchedules.length > 0 && !isOpen && (
+                                                <div className="text-xs text-red-400 font-bold">×</div>
                                             )}
                                         </div>
                                     );
                                 })}
+
                             </div>
 
                             {/* 범례 */}
@@ -326,7 +340,7 @@ const ScheduleCalendarPopup: React.FC<ScheduleCalendarPopupProps> = ({
                                 return <div key={`empty-${index}`} className="p-2 h-14" />;
                             }
 
-                            const isAvailable = isDateAvailable(day);
+                            const is_open = getReservationStatus(day);
                             const daySchedules = getSchedulesForDate(day);
 
                             return (
@@ -336,15 +350,15 @@ const ScheduleCalendarPopup: React.FC<ScheduleCalendarPopupProps> = ({
                                     className={`p-2 border rounded-md h-14 text-center cursor-pointer transition-colors relative flex flex-col justify-center ${
                                         index % 7 === 0 ? 'text-red-400' : index % 7 === 6 ? 'text-blue-400' : 'text-gray-200'
                                     } ${
-                                        isAvailable ? 'border-green-500 bg-green-900/30 hover:bg-green-800/50' :
+                                        is_open ? 'border-green-500 bg-green-900/30 hover:bg-green-800/50' :
                                             daySchedules.length > 0 ? 'border-red-500 bg-red-900/30' : 'border-gray-600 hover:bg-gray-700'
                                     }`}
                                 >
                                     <div className="text-sm font-medium">{day}</div>
-                                    {isAvailable && (
+                                    {is_open && (
                                         <div className="text-xs text-green-400 font-bold">○</div>
                                     )}
-                                    {daySchedules.length > 0 && !isAvailable && (
+                                    {daySchedules.length > 0 && !is_open && (
                                         <div className="text-xs text-red-400 font-bold">×</div>
                                     )}
                                 </div>
@@ -357,12 +371,10 @@ const ScheduleCalendarPopup: React.FC<ScheduleCalendarPopupProps> = ({
                         <div className="text-sm space-y-2 text-gray-200">
                             <div className="flex items-center">
                                 <span className="inline-block w-3 h-3 bg-green-400 rounded mr-2"></span>
-                                <span className="text-green-400 mr-2 font-bold">○</span>
                                 예약 가능
                             </div>
                             <div className="flex items-center">
                                 <span className="inline-block w-3 h-3 bg-red-400 rounded mr-2"></span>
-                                <span className="text-red-400 mr-2 font-bold">×</span>
                                 예약 마감
                             </div>
                         </div>

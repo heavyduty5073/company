@@ -1,11 +1,13 @@
 // components/admin/AdminScheduleCalendar.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 import ScheduleDayModal from './ScheduleDayModal';
 import {Schedules} from "@/utils/supabase/types";
 import ScheduleForm from "@/components/admin/schedule/ScheduleForm";
+import {updateReservationStatus} from "@/app/(admin)/admin/schedule/actions";
+import {useScheduleStore} from "@/lib/store/useScheduleStore";
 
 interface AdminScheduleCalendarProps {
     initialSchedules: Schedules[];
@@ -16,125 +18,127 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [showForm, setShowForm] = useState(false);
     const [editingSchedule, setEditingSchedule] = useState<Schedules | null>(null);
-    // 날짜별 예약 상태 관리 (관리자용 - 전화 예약 현황 업데이트)
-    const [dateReservationStatus, setDateReservationStatus] = useState<Map<string, 'available' | 'full'>>(new Map());
 
-    // 현재 달의 스케줄만 필터링
+    const reservationStatusMap = useScheduleStore((state) => state.reservationStatus);
+    const setReservationStatus = useScheduleStore((state) => state.setReservationStatus);
+    const bulkSetReservationStatus = useScheduleStore((state) => state.bulkSetReservationStatus);
+
+    // useMemo로 초기 상태 설정 최적화
+    useEffect(() => {
+        const map = new Map<string, boolean>();
+        initialSchedules.forEach((schedule) => {
+            const date = schedule.schedule_date;
+
+            // ✅ is_open 그대로 사용
+            const prev = map.get(date) ?? true;
+            map.set(date, prev && schedule.is_open); // 예약 가능한 경우만 true로 유지
+        });
+        bulkSetReservationStatus(map);
+    }, [initialSchedules]);
+
+    const toggleReservationStatus = async (day: number, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+            .toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+        const currentIsOpen = reservationStatusMap.get(dateString);
+        if (currentIsOpen === undefined) return;
+
+        const newIsOpen = !currentIsOpen;
+
+        const { data, error } = await updateReservationStatus(dateString, newIsOpen);
+
+        if (!error) {
+            setReservationStatus(dateString, newIsOpen);
+        } else {
+            console.error('⛔️ 업데이트 실패:', error.message);
+        }
+    };
+
     const getCurrentMonthSchedules = () => {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth() + 1;
         const startDate = `${year}-${month.toString().padStart(2, '0')}-01`;
         const endDate = new Date(year, month, 0).toISOString().split('T')[0];
-
-        return initialSchedules.filter(schedule =>
-            schedule.schedule_date >= startDate && schedule.schedule_date <= endDate
-        );
+        return initialSchedules.filter((schedule) => schedule.schedule_date >= startDate && schedule.schedule_date <= endDate);
     };
 
-    const schedules = getCurrentMonthSchedules();
+    const schedules = useMemo(() => getCurrentMonthSchedules(), [currentDate, initialSchedules]);
 
-    // 달력 생성 함수
     const generateCalendar = () => {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
-
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
         const daysInMonth = lastDay.getDate();
         const startingDayOfWeek = firstDay.getDay();
-
         const days = [];
-
-        // 이전 달의 날짜들
         for (let i = 0; i < startingDayOfWeek; i++) {
             days.push(null);
         }
-
-        // 현재 달의 날짜들
         for (let day = 1; day <= daysInMonth; day++) {
             days.push(day);
         }
-
         return days;
     };
 
-    // 특정 날짜의 스케줄 가져오기
     const getSchedulesForDate = (day: number) => {
-        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        return schedules.filter(schedule => schedule.schedule_date === dateString);
+        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+            .toString()
+            .padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        return schedules.filter((schedule) => schedule.schedule_date === dateString);
     };
 
-    // 날짜별 예약 상태 토글 (관리자가 전화 예약 현황에 따라 업데이트)
-    const toggleReservationStatus = (day: number, e: React.MouseEvent) => {
-        e.stopPropagation(); // 날짜 클릭 이벤트 방지
-        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-
-        setDateReservationStatus(prev => {
-            const newMap = new Map(prev);
-            const currentStatus = newMap.get(dateString) || 'available';
-            newMap.set(dateString, currentStatus === 'available' ? 'full' : 'available');
-            return newMap;
-        });
-    };
-
-    // 날짜의 예약 상태 확인
     const getReservationStatus = (day: number) => {
-        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        return dateReservationStatus.get(dateString) || 'available';
-    };
+        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+            .toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
-    // 이전/다음 달 이동
+        const isOpen = reservationStatusMap.get(dateString);
+        if (isOpen === undefined) return 'available'; // 기본값은 예약 가능
+
+        return isOpen ? 'available' : 'full'; // ✅ 이제 true가 '예약 가능'이 됨
+    };
     const navigateMonth = (direction: 'prev' | 'next') => {
-        setCurrentDate(prev => {
+        setCurrentDate((prev) => {
             const newDate = new Date(prev);
-            if (direction === 'prev') {
-                newDate.setMonth(prev.getMonth() - 1);
-            } else {
-                newDate.setMonth(prev.getMonth() + 1);
-            }
+            if (direction === 'prev') newDate.setMonth(prev.getMonth() - 1);
+            else newDate.setMonth(prev.getMonth() + 1);
             return newDate;
         });
     };
 
-    // 날짜 클릭 핸들러
     const handleDateClick = (day: number) => {
-        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+            .toString()
+            .padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
         setSelectedDate(dateString);
     };
 
-    // 새 스케줄 등록
     const handleNewSchedule = () => {
         if (!selectedDate) return;
         setEditingSchedule(null);
         setShowForm(true);
     };
 
-    // 스케줄 수정
     const handleEditSchedule = (schedule: Schedules) => {
         setEditingSchedule(schedule);
         setShowForm(true);
     };
 
-    // 폼 닫기
     const handleCloseForm = () => {
         setShowForm(false);
         setEditingSchedule(null);
     };
 
-    // 모달 닫기
     const handleCloseModal = () => {
         setSelectedDate(null);
     };
 
     const days = generateCalendar();
-    const monthNames = [
-        '1월', '2월', '3월', '4월', '5월', '6월',
-        '7월', '8월', '9월', '10월', '11월', '12월'
-    ];
-    const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+    const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+    const dayNames = ['일','월','화','수','목','금','토'];
 
-    const selectedDateSchedules = selectedDate ?
-        schedules.filter(schedule => schedule.schedule_date === selectedDate) : [];
+    const selectedDateSchedules = selectedDate ? schedules.filter(schedule => schedule.schedule_date === selectedDate) : [];
 
     return (
         <div className="p-6">
@@ -193,8 +197,8 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
                     const daySchedules = getSchedulesForDate(day);
                     const hasSchedules = daySchedules.length > 0;
-                    const hasAvailableSchedule = daySchedules.some(s => s.is_available);
-                    const hasUnavailableSchedule = daySchedules.some(s => !s.is_available);
+                    const hasAvailableSchedule = daySchedules.some(s => s.is_open);
+                    const hasUnavailableSchedule = daySchedules.some(s => !s.is_open);
                     const reservationStatus = getReservationStatus(day);
 
                     return (
@@ -211,15 +215,12 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
                             <div className="flex justify-between items-start mb-1">
                                 <div className="text-sm font-medium">{day}</div>
                                 <button
+                                    disabled={!hasSchedules}
                                     onClick={(e) => toggleReservationStatus(day, e)}
-                                    className={`w-5 h-5 rounded-full text-xs font-bold transition-colors flex items-center justify-center ${
-                                        reservationStatus === 'full'
-                                            ? 'bg-orange-500 text-white hover:bg-orange-600'
-                                            : 'bg-green-500 text-white hover:bg-green-600'
-                                    }`}
-                                    title={reservationStatus === 'full' ? '예약 만석 → 예약 가능으로 변경' : '예약 가능 → 예약 만석으로 변경'}
+                                    className={`w-5 h-5 rounded-full transition-colors flex items-center justify-center border border-white shadow-sm ring-1 ring-inset ring-gray-200
+    ${reservationStatus === 'full' ? 'bg-orange-500' : 'bg-green-500'}`}
+                                    title={reservationStatus === 'full' ? '예약 만석 → 예약 가능' : '예약 가능 → 예약 만석'}
                                 >
-                                    {reservationStatus === 'full' ? '×' : '○'}
                                 </button>
                             </div>
 

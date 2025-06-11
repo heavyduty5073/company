@@ -1,9 +1,8 @@
-// components/admin/ScheduleForm.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Schedules } from '@/utils/supabase/types';
-import FormContainer, {FormState} from '@/components/ui/form';
+import FormContainer from '@/components/ui/form';
 import {ERROR_CODES} from "@/utils/ErrorMessage";
 import {createSchedule, updateSchedule} from "@/app/(admin)/admin/schedule/actions";
 
@@ -14,7 +13,6 @@ interface ScheduleFormProps {
 }
 
 export default function ScheduleForm({ schedule, defaultDate, onSuccess }: ScheduleFormProps) {
-    const [isAvailable, setIsAvailable] = useState(schedule?.is_available ?? true);
     const isEditMode = !!schedule;
 
     return (
@@ -87,45 +85,6 @@ export default function ScheduleForm({ schedule, defaultDate, onSuccess }: Sched
                             placeholder="예: 김기사, 이기사, 박기사..."
                             className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                         />
-                    </div>
-
-                    {/* 예약 가능 여부 토글 */}
-                    <div className="bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
-                        <label className="flex items-center justify-between cursor-pointer">
-                            <div className="flex items-center">
-                <span className="text-sm font-semibold text-gray-700 mr-3">
-                  🎯 예약 상태
-                </span>
-                                <span className={`text-sm px-3 py-1 rounded-full font-medium ${
-                                    isAvailable
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-red-100 text-red-800'
-                                }`}>
-                  {isAvailable ? '✅ 예약 가능' : '❌ 예약 마감'}
-                </span>
-                            </div>
-                            <div className="relative">
-                                <input
-                                    type="checkbox"
-                                    name="is_available_checkbox"
-                                    id="is_available"
-                                    checked={isAvailable}
-                                    onChange={(e) => setIsAvailable(e.target.checked)}
-                                    className="sr-only"
-                                />
-                                <div className={`w-12 h-6 rounded-full transition-colors ${
-                                    isAvailable ? 'bg-green-500' : 'bg-red-400'
-                                }`}>
-                                    <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${
-                                        isAvailable ? 'translate-x-6' : 'translate-x-1'
-                                    } mt-0.5`} />
-                                </div>
-                            </div>
-                            <input type="hidden" name="is_available" value={isAvailable ? 'true' : 'false'} />
-                        </label>
-                        <p className="text-xs text-gray-500 mt-2">
-                            토글을 클릭하여 예약 가능 여부를 변경할 수 있습니다
-                        </p>
                     </div>
 
                     {/* 메모 */}

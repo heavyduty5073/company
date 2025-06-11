@@ -66,11 +66,7 @@ export default function ScheduleDayModal({
                         {schedules.map((schedule) => (
                             <div
                                 key={schedule.id}
-                                className={`p-4 border-2 rounded-lg transition-all ${
-                                    schedule.is_available
-                                        ? 'border-green-200 bg-green-50 hover:bg-green-100'
-                                        : 'border-red-200 bg-red-50 hover:bg-red-100'
-                                }`}
+                                className={`p-4 border-2 rounded-lg transition-all`}
                             >
                                 <div className="flex justify-between items-start mb-3">
                                     <div className="flex-1">
@@ -94,27 +90,6 @@ export default function ScheduleDayModal({
                                                 </div>
                                             </div>
                                         )}
-                                    </div>
-
-                                    <div className="flex flex-col items-end space-y-2 ml-4">
-                                        {/* 상태 토글 */}
-                                        <FormContainer action={toggleScheduleAvailability}>
-                                            <input type="hidden" name="id" value={schedule.id} />
-                                            <input type="hidden" name="is_available" value={(!schedule.is_available).toString()} />
-                                            <button
-                                                type="submit"
-                                                className={`px-4 py-2 rounded-full text-sm font-medium border-2 transition-all ${
-                                                    schedule.is_available
-                                                        ? 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200'
-                                                        : 'bg-red-100 text-red-700 border-red-300 hover:bg-red-200'
-                                                }`}
-                                            >
-                        <span className={`w-2 h-2 rounded-full inline-block mr-2 ${
-                            schedule.is_available ? 'bg-green-500' : 'bg-red-500'
-                        }`} />
-                                                {schedule.is_available ? '예약 가능' : '예약 마감'}
-                                            </button>
-                                        </FormContainer>
                                     </div>
                                 </div>
 

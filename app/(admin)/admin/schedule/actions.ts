@@ -129,7 +129,21 @@ export async function getSchedulesForCalendar(year: number, month: number): Prom
 
     return getSchedulesByDateRange(startDate, endDate);
 }
+export async function updateReservationStatus(date: string, isOpen: boolean) {
+    const supabase = await createClient();
 
+    const { data, error } = await supabase
+        .from('schedules')
+        .update({ is_open: isOpen })
+        .eq('schedule_date', date)
+        .select();
+
+    if (error) {
+        console.error('예약 상태 업데이트 실패:', error.message);
+    }
+
+    return { data, error };
+}
 export async function createSchedule(formData: FormData): Promise<FormState> {
     try {
         const supabase = await createClient();
@@ -138,7 +152,6 @@ export async function createSchedule(formData: FormData): Promise<FormState> {
             schedule_date: formData.get('schedule_date') as string,
             region: formData.get('region') as string,
             driver_name: formData.get('driver_name') as string,
-            is_available: formData.get('is_available') === 'true',
             notes: formData.get('notes') as string || null,
         };
 
@@ -205,7 +218,6 @@ export async function updateSchedule(formData: FormData): Promise<FormState> {
             schedule_date: formData.get('schedule_date') as string,
             region: formData.get('region') as string,
             driver_name: formData.get('driver_name') as string,
-            is_available: formData.get('is_available') === 'true',
             notes: formData.get('notes') as string || null,
             updated_at: new Date().toISOString(),
         };
