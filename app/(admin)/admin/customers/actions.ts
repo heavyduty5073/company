@@ -171,7 +171,7 @@ export async function changeUserRole(formData: FormData): Promise<FormState> {
 
         // app_metadata에 role 업데이트 (더 안전함)
         const { error } = await adminSupabase.auth.admin.updateUserById(userId, {
-            app_metadata: { role },
+            user_metadata: { role },
         })
 
         if (error) {

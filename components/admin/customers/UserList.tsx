@@ -90,7 +90,7 @@ export default function UserList({
                 </TableHeader>
                 <TableBody>
                     {users.map((user) => {
-                        const currentRole = user.app_metadata?.role || user.user_metadata?.role || 'user'
+                        const currentRole = user.user_metadata?.role || 'user'
                         const selectedRole = selectedRoles[user.id]
 
                         return (
