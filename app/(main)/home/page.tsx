@@ -14,6 +14,8 @@ import InAppButton from "@/components/home/inApp/InAppButton";
 import WorkTime from "@/components/home/WorkTime";
 import UreaPopup from '@/components/home/popup/UreaPopup';
 import ContactBanner from "@/components/home/ContactBanner";
+import ScheduleCalendarPopup from "@/components/home/popup/ScheduleCalendarPopup";
+import {getAllSchedules} from "@/app/(admin)/admin/schedule/actions";
 
 // 동적 임포트 (서버 컴포넌트에서는 ssr: false 옵션 제거)
 const RepairCaseCarousel = dynamic(
@@ -45,10 +47,12 @@ export const metadata: Metadata = {
 async function Page() {
     // 서버에서 데이터 프리페치
     const data = await getLatestRepairCases();
-
+    const schedules = await getAllSchedules();
     return (
         <main className="flex flex-col w-full">
             {/* 요소수 첨가제 홍보 팝업 */}
+
+            <ScheduleCalendarPopup schedules={schedules}/>
             <UreaPopup />
             {/* 히어로 섹션: 배너 + 타이핑 텍스트 */}
             <section className="relative w-full">

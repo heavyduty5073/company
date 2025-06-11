@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import { HiOutlineChatAlt2 } from "react-icons/hi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { AiOutlineSchedule } from "react-icons/ai";
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
 import {User} from "@supabase/auth-js";
@@ -79,6 +80,12 @@ export function AppSidebar({user}:{user:User}) {
                         icon={<Users size={20} />}
                         title="고객 관리"
                         active={isActive('/admin/customers')}
+                    />
+                    <SidebarItem
+                        href="/admin/schedule"
+                        icon={<AiOutlineSchedule size={20} />}
+                        title="일정 관리"
+                        active={isActive('/admin/schedule')}
                     />
                     {/*<SidebarItem*/}
                     {/*    href="/admin/repair"*/}

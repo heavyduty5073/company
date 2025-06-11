@@ -2,6 +2,7 @@ import {Database} from "@/lib/database.types";
 
 export type Posts = Database['public']['Tables']['posts']['Row'];
 export type Inquiry = Database['public']['Tables']['inquiry']['Row'];
+export type Schedules = Database['public']['Tables']['schedules']['Row'];
 
 export interface InquiryWithUser {
     id: string;
