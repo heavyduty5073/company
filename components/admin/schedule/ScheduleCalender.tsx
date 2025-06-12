@@ -140,6 +140,11 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
     const selectedDateSchedules = selectedDate ? schedules.filter(schedule => schedule.schedule_date === selectedDate) : [];
 
+    const getSelectedDateReservationStatus = () => {
+        if (!selectedDate) return 'available';
+        const isOpen = reservationStatusMap.get(selectedDate);
+        return isOpen === false ? 'full' : 'available';
+    };
     return (
         <div className="p-6">
             {/* 상단 컨트롤 */}
@@ -235,12 +240,10 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
                             {/* 스케줄 상태 표시 */}
                             <div className="space-y-1">
-                                {hasAvailableSchedule && (
-                                    <div className="w-full h-1 bg-green-400 rounded" />
-                                )}
-                                {hasUnavailableSchedule && (
+                                {reservationStatus==='full' ? (
                                     <div className="w-full h-1 bg-red-400 rounded" />
-                                )}
+                                ):  <div className="w-full h-1 bg-green-400 rounded" />}
+
 
                                 {/* 스케줄 개수와 메모 표시 */}
                                 {hasSchedules && (
@@ -308,6 +311,7 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
                             schedule={editingSchedule}
                             defaultDate={selectedDate}
                             onSuccess={handleCloseForm}
+                            isDateFull={getSelectedDateReservationStatus() === 'full'}
                         />
                     </div>
                 </div>

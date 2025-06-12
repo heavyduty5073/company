@@ -148,11 +148,14 @@ export async function createSchedule(formData: FormData): Promise<FormState> {
     try {
         const supabase = await createClient();
 
+        const isDateFull = formData.get('isDateFull') === 'true';
+
         const scheduleData = {
             schedule_date: formData.get('schedule_date') as string,
             region: formData.get('region') as string,
             driver_name: formData.get('driver_name') as string,
             notes: formData.get('notes') as string || null,
+            is_open:!isDateFull,
         };
 
         // 유효성 검사
@@ -160,22 +163,6 @@ export async function createSchedule(formData: FormData): Promise<FormState> {
             return {
                 code: ERROR_CODES.VALIDATION_ERROR,
                 message: '날짜, 지역, 기사명은 필수 입력 항목입니다.',
-            };
-        }
-
-        // 중복 체크
-        const { data: existing } = await supabase
-            .from('schedules')
-            .select('id')
-            .eq('schedule_date', scheduleData.schedule_date)
-            .eq('region', scheduleData.region)
-            .eq('driver_name', scheduleData.driver_name)
-            .single();
-
-        if (existing) {
-            return {
-                code: ERROR_CODES.DB_ERROR,
-                message: '해당 날짜에 이미 같은 지역과 기사로 등록된 스케줄이 있습니다.',
             };
         }
 

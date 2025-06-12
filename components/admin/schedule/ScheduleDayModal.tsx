@@ -2,8 +2,12 @@
 
 import React from 'react';
 import { Schedules } from "@/utils/supabase/types";
-import FormContainer from "@/components/ui/form";
-import {deleteSchedule, toggleScheduleAvailability} from "@/app/(admin)/admin/schedule/actions";
+import FormContainer, {FormState} from "@/components/ui/form";
+import {deleteSchedule} from "@/app/(admin)/admin/schedule/actions";
+import {formatScheduleDate} from "@/utils/utils";
+import useAlert from "@/lib/notiflix/useAlert";
+import {ERROR_CODES} from "@/utils/ErrorMessage";
+import {useRouter} from "next/navigation";
 
 interface ScheduleDayModalProps {
     date: string;
@@ -20,21 +24,24 @@ export default function ScheduleDayModal({
                                              onNewSchedule,
                                              onEditSchedule,
                                          }: ScheduleDayModalProps) {
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            weekday: 'long'
-        });
-    };
 
+
+    const {notify } = useAlert();
+    const router = useRouter();
+    const handleDelete = (formState:FormState) => {
+       if(formState.code===ERROR_CODES.SUCCESS){
+           notify.success(formState.message);
+           router.refresh()
+       }else{
+           notify.failure(formState.message);
+       }
+    };
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold">
-                        {formatDate(date)} 스케줄
+                        {formatScheduleDate(date)} 스케줄
                     </h3>
                     <button
                         onClick={onClose}
@@ -101,16 +108,11 @@ export default function ScheduleDayModal({
                                     >
                                         수정
                                     </button>
-                                    <FormContainer action={deleteSchedule}>
+                                    <FormContainer action={deleteSchedule} onResult={handleDelete}>
                                         <input type="hidden" name="id" value={schedule.id} />
                                         <button
                                             type="submit"
                                             className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 transition-colors"
-                                            onClick={(e) => {
-                                                if (!confirm('정말 삭제하시겠습니까?\n삭제된 스케줄은 복구할 수 없습니다.')) {
-                                                    e.preventDefault();
-                                                }
-                                            }}
                                         >
                                             삭제
                                         </button>

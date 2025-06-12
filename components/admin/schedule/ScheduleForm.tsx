@@ -10,9 +10,11 @@ interface ScheduleFormProps {
     schedule?: Schedules | null; // null도 허용
     defaultDate?: string | null; // null도 허용
     onSuccess?: () => void; // 성공 시 콜백
+    onCancel?: () => void; // 취소 시 콜백 추가
+    isDateFull: boolean;
 }
 
-export default function ScheduleForm({ schedule, defaultDate, onSuccess }: ScheduleFormProps) {
+export default function ScheduleForm({ schedule, defaultDate, onSuccess, onCancel,isDateFull }: ScheduleFormProps) {
     const isEditMode = !!schedule;
 
     return (
@@ -20,7 +22,8 @@ export default function ScheduleForm({ schedule, defaultDate, onSuccess }: Sched
             <FormContainer
                 action={isEditMode ? updateSchedule : createSchedule}
                 onResult={(result) => {
-                    if (result.code && ERROR_CODES.SUCCESS && onSuccess) {
+                    // 수정: 조건문 오타 수정
+                    if (result.code === ERROR_CODES.SUCCESS && onSuccess) {
                         onSuccess();
                     }
                 }}
@@ -28,7 +31,7 @@ export default function ScheduleForm({ schedule, defaultDate, onSuccess }: Sched
                 {isEditMode && schedule && (
                     <input type="hidden" name="id" value={schedule.id} />
                 )}
-
+                <input type="hidden" name="isDateFull" value={isDateFull.toString()} />
                 <div className="space-y-5">
                     {/* 제목 */}
                     <div className="text-center mb-6">
@@ -110,6 +113,17 @@ export default function ScheduleForm({ schedule, defaultDate, onSuccess }: Sched
                         >
                             {isEditMode ? '✅ 수정 완료' : '➕ 등록하기'}
                         </button>
+
+                        {/* 취소 버튼 추가 */}
+                        {onCancel && (
+                            <button
+                                type="button"
+                                onClick={onCancel}
+                                className="flex-1 bg-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-200 font-semibold transition-all"
+                            >
+                                ❌ 취소
+                            </button>
+                        )}
                     </div>
                 </div>
             </FormContainer>

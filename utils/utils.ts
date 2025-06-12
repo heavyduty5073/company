@@ -148,3 +148,12 @@ export function parseAttachments(attachments: any): any[] {
         return [];
     }
 }
+
+export const formatScheduleDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long'
+    });
+};
