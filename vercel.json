@@ -2,11 +2,13 @@
   "crons": [
     {
       "path": "/api/cron/daily-schedule",
-      "schedule": "30 8 * * *"
+      "schedule": "0 9 * * *",
+      "timezone": "Asia/Seoul"
     },
     {
       "path": "/api/cron/weekly-schedule",
-      "schedule": "30 8 * * 1"
+      "schedule": "0 9 * * 1",
+      "timezone": "Asia/Seoul"
     }
   ]
 }

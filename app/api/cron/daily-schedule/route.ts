@@ -3,7 +3,8 @@ import { createClient } from '@/utils/supabase/server';
 import { getKakaoWorkClient } from '@/utils/kakaowork';
 
 export async function GET(request: NextRequest) {
-    const today = new Date().toISOString().split('T')[0];
+    const koreaTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+    const today = koreaTime.toISOString().split('T')[0];
     try {
         // Vercel Cron 인증 (선택사항)
         const authHeader = request.headers.get('authorization');

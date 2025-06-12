@@ -1,4 +1,4 @@
-// weekly-schedule/route.ts (주간 스케줄 알림)
+// weekly-schedule/route.ts (시간대 설정 추가)
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { getKakaoWorkClient } from '@/utils/kakaowork';
@@ -13,10 +13,12 @@ export async function GET(request: NextRequest) {
 
         const supabase = await createClient();
 
-        // 이번 주 일요일부터 토요일까지
-        const today = new Date();
-        const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - today.getDay());
+        // 🕘 한국 시간대로 이번 주 계산
+        const koreaTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+
+        // 이번 주 일요일부터 토요일까지 (한국 시간 기준)
+        const startOfWeek = new Date(koreaTime);
+        startOfWeek.setDate(koreaTime.getDate() - koreaTime.getDay());
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
 
@@ -47,10 +49,13 @@ export async function GET(request: NextRequest) {
                 return acc;
             }, {} as Record<string, any[]>);
 
-            // 날짜별 상세 스케줄 생성
+            // 날짜별 상세 스케줄 생성 (한국 시간대 기준)
             const dateDetailList = Object.keys(schedulesByDate).sort().map(date => {
                 const daySchedules = schedulesByDate[date];
-                const dayName = new Date(date).toLocaleDateString('ko-KR', { weekday: 'short' });
+                const dayName = new Date(date + 'T12:00:00').toLocaleDateString('ko-KR', {
+                    weekday: 'short',
+                    timeZone: 'Asia/Seoul'
+                });
                 const scheduleDetails = daySchedules.map(schedule =>
                     `    - ${schedule.region} (${schedule.driver_name})`
                 ).join('\n');
@@ -89,7 +94,9 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({
                 success: true,
                 message: `주간 스케줄 요약 전송 완료 (${weekSchedules.length}건)`,
-                period: `${startDate} ~ ${endDate}`
+                period: `${startDate} ~ ${endDate}`,
+                serverTime: new Date().toISOString(),
+                koreaTime: koreaTime.toISOString()
             });
         } else {
             const kakaoWork = getKakaoWorkClient();
@@ -118,7 +125,9 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({
                 success: true,
                 message: '이번 주 스케줄이 없습니다.',
-                period: `${startDate} ~ ${endDate}`
+                period: `${startDate} ~ ${endDate}`,
+                serverTime: new Date().toISOString(),
+                koreaTime: koreaTime.toISOString()
             });
         }
 
