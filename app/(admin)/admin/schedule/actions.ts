@@ -5,6 +5,7 @@ import {FormState} from "@/components/ui/form";
 import { ERROR_CODES } from "@/utils/ErrorMessage";
 import {revalidatePath} from "next/cache";
 import {Schedules} from "@/utils/supabase/types";
+import {sendScheduleNotification} from "@/utils/kakaowork";
 
 export async function getAllSchedules(): Promise<Schedules[]> {
     const supabase = await createClient();
@@ -179,7 +180,7 @@ export async function createSchedule(formData: FormData): Promise<FormState> {
                 message: '스케줄 생성 중 오류가 발생했습니다.',
             };
         }
-
+        sendScheduleNotification('created', data).catch(console.error);
         revalidatePath('/admin/schedule');
         return {
             code: ERROR_CODES.SUCCESS,
@@ -238,7 +239,8 @@ export async function updateSchedule(formData: FormData): Promise<FormState> {
                 message: '스케줄 수정 중 오류가 발생했습니다.',
             };
         }
-
+        console.log('수정 데이터 확인:', data);
+        sendScheduleNotification('updated', data).catch(console.error);
         revalidatePath('/admin/schedule');
         return {
             code: ERROR_CODES.SUCCESS,
@@ -268,6 +270,22 @@ export async function deleteSchedule(formData: FormData): Promise<FormState> {
             };
         }
 
+        // 🔄 삭제 전에 먼저 데이터를 조회 (알림에 필요)
+        const { data: scheduleToDelete, error: selectError } = await supabase
+            .from('schedules')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (selectError) {
+            console.error('Schedule select error:', selectError);
+            return {
+                code: ERROR_CODES.DB_ERROR,
+                message: '삭제할 스케줄을 찾을 수 없습니다.',
+            };
+        }
+
+        // 실제 삭제 실행
         const { error } = await supabase
             .from('schedules')
             .delete()
@@ -280,6 +298,9 @@ export async function deleteSchedule(formData: FormData): Promise<FormState> {
                 message: '스케줄 삭제 중 오류가 발생했습니다.',
             };
         }
+
+        // 📢 카카오워크 삭제 알림 전송 (삭제된 데이터 정보 사용)
+        sendScheduleNotification('deleted', scheduleToDelete).catch(console.error);
 
         revalidatePath('/admin/schedule');
         return {
