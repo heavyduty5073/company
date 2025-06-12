@@ -239,7 +239,7 @@ export async function updateSchedule(formData: FormData): Promise<FormState> {
                 message: '스케줄 수정 중 오류가 발생했습니다.',
             };
         }
-        console.log('수정 데이터 확인:', data);
+
         sendScheduleNotification('updated', data).catch(console.error);
         revalidatePath('/admin/schedule');
         return {

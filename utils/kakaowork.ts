@@ -37,7 +37,6 @@ export class KakaoWorkClient {
             }
 
             const result = await response.json();
-            console.log('카카오워크 메시지 전송 성공:', result);
             return result;
         } catch (error) {
             console.error('카카오워크 메시지 전송 실패:', error);
@@ -341,7 +340,7 @@ export async function sendScheduleNotification(type: 'created' | 'updated' | 'de
         }
 
         await client.sendMessage(message.text, message.blocks);
-        console.log(`스케줄 ${type} 알림 전송 완료`);
+
     } catch (error) {
         console.error(`스케줄 ${type} 알림 전송 실패:`, error);
 
@@ -350,7 +349,7 @@ export async function sendScheduleNotification(type: 'created' | 'updated' | 'de
             const client = getKakaoWorkClient();
             const simpleText = `📅 스케줄 ${type === 'created' ? '등록' : type === 'updated' ? '수정' : '삭제'}: ${scheduleData.schedule_date} - ${scheduleData.region} (${scheduleData.driver_name})`;
             await client.sendMessage(simpleText);
-            console.log(`간단 텍스트로 알림 전송 완료`);
+
         } catch (fallbackError) {
             console.error('간단 텍스트 알림도 실패:', fallbackError);
         }
