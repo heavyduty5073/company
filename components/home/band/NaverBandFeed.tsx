@@ -43,6 +43,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMorePosts, setHasMorePosts] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
     const pageSize = 5; // 한 번에 5개씩 로드
 
@@ -56,6 +57,15 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
             seen.add(post.id);
             return true;
         });
+    };
+
+    // 이미지 URL을 프록시를 통해 처리하는 함수
+    const getImageSrc = (imageUrl: string): string => {
+        // 네이버 관련 도메인 이미지는 프록시를 통해 로드
+        if (imageUrl.includes('pstatic.net') || imageUrl.includes('naver.com') || imageUrl.includes('band.us')) {
+            return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
+        }
+        return imageUrl;
     };
 
     // 데이터 가져오기 함수
@@ -157,10 +167,15 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
         return tmp.textContent || tmp.innerText || '';
     };
 
-    // 이미지 에러 처리 (단순화)
-    const handleImageError = (event: any) => {
-        // 이미지 로드 실패시 숨김 처리
-        event.currentTarget.style.display = 'none';
+    // 이미지 에러 처리 개선
+    const handleImageError = (imageUrl: string, event: any) => {
+        console.error('이미지 로드 실패:', imageUrl);
+        setFailedImages(prev => new Set([...prev, imageUrl]));
+        // 이미지 컨테이너 숨김
+        const parent = event.currentTarget.parentElement;
+        if (parent) {
+            parent.style.display = 'none';
+        }
     };
 
     // 프리로드된 데이터가 있는 경우 로딩 상태 비활성화
@@ -235,34 +250,38 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
                                             className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-blue-900/10 transition-shadow border border-gray-700"
                                         >
                                             <div className="flex flex-col md:flex-row">
-                                                {/* 게시글 이미지 (있는 경우) */}
-                                                {post.imageUrl && (
+                                                {/* 게시글 이미지 (있는 경우) - 실패한 이미지는 표시하지 않음 */}
+                                                {post.imageUrl && !failedImages.has(post.imageUrl) && (
                                                     <div className="md:w-1/3 h-48 md:h-auto relative">
                                                         <Image
-                                                            src={post.imageUrl}
+                                                            src={getImageSrc(post.imageUrl)}
                                                             alt="게시글 이미지"
                                                             fill
                                                             sizes="(max-width: 768px) 100vw, 33vw"
                                                             className="object-cover"
                                                             loading="lazy"
-                                                            onError={handleImageError}
+                                                            onError={(e) => handleImageError(post.imageUrl!, e)}
                                                         />
                                                     </div>
                                                 )}
 
                                                 {/* 게시글 내용 */}
-                                                <div className={`p-4 flex flex-col ${post.imageUrl ? 'md:w-2/3' : 'w-full'}`}>
+                                                <div className={`p-4 flex flex-col ${
+                                                    post.imageUrl && !failedImages.has(post.imageUrl)
+                                                        ? 'md:w-2/3'
+                                                        : 'w-full'
+                                                }`}>
                                                     <div className="flex items-center text-xs text-gray-400 mb-3">
                                                         <div className="flex items-center">
-                                                            {post.author.profileImage && (
+                                                            {post.author.profileImage && !failedImages.has(post.author.profileImage) && (
                                                                 <Image
-                                                                    src={post.author.profileImage}
+                                                                    src={getImageSrc(post.author.profileImage)}
                                                                     width={20}
                                                                     height={20}
                                                                     alt={post.author.name}
                                                                     className="rounded-full mr-2"
                                                                     loading="lazy"
-                                                                    onError={handleImageError}
+                                                                    onError={(e) => handleImageError(post.author.profileImage, e)}
                                                                 />
                                                             )}
                                                             <span>{post.author.name}</span>
