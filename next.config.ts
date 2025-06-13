@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'coresos-phinf.pstatic.net' },
       { protocol: 'https', hostname: 'ssl.pstatic.net' },
       { protocol: 'https', hostname: 'phinf.pstatic.net' },
+      {
+        protocol: 'https',
+        hostname: '*.pstatic.net', // 네이버 이미지 서버
+      },
     ],
   },
 };
