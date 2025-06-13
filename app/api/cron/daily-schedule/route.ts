@@ -5,9 +5,16 @@ import { getKakaoWorkClient } from '@/utils/kakaowork';
 export async function GET(request: NextRequest) {
     const koreaTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
     const today = koreaTime.toISOString().split('T')[0];
+
+    console.log('=== 디버깅 정보 ===');
+    const authHeader = request.headers.get('authorization');
+    console.log('받은 Authorization:', authHeader);
+    console.log('환경변수 CRON_SECRET:', process.env.CRON_SECRET);
+    console.log('예상 값:', `Bearer ${process.env.CRON_SECRET}`);
+    console.log('일치 여부:', authHeader === `Bearer ${process.env.CRON_SECRET}`);
+
     try {
-        // Vercel Cron 인증 (선택사항)
-        const authHeader = request.headers.get('authorization');
+        // Vercel Cron 인증 (authHeader 재선언 제거)
         if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }

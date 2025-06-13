@@ -1,20 +1,30 @@
-// weekly-schedule/route.ts (시간대 설정 추가)
+// weekly-schedule/route.ts (디버깅 로그 추가)
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { getKakaoWorkClient } from '@/utils/kakaowork';
 
 export async function GET(request: NextRequest) {
+    console.log('=== 주간 스케줄 디버깅 정보 ===');
+    const authHeader = request.headers.get('authorization');
+    console.log('받은 Authorization:', authHeader);
+    console.log('환경변수 CRON_SECRET:', process.env.CRON_SECRET);
+    console.log('예상 값:', `Bearer ${process.env.CRON_SECRET}`);
+    console.log('일치 여부:', authHeader === `Bearer ${process.env.CRON_SECRET}`);
+
     try {
         // Vercel Cron 인증
-        const authHeader = request.headers.get('authorization');
         if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+            console.log('❌ 인증 실패');
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
+
+        console.log('✅ 인증 통과');
 
         const supabase = await createClient();
 
         // 🕘 한국 시간대로 이번 주 계산
         const koreaTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+        console.log('한국 시간:', koreaTime.toISOString());
 
         // 이번 주 일요일부터 토요일까지 (한국 시간 기준)
         const startOfWeek = new Date(koreaTime);
@@ -24,6 +34,8 @@ export async function GET(request: NextRequest) {
 
         const startDate = startOfWeek.toISOString().split('T')[0];
         const endDate = endOfWeek.toISOString().split('T')[0];
+
+        console.log('주간 기간:', `${startDate} ~ ${endDate}`);
 
         // 이번 주 스케줄 조회
         const { data: weekSchedules, error } = await supabase
@@ -37,6 +49,8 @@ export async function GET(request: NextRequest) {
             console.error('주간 스케줄 조회 오류:', error);
             return NextResponse.json({ error: 'Database error' }, { status: 500 });
         }
+
+        console.log('조회된 스케줄 수:', weekSchedules?.length || 0);
 
         if (weekSchedules && weekSchedules.length > 0) {
             const kakaoWork = getKakaoWorkClient();
@@ -88,7 +102,9 @@ export async function GET(request: NextRequest) {
                 }
             ];
 
+            console.log('카카오워크 메시지 전송 시도...');
             await kakaoWork.sendMessage('이번 주 스케줄을 확인하세요!', blocks);
+            console.log('✅ 메시지 전송 완료');
 
             return NextResponse.json({
                 success: true,
@@ -119,7 +135,9 @@ export async function GET(request: NextRequest) {
                 }
             ];
 
+            console.log('스케줄 없음 - 카카오워크 메시지 전송 시도...');
             await kakaoWork.sendMessage('이번 주 스케줄 확인', noScheduleBlocks);
+            console.log('✅ 스케줄 없음 메시지 전송 완료');
 
             return NextResponse.json({
                 success: true,
@@ -137,6 +155,7 @@ export async function GET(request: NextRequest) {
         try {
             const kakaoWork = getKakaoWorkClient();
             await kakaoWork.sendMessage(`📋 이번 주 스케줄 요약\n스케줄 조회 중 오류가 발생했습니다.`);
+            console.log('폴백 메시지 전송 완료');
         } catch (fallbackError) {
             console.error('폴백 메시지도 실패:', fallbackError);
         }
