@@ -1,4 +1,3 @@
-// components/band/NaverBandSection.tsx
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
@@ -41,7 +40,19 @@ const NaverBandSection: React.FC<NaverBandSectionProps> = ({ bandUrl }) => {
     const sectionRef = useRef<HTMLDivElement>(null);
     const hasStartedLoading = useRef(false);
 
-    // 데이터를 미리 가져오는 함수
+    // 중복 제거 함수
+    const removeDuplicatePosts = (postArray: BandPost[]): BandPost[] => {
+        const seen = new Set<string>();
+        return postArray.filter(post => {
+            if (seen.has(post.id)) {
+                return false;
+            }
+            seen.add(post.id);
+            return true;
+        });
+    };
+
+    // 초기 5개 데이터만 가져오는 함수
     const fetchBandPosts = async () => {
         // 이미 로딩이 시작되었다면 중복 호출 방지
         if (hasStartedLoading.current) return;
@@ -49,38 +60,48 @@ const NaverBandSection: React.FC<NaverBandSectionProps> = ({ bandUrl }) => {
         hasStartedLoading.current = true;
 
         try {
+            // 초기 로딩은 5개만 (page=1, limit=5)
+            const response = await axios.get('/api/band-posts', {
+                params: {
+                    page: 1,
+                    limit: 5
+                }
+            });
 
-            const response = await axios.get('/api/band-posts');
+
 
             if (response.data.error) {
                 throw new Error(response.data.error);
             }
 
             if (response.data.posts) {
-                setPosts(response.data.posts);
+                // 중복 제거
+                const uniquePosts = removeDuplicatePosts(response.data.posts);
+                setPosts(uniquePosts);
                 setIsDataReady(true);
             } else {
                 setPosts([]);
                 setIsDataReady(true);
             }
         } catch (err: any) {
+            console.error('밴드 게시글 로딩 중 오류 (NaverBandSection):', err);
             setError(err.message || '게시글을 불러올 수 없습니다.');
-            setIsDataReady(true); // 에러가 발생해도 데이터 로딩 시도는 완료됨
+            setIsDataReady(true);
         }
     };
+
 
     // 컴포넌트가 뷰포트에 들어왔는지 감지
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-
                     // 데이터 로딩 시작
                     if (!hasStartedLoading.current) {
                         fetchBandPosts();
                     }
 
-                    // 컴포넌트 가시성 설정 (데이터 로딩 완료 여부와 무관)
+                    // 컴포넌트 가시성 설정
                     setIsVisible(true);
 
                     // Observer 해제
@@ -108,6 +129,7 @@ const NaverBandSection: React.FC<NaverBandSectionProps> = ({ bandUrl }) => {
                 isDataReady ? (
                     // 데이터가 준비되면 NaverBandFeed에 데이터를 직접 전달
                     <NaverBandFeed
+                        key="naver-band-feed" // 고유 키 추가
                         bandUrl={bandUrl}
                         prefetchedPosts={posts}
                         prefetchedError={error}

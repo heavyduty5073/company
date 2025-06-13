@@ -1,9 +1,21 @@
 // app/api/band-posts/route.ts
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import axios from 'axios';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
+        // URL에서 쿼리 파라미터 추출
+        const { searchParams } = new URL(request.url);
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = parseInt(searchParams.get('limit') || '5');
+
+        // 파라미터 유효성 검사
+        if (page < 1 || limit < 1 || limit > 50) {
+            return NextResponse.json({
+                error: '잘못된 페이지네이션 파라미터입니다. (page >= 1, 1 <= limit <= 50)'
+            }, { status: 400 });
+        }
+
         // 액세스 토큰 사용
         const accessToken = process.env.BAND_ACCESS_TOKEN!
 
@@ -61,7 +73,11 @@ export async function GET() {
             }, { status: 404 });
         }
 
-        // 4. 밴드 게시글 가져오기
+        // 4. 밴드 게시글 가져오기 (더 많은 데이터 요청)
+        // 네이버 밴드 API에서 최대 100개까지 가져올 수 있음
+        const maxApiLimit = 100;
+        const requestLimit = Math.min(maxApiLimit, page * limit + 20); // 여유분 포함
+
         const postsResponse = await axios.get('https://openapi.band.us/v2/band/posts', {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -69,10 +85,9 @@ export async function GET() {
             params: {
                 band_key: dsBand.band_key,
                 locale: 'ko_KR',
-                limit: 10
+                limit: requestLimit
             },
         });
-
 
         if (postsResponse.data.result_code !== 1) {
             return NextResponse.json({
@@ -84,7 +99,7 @@ export async function GET() {
         // 5. 게시글 데이터 가공
         const postsData = postsResponse.data.result_data.items || [];
 
-        const posts = postsData.map((post: any) => {
+        const allPosts = postsData.map((post: any) => {
             // 첫 번째 이미지 URL 추출
             let imageUrl = null;
             if (post.photos && post.photos.length > 0) {
@@ -106,11 +121,27 @@ export async function GET() {
             };
         });
 
+        // 6. 페이지네이션 처리
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        const paginatedPosts = allPosts.slice(startIndex, endIndex);
+
+        // 7. 응답 데이터 구성
+        const totalPosts = allPosts.length;
+        const hasMore = endIndex < totalPosts;
+
         return NextResponse.json({
             success: true,
             bandName: dsBand.name,
             bandKey: dsBand.band_key,
-            posts
+            posts: paginatedPosts,
+            pagination: {
+                page,
+                limit,
+                total: totalPosts,
+                hasMore,
+                totalPages: Math.ceil(totalPosts / limit)
+            }
         });
 
     } catch (error: any) {
