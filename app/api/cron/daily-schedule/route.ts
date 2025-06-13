@@ -33,7 +33,6 @@ export async function GET(request: NextRequest) {
                 `• ${schedule.region} - ${schedule.driver_name}`
             ).join('\n');
 
-            // ✅ 테스트된 간단한 블록 형식 (inlines 없이)
             const blocks = [
                 {
                     "type": "text",

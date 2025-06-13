@@ -63,7 +63,6 @@ export async function GET(request: NextRequest) {
                 return `${date} (${dayName}) - ${daySchedules.length}건\n${scheduleDetails}`;
             }).join('\n\n');
 
-            // ✅ 테스트된 간단한 블록 형식 (지역별 현황 제거)
             const blocks = [
                 {
                     "type": "text",
