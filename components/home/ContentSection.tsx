@@ -65,11 +65,11 @@ const ContentSection: React.FC = () => {
                         <div className="flex flex-col lg:flex-row items-stretch">
                             {/* 텍스트 섹션 */}
                             <div className="p-6 lg:p-8 lg:w-1/2 flex flex-col justify-center">
-                                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-Paperlogy text-white mb-8 text-start">
+                                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-Paperlogy text-white mb-4 lg:mb-8 text-start">
                                     건설기계 전문 서비스
                                 </h2>
-                                <div className="h-1 w-full bg-blue-600 mb-6 rounded-full"></div>
-                                <p className="text-gray-300 text-sm lg:text-base mb-8 leading-relaxed">
+                                <div className="h-1 w-full bg-blue-600 mb-3 rounded-full"></div>
+                                <p className="text-gray-300 text-xs lg:text-base mb-4 leading-relaxed">
                                     최고의 품질과 서비스로 고객의 성공을 위한 최적의 솔루션을 제공합니다.
                                     혁신적인 기술과 전문가의 노하우가 결합된 DS 건설기계와 함께 더 효율적인 작업 환경을 경험해보세요.
                                 </p>
@@ -77,7 +77,7 @@ const ContentSection: React.FC = () => {
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-blue-500/30 flex items-center"
+                                        className="px-4 py-2 text-sm lg:text-base lg:px-6 lg:py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-blue-500/30 flex items-center"
                                     >
                                         더 알아보기
                                         <IoIosArrowForward className="ml-1" />
@@ -86,7 +86,7 @@ const ContentSection: React.FC = () => {
                             </div>
 
                             {/* 비디오 섹션 */}
-                            <div className="w-full lg:w-1/2 p-6 sm:p-8 lg:p-10">
+                            <div className="w-full lg:w-1/2 p-0 sm:p-8 lg:p-10">
                                 <YouTubeEmbed videoId="D5Bs7IGXqrE" />
                             </div>
                         </div>

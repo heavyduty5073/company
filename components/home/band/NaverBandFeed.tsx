@@ -183,7 +183,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
 
     return (
         <section className="py-10 md:py-16 bg-main">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto w-full px-4">
                 <div className="flex flex-col items-center mb-8">
                     <div className="flex items-center mb-4">
                         <Image
@@ -203,13 +203,13 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
                 </div>
 
                 {/* 고정 높이 컨테이너 */}
-                <div className="w-full max-w-5xl mx-auto bg-gray-800/50 rounded-xl border border-gray-700 overflow-hidden">
+                <div className="w-full max-w-7xl mx-auto bg-green-600 rounded-xl border border-gray-700 overflow-hidden">
                     {/* 헤더 */}
                     <div className="p-4 border-b border-gray-700 bg-gray-900/50">
                         <div className="flex items-center justify-between">
                             <h3 className="text-lg font-semibold text-white">최신 게시글</h3>
                             {posts.length > 0 && (
-                                <div className="text-sm text-gray-400">
+                                <div className="text-sm text-white">
                                     {posts.length}개 게시글
                                 </div>
                             )}
@@ -217,7 +217,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
                     </div>
 
                     {/* 스크롤 가능한 컨텐츠 영역 */}
-                    <div className="h-[600px] overflow-y-auto">
+                    <div className="h-[700px] overflow-y-auto">
                         {showLoading && (
                             <div className="flex justify-center items-center h-full">
                                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -243,16 +243,16 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
 
                         {!showLoading && !error && (
                             <>
-                                <div className="p-4 space-y-4">
+                                <div className="p-4 space-y-3">
                                     {posts.map((post, index) => (
                                         <div
                                             key={`${post.id}-${index}`} // 고유 키 보장
-                                            className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-blue-900/10 transition-shadow border border-gray-700"
+                                            className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-blue-900/10 transition-shadow border border-gray-700 min-h-[18vh]"
                                         >
                                             <div className="flex flex-col md:flex-row">
                                                 {/* 게시글 이미지 (있는 경우) - 실패한 이미지는 표시하지 않음 */}
                                                 {post.imageUrl && !failedImages.has(post.imageUrl) && (
-                                                    <div className="md:w-1/3 h-48 md:h-auto relative">
+                                                    <div className="md:w-1/3 h-[18vh] relative">
                                                         <Image
                                                             src={getImageSrc(post.imageUrl)}
                                                             alt="게시글 이미지"
@@ -271,7 +271,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
                                                         ? 'md:w-2/3'
                                                         : 'w-full'
                                                 }`}>
-                                                    <div className="flex items-center text-xs text-gray-400 mb-3">
+                                                    <div className="flex items-center text-xs text-black mb-3">
                                                         <div className="flex items-center">
                                                             {post.author.profileImage && !failedImages.has(post.author.profileImage) && (
                                                                 <Image
@@ -292,7 +292,7 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
                                                     </div>
 
                                                     <div className="text-white mb-3 flex-grow">
-                                                        <p className="text-gray-300 text-sm line-clamp-3">
+                                                        <p className="text-black text-sm line-clamp-3">
                                                             {stripHtml(post.content)}
                                                         </p>
                                                     </div>

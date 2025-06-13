@@ -124,7 +124,7 @@ const NaverBandSection: React.FC<NaverBandSectionProps> = ({ bandUrl }) => {
     }, []);
 
     return (
-        <div ref={sectionRef} className="band-section-container">
+        <div ref={sectionRef}>
             {isVisible ? (
                 isDataReady ? (
                     // 데이터가 준비되면 NaverBandFeed에 데이터를 직접 전달

@@ -274,11 +274,11 @@ const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
 
                     <Link
                         href="/repair"
-                        className="group flex items-center gap-2 text-white hover:text-blue-400 transition-colors"
+                        className="group flex items-center gap-2 bg-white rounded-full px-3 py-1 lg:px-5 lg:py-2 text-black transition-colors"
                     >
-            <span className="text-sm sm:text-base opacity-80 group-hover:opacity-100">
-              더 보기
-            </span>
+                        <span className="text-xs sm:text-base opacity-80 group-hover:opacity-100 font-jalnan">
+                          더 보기
+                        </span>
                         <motion.div
                             className="p-2 rounded-full bg-blue-600/20 group-hover:bg-blue-600/40 transition-all"
                             initial={{ opacity: 0, x: 20 }}
