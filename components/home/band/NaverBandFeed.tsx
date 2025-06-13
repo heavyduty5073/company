@@ -48,8 +48,29 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
     // 현재 표시 중인 게시글 수
     const [visiblePostCount, setVisiblePostCount] = useState(initialPostCount);
 
+    // 이미지 로딩 관련 상태
+    const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+    const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
+    const [retryingImages, setRetryingImages] = useState<Set<string>>(new Set());
+    const [visibleImageCount, setVisibleImageCount] = useState(3); // 처음에 3개 이미지만 표시
+
     // 더 보여줄 게시글이 있는지 확인
     const hasMorePosts = visiblePostCount < posts.length;
+
+    // 이미지 로딩 제어 - 순차적으로 이미지 표시 확장
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setVisibleImageCount(prev => {
+                const maxImages = posts.slice(0, visiblePostCount).filter(post => post.imageUrl).length;
+                if (prev < maxImages) {
+                    return Math.min(prev + 2, maxImages); // 2개씩 추가
+                }
+                return prev;
+            });
+        }, 1000); // 1초마다 2개씩 추가
+
+        return () => clearInterval(timer);
+    }, [posts, visiblePostCount]);
 
     // 데이터 가져오기 함수
     const fetchBandPosts = async () => {
@@ -107,6 +128,52 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
         return tmp.textContent || tmp.innerText || '';
     };
 
+    // 이미지 로드 성공 처리
+    const handleImageLoad = (imageUrl: string) => {
+        setLoadedImages(prev => new Set([...prev, imageUrl]));
+        setRetryingImages(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(imageUrl);
+            return newSet;
+        });
+        console.log('✅ 이미지 로드 성공:', imageUrl);
+    };
+
+    // 이미지 로드 실패 처리
+    const handleImageError = (imageUrl: string, event: any) => {
+        console.error('❌ 이미지 로드 실패:', imageUrl);
+
+        // 이미 재시도 중이면 최종 실패 처리
+        if (retryingImages.has(imageUrl)) {
+            setFailedImages(prev => new Set([...prev, imageUrl]));
+            setRetryingImages(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(imageUrl);
+                return newSet;
+            });
+            event.currentTarget.style.display = 'none';
+            return;
+        }
+
+        // 첫 번째 실패 시 프록시로 재시도
+        setRetryingImages(prev => new Set([...prev, imageUrl]));
+
+        setTimeout(() => {
+            const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
+            event.currentTarget.src = proxyUrl;
+            console.log('🔄 프록시로 재시도:', proxyUrl);
+        }, 1000 + Math.random() * 2000); // 1-3초 랜덤 지연
+    };
+
+    // 이미지를 표시할지 결정
+    const shouldShowImage = (post: BandPost, index: number): boolean => {
+        if (!post.imageUrl) return false;
+
+        // 현재 보여줄 이미지 인덱스 계산
+        const imageIndex = posts.slice(0, index + 1).filter(p => p.imageUrl).length - 1;
+        return imageIndex < visibleImageCount;
+    };
+
     // 프리로드된 데이터가 있는 경우 로딩 상태 비활성화
     const showLoading = isLoading && (!skipFetching || posts.length === 0);
 
@@ -156,23 +223,40 @@ const NaverBandFeed: React.FC<NaverBandFeedProps> = ({
                     {!showLoading && !error && (
                         <>
                             <div className="grid grid-cols-1 gap-6 md:gap-8">
-                                {posts.slice(0, visiblePostCount).map((post) => (
+                                {posts.slice(0, visiblePostCount).map((post, index) => (
                                     <div
-                                        key={post.id}
+                                        key={`${post.id}-${index}`}
                                         className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-blue-900/10 transition-shadow"
                                     >
                                         <div className="flex flex-col md:flex-row">
                                             {/* 게시글 이미지 (있는 경우) */}
-                                            {post.imageUrl && (
+                                            {post.imageUrl && shouldShowImage(post, index) && (
                                                 <div className="md:w-1/3 h-64 md:h-auto relative">
                                                     <Image
+                                                        key={`img-${post.id}-${index}`}
                                                         src={post.imageUrl}
                                                         alt="게시글 이미지"
                                                         fill
                                                         sizes="(max-width: 768px) 100vw, 33vw"
                                                         className="object-cover"
-                                                        loading="lazy"
+                                                        loading={index < 2 ? "eager" : "lazy"}
+                                                        onLoad={() => handleImageLoad(post.imageUrl!)}
+                                                        onError={(e) => handleImageError(post.imageUrl!, e)}
                                                     />
+
+                                                    {/* 재시도 중 로딩 표시 */}
+                                                    {retryingImages.has(post.imageUrl) && (
+                                                        <div className="absolute inset-0 bg-gray-700/50 flex items-center justify-center">
+                                                            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-400"></div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {/* 이미지 로딩 대기 중 플레이스홀더 */}
+                                            {post.imageUrl && !shouldShowImage(post, index) && (
+                                                <div className="md:w-1/3 h-64 md:h-auto relative bg-gray-700 animate-pulse flex items-center justify-center">
+                                                    <span className="text-gray-400 text-sm">이미지 로딩 대기중...</span>
                                                 </div>
                                             )}
 

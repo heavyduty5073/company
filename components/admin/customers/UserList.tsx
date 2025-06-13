@@ -6,74 +6,68 @@ import { Badge } from '@/components/ui/badge'
 import { Pagination, PaginationContent, PaginationItem, PaginationLink } from '@/components/ui/pagination'
 import { useRouter } from 'next/navigation'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useState } from "react"
+import { useState, useCallback, useMemo, useTransition } from "react"
 import FormContainer from "@/components/ui/form"
 import { changeUserRole } from "@/app/(admin)/admin/customers/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-export default function UserList({
-                                     users,
-                                     total,
-                                     page,
-                                     pageSize,
-                                 }: {
+interface UserListProps {
     users: User[]
     total: number
     page: number
     pageSize: number
-}) {
+}
+
+// 역할 설정을 상수로 분리 (메모리 최적화)
+const ROLES = {
+    admin: { label: '관리자', color: 'bg-green-500 hover:bg-green-600' },
+    manager: { label: '직원', color: 'bg-blue-500 hover:bg-blue-600' },
+    user: { label: '유저', color: 'bg-yellow-500 hover:bg-yellow-600' },
+} as const
+
+export default function UserList({ users, total, page, pageSize }: UserListProps) {
     const router = useRouter()
-    const totalPages = Math.ceil(total / pageSize)
+    const [isPending, startTransition] = useTransition()
     const [selectedRoles, setSelectedRoles] = useState<Record<string, string>>({})
 
-    const handlePageChange = (newPage: number) => {
-        const params = new URLSearchParams(window.location.search)
-        params.set('page', newPage.toString())
-        router.push(`?${params.toString()}`)
-    }
+    // 총 페이지 수 메모이제이션
+    const totalPages = useMemo(() => Math.ceil(total / pageSize), [total, pageSize])
 
-    const getRoleBadgeColor = (role: string) => {
-        switch (role) {
-            case 'admin':
-                return 'bg-green-500 hover:bg-green-600'
-            case 'manager':
-                return 'bg-blue-500 hover:bg-blue-600'
-            case 'user':
-                return 'bg-yellow-500 hover:bg-yellow-600'
-            default:
-                return 'bg-gray-500 hover:bg-gray-600'
-        }
-    }
+    // 페이지 변경 핸들러 최적화
+    const handlePageChange = useCallback((newPage: number) => {
+        startTransition(() => {
+            const params = new URLSearchParams(window.location.search)
+            params.set('page', newPage.toString())
+            router.push(`?${params.toString()}`)
+        })
+    }, [router])
 
-    const getRoleLabel = (role: string) => {
-        switch (role) {
-            case 'admin':
-                return '관리자'
-            case 'manager':
-                return '직원'
-            case 'user':
-                return '유저'
-            default:
-                return '없음'
-        }
-    }
-
-    const handleRoleSelect = (userId: string, role: string) => {
+    // 역할 선택 핸들러 최적화
+    const handleRoleSelect = useCallback((userId: string, role: string) => {
         setSelectedRoles(prev => ({
             ...prev,
             [userId]: role
         }))
-    }
+    }, [])
 
-    const handleFormResult = (result: any) => {
-        if (result.code === 0) { // SUCCESS
-            // 성공 시 선택된 역할 초기화
+    // 폼 결과 핸들러 최적화
+    const handleFormResult = useCallback((result: any) => {
+        if (result.code === 0) {
             setSelectedRoles({})
-            // 페이지 새로고침으로 최신 데이터 가져오기
-            router.refresh()
+            startTransition(() => {
+                router.refresh()
+            })
         }
-    }
+    }, [router])
+
+    // 역할 정보 가져오기 함수 최적화
+    const getRoleInfo = useCallback((role: string) => {
+        return ROLES[role as keyof typeof ROLES] || {
+            label: '없음',
+            color: 'bg-gray-500 hover:bg-gray-600'
+        }
+    }, [])
 
     return (
         <div className="space-y-4">
@@ -92,6 +86,7 @@ export default function UserList({
                     {users.map((user) => {
                         const currentRole = user.user_metadata?.role || 'user'
                         const selectedRole = selectedRoles[user.id]
+                        const roleInfo = getRoleInfo(currentRole)
 
                         return (
                             <TableRow key={user.id}>
@@ -99,10 +94,10 @@ export default function UserList({
                                 <TableCell>{user.user_metadata?.name || '미지정'}</TableCell>
                                 <TableCell>
                                     <Badge
-                                        className={`${getRoleBadgeColor(currentRole)} text-white`}
+                                        className={`${roleInfo.color} text-white`}
                                         variant="outline"
                                     >
-                                        {getRoleLabel(currentRole)}
+                                        {roleInfo.label}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
@@ -111,7 +106,6 @@ export default function UserList({
                                         onResult={handleFormResult}
                                     >
                                         <div className="flex items-center gap-2">
-                                            {/* Hidden input for userId */}
                                             <Input
                                                 type="hidden"
                                                 name="userId"
@@ -127,26 +121,22 @@ export default function UserList({
                                                 <SelectTrigger className="w-32">
                                                     <SelectValue placeholder="권한선택" />
                                                 </SelectTrigger>
-                                                <SelectContent className={'border border-black bg-white'}>
-                                                    <SelectItem value="user">
-                                                        유저
-                                                    </SelectItem>
-                                                    <SelectItem value="manager">
-                                                        직원
-                                                    </SelectItem>
-                                                    <SelectItem value="admin">
-                                                        관리자
-                                                    </SelectItem>
+                                                <SelectContent className="border border-black bg-white">
+                                                    {Object.entries(ROLES).map(([key, value]) => (
+                                                        <SelectItem key={key} value={key}>
+                                                            {value.label}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
 
                                             <Button
                                                 type="submit"
                                                 size="sm"
-                                                disabled={!selectedRole || selectedRole === currentRole}
+                                                disabled={!selectedRole || selectedRole === currentRole || isPending}
                                                 className="px-3 py-1 text-xs"
                                             >
-                                                변경
+                                                {isPending ? '변경중...' : '변경'}
                                             </Button>
                                         </div>
                                     </FormContainer>
@@ -159,21 +149,24 @@ export default function UserList({
                 </TableBody>
             </Table>
 
-            {/* Pagination */}
-            <Pagination>
-                <PaginationContent>
-                    {[...Array(totalPages)].map((_, i) => (
-                        <PaginationItem key={i}>
-                            <PaginationLink
-                                isActive={i + 1 === page}
-                                onClick={() => handlePageChange(i + 1)}
-                            >
-                                {i + 1}
-                            </PaginationLink>
-                        </PaginationItem>
-                    ))}
-                </PaginationContent>
-            </Pagination>
+            {/* 최적화된 페이지네이션 */}
+            {totalPages > 1 && (
+                <Pagination>
+                    <PaginationContent>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                            <PaginationItem key={pageNum}>
+                                <PaginationLink
+                                    isActive={pageNum === page}
+                                    onClick={() => handlePageChange(pageNum)}
+                                    className={isPending ? 'opacity-50 pointer-events-none' : ''}
+                                >
+                                    {pageNum}
+                                </PaginationLink>
+                            </PaginationItem>
+                        ))}
+                    </PaginationContent>
+                </Pagination>
+            )}
         </div>
     )
 }
