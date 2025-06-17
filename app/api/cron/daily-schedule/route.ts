@@ -1,3 +1,4 @@
+// app/api/cron/daily-schedule/route.ts - 완전히 수정된 버전
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { getKakaoWorkClient } from '@/utils/kakaowork';
@@ -6,22 +7,24 @@ export async function GET(request: NextRequest) {
     const koreaTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
     const today = koreaTime.toISOString().split('T')[0];
 
-    console.log('=== 디버깅 정보 ===');
+    console.log('=== 일일 스케줄 크론 실행 ===');
+    console.log('실행 시간 (한국):', koreaTime.toLocaleString('ko-KR'));
+    console.log('대상 날짜:', today);
+
     const authHeader = request.headers.get('authorization');
-    console.log('받은 Authorization:', authHeader);
+    console.log('받은 Authorization:', authHeader ? '있음' : '없음');
     console.log('환경변수 CRON_SECRET:', process.env.CRON_SECRET);
-    console.log('예상 값:', `Bearer ${process.env.CRON_SECRET}`);
-    console.log('일치 여부:', authHeader === `Bearer ${process.env.CRON_SECRET}`);
 
     try {
-        // Vercel Cron 인증 (authHeader 재선언 제거)
-        // if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        //     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        // }
+        // Vercel Cron 인증 활성화
+        if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+            console.error('인증 실패 - 권한 없는 접근');
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
 
         const supabase = await createClient();
 
-        // 오늘의 스케줄 조회
+        // 오늘의 스케줄 조회 (모든 필드 포함)
         const { data: todaySchedules, error } = await supabase
             .from('schedules')
             .select('*')
@@ -33,68 +36,56 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: 'Database error' }, { status: 500 });
         }
 
+        const kakaoWork = getKakaoWorkClient();
+
         if (todaySchedules && todaySchedules.length > 0) {
-            const kakaoWork = getKakaoWorkClient();
+            console.log(`오늘 스케줄 ${todaySchedules.length}개 발견`);
 
-            const scheduleList = todaySchedules.map(schedule =>
-                `• ${schedule.region} - ${schedule.driver_name}`
-            ).join('\n');
-
-            const blocks = [
-                {
-                    "type": "text",
-                    "text": "🌅 오늘의 스케줄 안내 (오전 8:30)"
-                },
-                {
-                    "type": "divider"
-                },
-                {
-                    "type": "text",
-                    "text": `${today} 스케줄 현황`
-                },
-                {
-                    "type": "text",
-                    "text": scheduleList
-                },
-                {
-                    "type": "divider"
-                },
-                {
-                    "type": "text",
-                    "text": `총 ${todaySchedules.length}개의 스케줄이 있습니다.`
+            // 메모 포함한 스케줄 목록 생성
+            const scheduleList = todaySchedules.map(schedule => {
+                let scheduleText = `📍 ${schedule.region} - ${schedule.driver_name}`;
+                if (schedule.notes && schedule.notes.trim()) {
+                    scheduleText += `\n   💬 ${schedule.notes}`;
                 }
-            ];
+                return scheduleText;
+            }).join('\n\n');
 
-            await kakaoWork.sendMessage('오늘의 스케줄을 확인하세요!', blocks);
+            // 간단한 텍스트 메시지로 먼저 테스트
+            const simpleMessage = `🌅 오늘의 스케줄 안내\n\n📅 ${today}\n\n${scheduleList}\n\n📊 총 ${todaySchedules.length}개의 스케줄`;
+
+            console.log('카카오워크 메시지 전송 시도...');
+
+            try {
+                const result = await kakaoWork.sendMessage(simpleMessage);
+                console.log('카카오워크 전송 성공:', result);
+            } catch (kakaoError) {
+                console.error('카카오워크 전송 실패:', kakaoError);
+                throw kakaoError;
+            }
 
             return NextResponse.json({
                 success: true,
                 message: `${todaySchedules.length}개의 스케줄 알림 전송 완료`,
-                date: today
+                date: today,
+                schedules: todaySchedules.map(s => ({
+                    region: s.region,
+                    driver: s.driver_name,
+                    notes: s.notes || null
+                }))
             });
+
         } else {
-            const kakaoWork = getKakaoWorkClient();
+            console.log('오늘 스케줄 없음');
 
-            // 스케줄이 없을 때도 블록 형식
-            const noScheduleBlocks = [
-                {
-                    "type": "text",
-                    "text": "📅 오늘의 스케줄"
-                },
-                {
-                    "type": "divider"
-                },
-                {
-                    "type": "text",
-                    "text": `${today}`
-                },
-                {
-                    "type": "text",
-                    "text": "오늘은 스케줄이 없습니다."
-                }
-            ];
+            const noScheduleMessage = `📅 오늘의 스케줄\n\n${today}\n\n😴 오늘은 등록된 스케줄이 없습니다.`;
 
-            await kakaoWork.sendMessage('오늘 스케줄 확인', noScheduleBlocks);
+            try {
+                const result = await kakaoWork.sendMessage(noScheduleMessage);
+                console.log('카카오워크 전송 성공:', result);
+            } catch (kakaoError) {
+                console.error('카카오워크 전송 실패:', kakaoError);
+                throw kakaoError;
+            }
 
             return NextResponse.json({
                 success: true,
@@ -103,17 +94,29 @@ export async function GET(request: NextRequest) {
             });
         }
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('일일 스케줄 알림 오류:', error);
 
-        // 블록 전송 실패 시 간단한 텍스트로 폴백
-        try {
-            const kakaoWork = getKakaoWorkClient();
-            await kakaoWork.sendMessage(`🌅 오늘의 스케줄 안내\n${today}\n스케줄 조회 중 오류가 발생했습니다.`);
-        } catch (fallbackError) {
-            console.error('폴백 메시지도 실패:', fallbackError);
-        }
-
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({
+            error: 'Internal server error',
+            message: error.message,
+            date: today
+        }, { status: 500 });
     }
+}
+
+// POST 메소드는 개발 테스트용
+export async function POST(request: NextRequest) {
+    console.log('=== 개발 테스트 실행 ===');
+
+    // 개발환경에서는 인증 헤더 자동 추가
+    const testRequest = new NextRequest(request.url, {
+        method: 'GET',
+        headers: {
+            ...request.headers,
+            'authorization': `Bearer ${process.env.CRON_SECRET}`
+        }
+    });
+
+    return await GET(testRequest);
 }
