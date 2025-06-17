@@ -51,7 +51,7 @@ export default function CTASection() {
                     <Button
                         variant="outline"
                         size="lg"
-                        onClick={()=>alert('준비중입니다.')}
+                        onClick={()=>open('https://open.kakao.com/o/sFGR9kfh', '_blank')}
                         className="border-white text-black bg-yellow-400 hover:bg-amber-800"
                     >
                         <RiKakaoTalkFill className="text-black mr-2 h-4 w-4" /> 카카오톡 상담
