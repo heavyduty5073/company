@@ -1,13 +1,16 @@
-// components/admin/AdminScheduleCalendar.tsx
+// components/admin/AdminScheduleCalendar.tsx - Realtime 디버깅 강화
 'use client';
 
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState, useCallback} from 'react';
+import { createClient } from '@/utils/supabase/client';
 
 import ScheduleDayModal from './ScheduleDayModal';
 import {Schedules} from "@/utils/supabase/types";
 import ScheduleForm from "@/components/admin/schedule/ScheduleForm";
 import {updateReservationStatus} from "@/app/(admin)/admin/schedule/actions";
 import {useScheduleStore} from "@/lib/store/useScheduleStore";
+import {generateCalendar} from "@/utils/utils";
+import {dayNames, monthNames} from "@/lib/store/calenderData";
 
 interface AdminScheduleCalendarProps {
     initialSchedules: Schedules[];
@@ -19,22 +22,172 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
     const [showForm, setShowForm] = useState(false);
     const [editingSchedule, setEditingSchedule] = useState<Schedules | null>(null);
 
+    // 실시간 스케줄 데이터 상태
+    const [schedules, setSchedules] = useState<Schedules[]>(initialSchedules);
+    const [realtimeStatus, setRealtimeStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
+
     const reservationStatusMap = useScheduleStore((state) => state.reservationStatus);
     const setReservationStatus = useScheduleStore((state) => state.setReservationStatus);
     const bulkSetReservationStatus = useScheduleStore((state) => state.bulkSetReservationStatus);
 
-    // useMemo로 초기 상태 설정 최적화
-    useEffect(() => {
+    // 예약 상태 재계산 함수 - useCallback으로 메모이제이션
+    const updateReservationStatusForSchedules = useCallback((scheduleList: Schedules[]) => {
+        console.log('📊 예약 상태 재계산 시작, 스케줄 개수:', scheduleList.length);
         const map = new Map<string, boolean>();
-        initialSchedules.forEach((schedule) => {
+        scheduleList.forEach((schedule) => {
             const date = schedule.schedule_date;
-
-            // ✅ is_open 그대로 사용
             const prev = map.get(date) ?? true;
-            map.set(date, prev && schedule.is_open); // 예약 가능한 경우만 true로 유지
+            map.set(date, prev && schedule.is_open);
         });
+        console.log('📊 예약 상태 맵 크기:', map.size);
         bulkSetReservationStatus(map);
-    }, [initialSchedules]);
+    }, [bulkSetReservationStatus]);
+
+    // Realtime 이벤트 처리 함수 - useCallback으로 메모이제이션
+    const handleRealtimeChange = useCallback((payload: any) => {
+        console.log('🔥 Realtime 이벤트 처리 함수 호출됨!');
+        console.log('📡 전체 payload:', JSON.stringify(payload, null, 2));
+
+        const { eventType, new: newRecord, old: oldRecord } = payload;
+
+        setSchedules(prevSchedules => {
+            console.log('🔄 이전 스케줄 개수:', prevSchedules.length);
+            let updatedSchedules = [...prevSchedules];
+
+            switch (eventType) {
+                case 'INSERT':
+                    console.log('➕ 새 스케줄 추가 처리 중:', newRecord);
+                    // 중복 체크
+                    const existingIndex = updatedSchedules.findIndex(s => s.id === newRecord.id);
+                    if (existingIndex === -1) {
+                        updatedSchedules.push(newRecord as Schedules);
+                        console.log('✅ 새 스케줄 추가 완료');
+                    } else {
+                        console.log('⚠️ 이미 존재하는 스케줄');
+                    }
+                    break;
+
+                case 'UPDATE':
+                    console.log('✏️ 스케줄 수정 처리 중:', newRecord);
+                    const updateIndex = updatedSchedules.findIndex(s => s.id === newRecord.id);
+                    if (updateIndex !== -1) {
+                        updatedSchedules[updateIndex] = newRecord as Schedules;
+                        console.log('✅ 스케줄 수정 완료');
+                    } else {
+                        console.log('⚠️ 수정할 스케줄을 찾을 수 없음');
+                    }
+                    break;
+
+                case 'DELETE':
+                    console.log('🗑️ 스케줄 삭제 처리 중:', oldRecord);
+                    const beforeCount = updatedSchedules.length;
+                    updatedSchedules = updatedSchedules.filter(s => s.id !== oldRecord.id);
+                    console.log(`✅ 스케줄 삭제 완료: ${beforeCount} → ${updatedSchedules.length}`);
+                    break;
+
+                default:
+                    console.log('❓ 알 수 없는 이벤트 타입:', eventType);
+            }
+
+            console.log('🔄 업데이트된 스케줄 개수:', updatedSchedules.length);
+            return updatedSchedules;
+        });
+    }, []);
+
+    // Supabase Realtime 설정
+    useEffect(() => {
+        console.log('🚀 Realtime useEffect 실행됨');
+        const supabase = createClient();
+
+        console.log('🔄 Supabase Realtime 연결 중...');
+        console.log('📊 Supabase 클라이언트:', supabase);
+
+        // Realtime 구독 설정
+        const channel = supabase
+            .channel('schedules-changes-v2') // 채널명 변경으로 새로 연결
+            .on(
+                'postgres_changes',
+                {
+                    event: '*', // INSERT, UPDATE, DELETE 모든 이벤트
+                    schema: 'public',
+                    table: 'schedules'
+                },
+                (payload) => {
+                    console.log('🎯 Realtime 이벤트 수신됨!', new Date().toLocaleTimeString());
+                    console.log('📡 이벤트 데이터:', payload);
+                    handleRealtimeChange(payload);
+                }
+            )
+            .subscribe((status, err) => {
+                console.log('📡 Realtime 구독 상태:', status);
+                if (err) {
+                    console.error('❌ Realtime 구독 오류:', err);
+                    setRealtimeStatus('error');
+                } else {
+                    switch (status) {
+                        case 'SUBSCRIBED':
+                            setRealtimeStatus('connected');
+                            console.log('✅ Realtime 연결 성공!');
+                            break;
+                        case 'CHANNEL_ERROR':
+                        case 'TIMED_OUT':
+                        case 'CLOSED':
+                            setRealtimeStatus('error');
+                            console.error('❌ Realtime 연결 실패:', status);
+                            break;
+                        default:
+                            setRealtimeStatus('connecting');
+                            console.log('⏳ Realtime 연결 중...', status);
+                    }
+                }
+            });
+
+        // 5초 후 연결 상태 재확인
+        const statusCheckTimeout = setTimeout(() => {
+            console.log('⏰ 5초 후 상태 확인:');
+            console.log('🔗 Realtime 연결 상태:', supabase.realtime.isConnected());
+            console.log('📋 활성 채널 수:', supabase.realtime.channels?.length || 0);
+
+            // 연결되지 않은 경우 재시도
+            if (!supabase.realtime.isConnected()) {
+                console.log('🔄 연결 재시도...');
+                setRealtimeStatus('error');
+            }
+        }, 5000);
+
+        // 컴포넌트 언마운트 시 구독 해제
+        return () => {
+            console.log('🔌 Realtime 연결 해제');
+            clearTimeout(statusCheckTimeout);
+            supabase.removeChannel(channel);
+        };
+    }, []); // handleRealtimeChange 의존성 제거
+
+    // schedules가 변경될 때만 예약 상태 재계산 (별도 useEffect)
+    useEffect(() => {
+        console.log('📊 schedules 변경됨, 예약 상태 재계산 시작');
+        updateReservationStatusForSchedules(schedules);
+    }, [schedules, updateReservationStatusForSchedules]);
+
+    // 간단한 연결 테스트 함수
+    const testRealtimeConnection = async () => {
+        console.log('🧪 Realtime 연결 테스트 시작');
+        const supabase = createClient();
+
+        try {
+            // 간단한 테스트 채널
+            const testChannel = supabase
+                .channel('test-connection')
+                .subscribe((status) => {
+                    console.log('🧪 테스트 채널 상태:', status);
+                    alert(`테스트 채널 상태: ${status}`);
+                    supabase.removeChannel(testChannel);
+                });
+        } catch (error) {
+            console.error('🧪 테스트 실패:', error);
+            alert('테스트 실패: ' + error);
+        }
+    };
 
     const toggleReservationStatus = async (day: number, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -60,33 +213,16 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
         const month = currentDate.getMonth() + 1;
         const startDate = `${year}-${month.toString().padStart(2, '0')}-01`;
         const endDate = new Date(year, month, 0).toISOString().split('T')[0];
-        return initialSchedules.filter((schedule) => schedule.schedule_date >= startDate && schedule.schedule_date <= endDate);
+        return schedules.filter((schedule) => schedule.schedule_date >= startDate && schedule.schedule_date <= endDate);
     };
 
-    const schedules = useMemo(() => getCurrentMonthSchedules(), [currentDate, initialSchedules]);
-
-    const generateCalendar = () => {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        const startingDayOfWeek = firstDay.getDay();
-        const days = [];
-        for (let i = 0; i < startingDayOfWeek; i++) {
-            days.push(null);
-        }
-        for (let day = 1; day <= daysInMonth; day++) {
-            days.push(day);
-        }
-        return days;
-    };
+    const currentMonthSchedules = useMemo(() => getCurrentMonthSchedules(), [currentDate, schedules]);
 
     const getSchedulesForDate = (day: number) => {
         const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
             .toString()
             .padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        return schedules.filter((schedule) => schedule.schedule_date === dateString);
+        return currentMonthSchedules.filter((schedule) => schedule.schedule_date === dateString);
     };
 
     const getReservationStatus = (day: number) => {
@@ -94,10 +230,11 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
             .toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
 
         const isOpen = reservationStatusMap.get(dateString);
-        if (isOpen === undefined) return 'available'; // 기본값은 예약 가능
+        if (isOpen === undefined) return 'available';
 
-        return isOpen ? 'available' : 'full'; // ✅ 이제 true가 '예약 가능'이 됨
+        return isOpen ? 'available' : 'full';
     };
+
     const navigateMonth = (direction: 'prev' | 'next') => {
         setCurrentDate((prev) => {
             const newDate = new Date(prev);
@@ -134,19 +271,58 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
         setSelectedDate(null);
     };
 
-    const days = generateCalendar();
-    const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-    const dayNames = ['일','월','화','수','목','금','토'];
+    const days = generateCalendar(currentDate);
 
-    const selectedDateSchedules = selectedDate ? schedules.filter(schedule => schedule.schedule_date === selectedDate) : [];
+    const selectedDateSchedules = selectedDate ? currentMonthSchedules.filter(schedule => schedule.schedule_date === selectedDate) : [];
 
     const getSelectedDateReservationStatus = () => {
         if (!selectedDate) return 'available';
         const isOpen = reservationStatusMap.get(selectedDate);
         return isOpen === false ? 'full' : 'available';
     };
+
+    // Realtime 상태 표시
+    const getStatusColor = () => {
+        switch (realtimeStatus) {
+            case 'connected': return 'bg-green-500';
+            case 'connecting': return 'bg-yellow-500 animate-pulse';
+            case 'error': return 'bg-red-500';
+            default: return 'bg-gray-500';
+        }
+    };
+
+    const getStatusText = () => {
+        switch (realtimeStatus) {
+            case 'connected': return '실시간 연결됨';
+            case 'connecting': return '연결 중...';
+            case 'error': return '연결 오류';
+            default: return '알 수 없음';
+        }
+    };
+
     return (
         <div className="p-6">
+            {/* 디버깅 정보 패널 */}
+            <div className="mb-4 p-4 bg-gray-50 rounded-lg border">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                        <div className="flex items-center">
+                            <span className={`w-3 h-3 rounded-full mr-2 ${getStatusColor()}`}></span>
+                            <span className="text-sm font-medium">{getStatusText()}</span>
+                        </div>
+                        <div className="text-sm text-gray-600">
+                            전체 스케줄: {schedules.length}개 | 이번 달: {currentMonthSchedules.length}개
+                        </div>
+                    </div>
+                    <button
+                        onClick={testRealtimeConnection}
+                        className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+                    >
+                        연결 테스트
+                    </button>
+                </div>
+            </div>
+
             {/* 상단 컨트롤 */}
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center space-x-4">
@@ -202,8 +378,6 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
                     const daySchedules = getSchedulesForDate(day);
                     const hasSchedules = daySchedules.length > 0;
-                    const hasAvailableSchedule = daySchedules.some(s => s.is_open);
-                    const hasUnavailableSchedule = daySchedules.some(s => !s.is_open);
                     const reservationStatus = getReservationStatus(day);
 
                     return (
@@ -244,7 +418,6 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
                                     <div className="w-full h-1 bg-red-400 rounded" />
                                 ):  <div className="w-full h-1 bg-green-400 rounded" />}
 
-
                                 {/* 스케줄 개수와 메모 표시 */}
                                 {hasSchedules && (
                                     <div className="text-xs text-gray-600 space-y-1">
@@ -253,7 +426,7 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
                                         </div>
                                         {/* 메모 내용 표시 (최대 2개까지) */}
                                         {daySchedules.slice(0, 2).map((schedule, idx) => (
-                                            <div key={idx} className="truncate">
+                                            <div key={schedule.id || idx} className="truncate">
                                                 {schedule.notes && (
                                                     <div className="text-xs text-blue-600 bg-blue-50 px-1 rounded">
                                                         📝 {schedule.notes.length > 10 ?
