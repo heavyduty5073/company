@@ -1,4 +1,3 @@
-// components/admin/AdminScheduleCalendar.tsx - Realtime 디버깅 강화
 'use client';
 
 import React, {useEffect, useMemo, useState, useCallback} from 'react';
@@ -24,148 +23,223 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
     // 실시간 스케줄 데이터 상태
     const [schedules, setSchedules] = useState<Schedules[]>(initialSchedules);
-    const [realtimeStatus, setRealtimeStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
+    const [realtimeStatus, setRealtimeStatus] = useState<'connecting' | 'connected' | 'error' | 'disabled'>('disabled');
+
+    // Hydration 문제 해결: 클라이언트에서만 실행되는 상태
+    const [isClient, setIsClient] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+    // 폴링 모드 (Realtime 대체)
+    const [usePolling, setUsePolling] = useState(false);
+    const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(null);
 
     const reservationStatusMap = useScheduleStore((state) => state.reservationStatus);
     const setReservationStatus = useScheduleStore((state) => state.setReservationStatus);
     const bulkSetReservationStatus = useScheduleStore((state) => state.bulkSetReservationStatus);
 
-    // 예약 상태 재계산 함수 - useCallback으로 메모이제이션
+    // 클라이언트 사이드 감지
+    useEffect(() => {
+        setIsClient(true);
+        // 클라이언트에서 바로 폴링 시작 (Realtime 대신)
+        setTimeout(() => {
+            setUsePolling(true);
+        }, 1000);
+    }, []);
+
+    // 캐싱 문제 해결을 위한 새로고침 함수
+    const forceRefresh = useCallback(() => {
+        setRefreshTrigger(prev => prev + 1);
+    }, []);
+
+    // 날짜 문자열 생성 함수 - 일관성 있게 처리
+    const createDateString = useCallback((year: number, month: number, day: number): string => {
+        return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    }, []);
+
+    // 예약 상태 재계산 함수
     const updateReservationStatusForSchedules = useCallback((scheduleList: Schedules[]) => {
-        console.log('📊 예약 상태 재계산 시작, 스케줄 개수:', scheduleList.length);
         const map = new Map<string, boolean>();
         scheduleList.forEach((schedule) => {
             const date = schedule.schedule_date;
             const prev = map.get(date) ?? true;
             map.set(date, prev && schedule.is_open);
         });
-        console.log('📊 예약 상태 맵 크기:', map.size);
         bulkSetReservationStatus(map);
     }, [bulkSetReservationStatus]);
 
-    // Realtime 이벤트 처리 함수 - useCallback으로 메모이제이션
-    const handleRealtimeChange = useCallback((payload: any) => {
-        console.log('🔥 Realtime 이벤트 처리 함수 호출됨!');
-        console.log('📡 전체 payload:', JSON.stringify(payload, null, 2));
+    // 수동 새로고침 함수 (데이터 다시 가져오기)
+    const manualRefresh = useCallback(async () => {
+        try {
+            const supabase = createClient();
+            const { data, error } = await supabase
+                .from('schedules')
+                .select('*')
+                .order('schedule_date', { ascending: true });
 
-        const { eventType, new: newRecord, old: oldRecord } = payload;
-
-        setSchedules(prevSchedules => {
-            console.log('🔄 이전 스케줄 개수:', prevSchedules.length);
-            let updatedSchedules = [...prevSchedules];
-
-            switch (eventType) {
-                case 'INSERT':
-                    console.log('➕ 새 스케줄 추가 처리 중:', newRecord);
-                    // 중복 체크
-                    const existingIndex = updatedSchedules.findIndex(s => s.id === newRecord.id);
-                    if (existingIndex === -1) {
-                        updatedSchedules.push(newRecord as Schedules);
-                        console.log('✅ 새 스케줄 추가 완료');
-                    } else {
-                        console.log('⚠️ 이미 존재하는 스케줄');
-                    }
-                    break;
-
-                case 'UPDATE':
-                    console.log('✏️ 스케줄 수정 처리 중:', newRecord);
-                    const updateIndex = updatedSchedules.findIndex(s => s.id === newRecord.id);
-                    if (updateIndex !== -1) {
-                        updatedSchedules[updateIndex] = newRecord as Schedules;
-                        console.log('✅ 스케줄 수정 완료');
-                    } else {
-                        console.log('⚠️ 수정할 스케줄을 찾을 수 없음');
-                    }
-                    break;
-
-                case 'DELETE':
-                    console.log('🗑️ 스케줄 삭제 처리 중:', oldRecord);
-                    const beforeCount = updatedSchedules.length;
-                    updatedSchedules = updatedSchedules.filter(s => s.id !== oldRecord.id);
-                    console.log(`✅ 스케줄 삭제 완료: ${beforeCount} → ${updatedSchedules.length}`);
-                    break;
-
-                default:
-                    console.log('❓ 알 수 없는 이벤트 타입:', eventType);
+            if (error) {
+                console.error('데이터 새로고침 실패:', error);
+            } else {
+                setSchedules(data || []);
+                forceRefresh();
             }
+        } catch (error) {
+            console.error('수동 새로고침 오류:', error);
+        }
+    }, [forceRefresh]);
 
-            console.log('🔄 업데이트된 스케줄 개수:', updatedSchedules.length);
-            return updatedSchedules;
-        });
-    }, []);
+    // 폴링 시작/중지 함수
+    const togglePolling = useCallback(() => {
+        if (usePolling && pollingInterval) {
+            clearInterval(pollingInterval);
+            setPollingInterval(null);
+            setUsePolling(false);
+        } else {
+            const interval = setInterval(async () => {
+                await manualRefresh();
+            }, 5000); // 5초마다
 
-    // Supabase Realtime 설정
-    useEffect(() => {
+            setPollingInterval(interval);
+            setUsePolling(true);
+        }
+    }, [usePolling, pollingInterval, manualRefresh]);
+
+    // Realtime 시도 (실패해도 상관없음)
+    const tryRealtimeConnection = useCallback(() => {
+        if (!isClient) return;
+
         const supabase = createClient();
+        let channelRef: any = null;
 
-        // Realtime 구독 설정
-        const channel = supabase
-            .channel('schedules-changes-v2') // 채널명 변경으로 새로 연결
-            .on(
-                'postgres_changes',
-                {
-                    event: '*', // INSERT, UPDATE, DELETE 모든 이벤트
-                    schema: 'public',
-                    table: 'schedules'
-                },
-                (payload) => {
-                    console.log('🎯 Realtime 이벤트 수신됨!', new Date().toLocaleTimeString());
-                    console.log('📡 이벤트 데이터:', payload);
-                    handleRealtimeChange(payload);
-                }
-            )
-            .subscribe((status, err) => {
-                console.log('📡 Realtime 구독 상태:', status);
-                if (err) {
-                    console.error('❌ Realtime 구독 오류:', err);
-                    setRealtimeStatus('error');
-                } else {
-                    switch (status) {
-                        case 'SUBSCRIBED':
-                            setRealtimeStatus('connected');
-                            console.log('✅ Realtime 연결 성공!');
-                            break;
-                        case 'CHANNEL_ERROR':
-                        case 'TIMED_OUT':
-                        case 'CLOSED':
-                            setRealtimeStatus('error');
-                            console.error('❌ Realtime 연결 실패:', status);
-                            break;
-                        default:
-                            setRealtimeStatus('connecting');
-                            console.log('⏳ Realtime 연결 중...', status);
+        setRealtimeStatus('connecting');
+
+        try {
+            // Realtime 구독 설정
+            const channel = supabase
+                .channel(`schedules-changes-${Date.now()}`)
+                .on(
+                    'postgres_changes',
+                    {
+                        event: '*',
+                        schema: 'public',
+                        table: 'schedules'
+                    },
+                    (payload) => {
+                        // Realtime 성공 시 폴링 중지
+                        if (usePolling) {
+                            togglePolling();
+                        }
+                        // 데이터 새로고침
+                        setTimeout(() => manualRefresh(), 100);
                     }
+                )
+                .subscribe((status, err) => {
+                    if (err) {
+                        setRealtimeStatus('error');
+                    } else {
+                        switch (status) {
+                            case 'SUBSCRIBED':
+                                setRealtimeStatus('connected');
+                                // 폴링 중지 (Realtime 사용)
+                                if (usePolling) {
+                                    togglePolling();
+                                }
+                                break;
+                            case 'CHANNEL_ERROR':
+                            case 'TIMED_OUT':
+                            case 'CLOSED':
+                                setRealtimeStatus('error');
+                                // 폴링이 꺼져있으면 시작
+                                if (!usePolling) {
+                                    setTimeout(() => togglePolling(), 1000);
+                                }
+                                break;
+                            default:
+                                setRealtimeStatus('connecting');
+                        }
+                    }
+                });
+
+            channelRef = channel;
+
+            // 10초 후 연결 실패로 간주하고 폴링 시작
+            setTimeout(() => {
+                if (realtimeStatus !== 'connected' && !usePolling) {
+                    setRealtimeStatus('error');
+                    togglePolling();
                 }
-            });
+            }, 10000);
 
-        // 5초 후 연결 상태 재확인
-        const statusCheckTimeout = setTimeout(() => {
-
-            // 연결되지 않은 경우 재시도
-            if (!supabase.realtime.isConnected()) {
-                console.log('🔄 연결 재시도...');
-                setRealtimeStatus('error');
+        } catch (error) {
+            setRealtimeStatus('error');
+            if (!usePolling) {
+                togglePolling();
             }
-        }, 5000);
+        }
 
-        // 컴포넌트 언마운트 시 구독 해제
+        // 정리 함수
         return () => {
-            clearTimeout(statusCheckTimeout);
-            supabase.removeChannel(channel);
+            if (channelRef) {
+                supabase.removeChannel(channelRef);
+            }
         };
-    }, []); // handleRealtimeChange 의존성 제거
+    }, [isClient, realtimeStatus, usePolling, togglePolling, manualRefresh]);
 
-    // schedules가 변경될 때만 예약 상태 재계산 (별도 useEffect)
+    // 클라이언트에서 Realtime 시도
     useEffect(() => {
-        console.log('📊 schedules 변경됨, 예약 상태 재계산 시작');
+        if (!isClient) return;
+
+        const cleanup = tryRealtimeConnection();
+        return cleanup;
+    }, [isClient]);
+
+    // 폴링 자동 시작
+    useEffect(() => {
+        if (isClient && usePolling && !pollingInterval) {
+            togglePolling();
+        }
+    }, [isClient, usePolling]);
+
+    // 컴포넌트 언마운트 시 정리
+    useEffect(() => {
+        return () => {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+        };
+    }, [pollingInterval]);
+
+    // schedules가 변경될 때마다 예약 상태 재계산
+    useEffect(() => {
         updateReservationStatusForSchedules(schedules);
     }, [schedules, updateReservationStatusForSchedules]);
 
+    // 캐싱 방지: getCurrentMonthSchedules 함수 수정
+    const getCurrentMonthSchedules = useCallback(() => {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1;
+        const startDate = `${year}-${month.toString().padStart(2, '0')}-01`;
+
+        // 월말 날짜 계산 수정 - 마지막 날 포함되도록
+        const lastDay = new Date(year, month, 0).getDate();
+        const endDate = `${year}-${month.toString().padStart(2, '0')}-${lastDay.toString().padStart(2, '0')}`;
+
+        const filtered = schedules.filter((schedule) =>
+            schedule.schedule_date >= startDate && schedule.schedule_date <= endDate
+        );
+
+        return filtered;
+    }, [currentDate, schedules, refreshTrigger]);
+
+    const currentMonthSchedules = useMemo(() =>
+            getCurrentMonthSchedules(),
+        [getCurrentMonthSchedules]
+    );
 
     const toggleReservationStatus = async (day: number, e: React.MouseEvent) => {
         e.stopPropagation();
-        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
-            .toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1;
+        const dateString = createDateString(year, month, day);
 
         const currentIsOpen = reservationStatusMap.get(dateString);
         if (currentIsOpen === undefined) return;
@@ -176,31 +250,25 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
         if (!error) {
             setReservationStatus(dateString, newIsOpen);
+            // 상태 변경 후 새로고침
+            setTimeout(() => manualRefresh(), 500);
         } else {
-            console.error('⛔️ 업데이트 실패:', error.message);
+            console.error('업데이트 실패:', error.message);
         }
     };
 
-    const getCurrentMonthSchedules = () => {
+    const getSchedulesForDate = (day: number) => {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth() + 1;
-        const startDate = `${year}-${month.toString().padStart(2, '0')}-01`;
-        const endDate = new Date(year, month, 0).toISOString().split('T')[0];
-        return schedules.filter((schedule) => schedule.schedule_date >= startDate && schedule.schedule_date <= endDate);
-    };
+        const dateString = createDateString(year, month, day);
 
-    const currentMonthSchedules = useMemo(() => getCurrentMonthSchedules(), [currentDate, schedules]);
-
-    const getSchedulesForDate = (day: number) => {
-        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
-            .toString()
-            .padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
         return currentMonthSchedules.filter((schedule) => schedule.schedule_date === dateString);
     };
 
     const getReservationStatus = (day: number) => {
-        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
-            .toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1;
+        const dateString = createDateString(year, month, day);
 
         const isOpen = reservationStatusMap.get(dateString);
         if (isOpen === undefined) return 'available';
@@ -218,9 +286,10 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
     };
 
     const handleDateClick = (day: number) => {
-        const dateString = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
-            .toString()
-            .padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1;
+        const dateString = createDateString(year, month, day);
+
         setSelectedDate(dateString);
     };
 
@@ -238,6 +307,8 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
     const handleCloseForm = () => {
         setShowForm(false);
         setEditingSchedule(null);
+        // 폼 닫을 때 수동 새로고침
+        setTimeout(() => manualRefresh(), 500);
     };
 
     const handleCloseModal = () => {
@@ -254,8 +325,9 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
         return isOpen === false ? 'full' : 'available';
     };
 
-    // Realtime 상태 표시
+    // 연결 상태 표시
     const getStatusColor = () => {
+        if (usePolling) return 'bg-blue-500';
         switch (realtimeStatus) {
             case 'connected': return 'bg-green-500';
             case 'connecting': return 'bg-yellow-500 animate-pulse';
@@ -265,6 +337,7 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
     };
 
     const getStatusText = () => {
+        if (usePolling) return '폴링 모드';
         switch (realtimeStatus) {
             case 'connected': return '실시간 연결됨';
             case 'connecting': return '연결 중...';
@@ -275,7 +348,7 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
     return (
         <div className="p-6">
-            {/* 디버깅 정보 패널 */}
+            {/* 상태 표시 패널 */}
             <div className="mb-4 p-4 bg-gray-50 rounded-lg border">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
@@ -288,6 +361,13 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
                         </div>
                     </div>
 
+                    {/* 새로고침 버튼 */}
+                    <button
+                        onClick={manualRefresh}
+                        className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                    >
+                        🔄 새로고침
+                    </button>
                 </div>
             </div>
 
@@ -350,7 +430,7 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
                     return (
                         <div
-                            key={`day-${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`}
+                            key={`day-${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}-${refreshTrigger}`}
                             onClick={() => handleDateClick(day)}
                             className={`p-2 border rounded-md h-32 cursor-pointer transition-colors relative hover:bg-gray-50 ${
                                 index % 7 === 0 ? 'text-red-600' : index % 7 === 6 ? 'text-blue-600' : 'text-gray-900'
