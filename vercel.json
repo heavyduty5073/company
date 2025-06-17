@@ -1,13 +1,8 @@
 {
-  "functions": {
-    "app/api/**/*.ts": {
-      "regions": ["icn1"]
-    }
-  },
   "crons": [
     {
       "path": "/api/cron/daily-schedule",
-      "schedule": "9 4 * * *"
+      "schedule": "13 4 * * *"
     }
   ]
 }
