@@ -41,3 +41,34 @@ export interface VideoDetail {
     title: string;
     content: string;
 }
+
+/*NAVER ADS*/
+export interface NaverAdsData {
+    id: string;
+    date: string;
+    impressions: number;
+    clicks: number;
+    cost: number;
+    created_at: string;
+}
+
+export interface NaverAdsStats {
+    date: string;
+    impressions: number;
+    clicks: number;
+    cost: number;
+}
+
+export interface NaverAdsApiResponse {
+    impressions: number;
+    clicks: number;
+    cost: number;
+}
+
+export interface CampaignStatResponse {
+    data?: Array<{
+        impressionCnt?: number;
+        clickCnt?: number;
+        salesAmt?: number;
+    }>;
+}

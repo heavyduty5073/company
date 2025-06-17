@@ -1,13 +1,29 @@
 import React from 'react';
-import {createClient} from "@/utils/supabase/server";
-import {redirect} from "next/navigation";
+import { fetchNaverAdsData } from '@/lib/naver/naver-ads-actions';
+import StatsCards from "@/components/admin/dashboard/naver/StatsCards";
+import NaverAdsChart from "@/components/admin/dashboard/naver/charts/NaverAdsChart";
 
 async function Page() {
-    const supabase = await createClient()
-    const {data:{user}} = await supabase.auth.getUser()
-
+    const adsData = await fetchNaverAdsData(30); // 최근 30일 데이터
     return (
-        <div>관리자 페이지에 오신것을 환영합니다.</div>
+        <div className="min-h-screen bg-gray-50 p-8">
+            <div className="max-w-7xl mx-auto">
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                        네이버 검색광고 관리자 대시보드
+                    </h1>
+                    <p className="text-gray-600">
+                        최근 30일간의 광고 성과를 확인하세요.
+                    </p>
+                </div>
+
+                {/* 통계 카드 (클라이언트 컴포넌트) */}
+                <StatsCards data={adsData} />
+
+                {/* 차트 (클라이언트 컴포넌트) */}
+                <NaverAdsChart data={adsData} />
+            </div>
+        </div>
     );
 }
 

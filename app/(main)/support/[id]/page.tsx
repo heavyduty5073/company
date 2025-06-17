@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Inquiry, Posts } from "@/utils/supabase/types";
 import {createClient} from "@/utils/supabase/server";
+import AttachmentDownload from "@/components/editor/AttachmentDownload";
 
 async function Page({ params, searchParams }: {
     params: Promise<{ id: string }>;
@@ -157,6 +158,8 @@ async function Page({ params, searchParams }: {
                                     className="prose max-w-none"
                                 ></div>
                             </div>
+                            {/* 게시물 첨부파일 */}
+                            <AttachmentDownload attachments={post.attachments || []} />
                         </CardContent>
                     </Card>
                 </div>
