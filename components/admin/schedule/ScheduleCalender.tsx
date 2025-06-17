@@ -96,11 +96,7 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
     // Supabase Realtime 설정
     useEffect(() => {
-        console.log('🚀 Realtime useEffect 실행됨');
         const supabase = createClient();
-
-        console.log('🔄 Supabase Realtime 연결 중...');
-        console.log('📊 Supabase 클라이언트:', supabase);
 
         // Realtime 구독 설정
         const channel = supabase
@@ -144,9 +140,6 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
         // 5초 후 연결 상태 재확인
         const statusCheckTimeout = setTimeout(() => {
-            console.log('⏰ 5초 후 상태 확인:');
-            console.log('🔗 Realtime 연결 상태:', supabase.realtime.isConnected());
-            console.log('📋 활성 채널 수:', supabase.realtime.channels?.length || 0);
 
             // 연결되지 않은 경우 재시도
             if (!supabase.realtime.isConnected()) {
@@ -157,7 +150,6 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
         // 컴포넌트 언마운트 시 구독 해제
         return () => {
-            console.log('🔌 Realtime 연결 해제');
             clearTimeout(statusCheckTimeout);
             supabase.removeChannel(channel);
         };
@@ -169,25 +161,6 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
         updateReservationStatusForSchedules(schedules);
     }, [schedules, updateReservationStatusForSchedules]);
 
-    // 간단한 연결 테스트 함수
-    const testRealtimeConnection = async () => {
-        console.log('🧪 Realtime 연결 테스트 시작');
-        const supabase = createClient();
-
-        try {
-            // 간단한 테스트 채널
-            const testChannel = supabase
-                .channel('test-connection')
-                .subscribe((status) => {
-                    console.log('🧪 테스트 채널 상태:', status);
-                    alert(`테스트 채널 상태: ${status}`);
-                    supabase.removeChannel(testChannel);
-                });
-        } catch (error) {
-            console.error('🧪 테스트 실패:', error);
-            alert('테스트 실패: ' + error);
-        }
-    };
 
     const toggleReservationStatus = async (day: number, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -314,12 +287,7 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
                             전체 스케줄: {schedules.length}개 | 이번 달: {currentMonthSchedules.length}개
                         </div>
                     </div>
-                    <button
-                        onClick={testRealtimeConnection}
-                        className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
-                    >
-                        연결 테스트
-                    </button>
+
                 </div>
             </div>
 
