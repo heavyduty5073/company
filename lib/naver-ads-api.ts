@@ -45,8 +45,10 @@ export class NaverAdsApi {
                     'X-API-KEY': this.accessLicense,
                     'X-Signature': signature,
                     'Content-Type': 'application/json;charset=UTF-8'
-                }
+                },
+                signal:AbortSignal.timeout(30000)
             });
+
 
             if (!response.ok) {
                 console.error(`네이버 광고 API 오류: ${response.status} ${response.statusText}`);
