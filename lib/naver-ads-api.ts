@@ -58,7 +58,6 @@ export class NaverAdsApi {
             }
 
             const data: CampaignStatResponse = await response.json();
-            console.log('네이버 광고 API 응답:', data);
 
             // API 응답 데이터를 파싱하여 반환
             const stats = data.data?.[0] || {};

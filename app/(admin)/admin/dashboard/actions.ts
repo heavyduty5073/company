@@ -69,7 +69,6 @@ async function fillMissingDates(days: number): Promise<void> {
     // 누락된 날짜의 데이터 수집
     for (const date of missingDates) {
         try {
-            console.log(`${date} 데이터 수집 중...`);
 
             // 각 날짜별로 API 호출
             const apiData = await naverAds.fetchCampaignStats(date, date);
@@ -90,8 +89,6 @@ async function fillMissingDates(days: number): Promise<void> {
 
             if (error) {
                 console.error(`${date} 데이터 저장 오류:`, error);
-            } else {
-                console.log(`${date} 데이터 저장 완료`);
             }
 
             // API 호출 간격 (1초 대기)

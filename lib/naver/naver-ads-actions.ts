@@ -57,8 +57,6 @@ export async function updateNaverAdsData(): Promise<void> {
         // 네이버 광고 API에서 데이터 가져오기
         const apiData = await naverAds.fetchCampaignStats(yesterday, today);
 
-        console.log('네이버 광고 API 데이터:', apiData);
-
         // Supabase에 데이터 저장 또는 업데이트
         const { error } = await supabase
             .from('naver_ads_stats')

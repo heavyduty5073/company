@@ -7,13 +7,7 @@ export async function GET(request: NextRequest) {
     const koreaTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
     const today = koreaTime.toISOString().split('T')[0];
 
-    console.log('=== 일일 스케줄 크론 실행 ===');
-    console.log('실행 시간 (한국):', koreaTime.toLocaleString('ko-KR'));
-    console.log('대상 날짜:', today);
-
     const authHeader = request.headers.get('authorization');
-    console.log('받은 Authorization:', authHeader ? '있음' : '없음');
-    console.log('환경변수 CRON_SECRET:', process.env.CRON_SECRET);
 
     try {
         // Vercel Cron 인증 활성화
@@ -53,11 +47,9 @@ export async function GET(request: NextRequest) {
             // 간단한 텍스트 메시지로 먼저 테스트
             const simpleMessage = `🌅 오늘의 스케줄 안내\n\n📅 ${today}\n\n${scheduleList}\n\n📊 총 ${todaySchedules.length}개의 스케줄`;
 
-            console.log('카카오워크 메시지 전송 시도...');
-
             try {
-                const result = await kakaoWork.sendMessage(simpleMessage);
-                console.log('카카오워크 전송 성공:', result);
+                await kakaoWork.sendMessage(simpleMessage);
+
             } catch (kakaoError) {
                 console.error('카카오워크 전송 실패:', kakaoError);
                 throw kakaoError;
@@ -75,13 +67,12 @@ export async function GET(request: NextRequest) {
             });
 
         } else {
-            console.log('오늘 스케줄 없음');
+            //등록된 스케줄 없을 경우
 
             const noScheduleMessage = `📅 오늘의 스케줄\n\n${today}\n\n😴 오늘은 등록된 스케줄이 없습니다.`;
 
             try {
-                const result = await kakaoWork.sendMessage(noScheduleMessage);
-                console.log('카카오워크 전송 성공:', result);
+                await kakaoWork.sendMessage(noScheduleMessage);
             } catch (kakaoError) {
                 console.error('카카오워크 전송 실패:', kakaoError);
                 throw kakaoError;
@@ -107,7 +98,6 @@ export async function GET(request: NextRequest) {
 
 // POST 메소드는 개발 테스트용
 export async function POST(request: NextRequest) {
-    console.log('=== 개발 테스트 실행 ===');
 
     // 개발환경에서는 인증 헤더 자동 추가
     const testRequest = new NextRequest(request.url, {
