@@ -8,7 +8,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import {ProductWithInventory} from "@/utils/supabase/types";
-
+import { TiSpanner } from "react-icons/ti";
+import { FaBoxOpen } from "react-icons/fa";
 interface ProductTableProps {
     products: ProductWithInventory[];
 }
@@ -50,7 +51,7 @@ export default function EcountProductTable({ products }: ProductTableProps) {
                 product.PROD_CD?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.PROD_DES?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 product.REMARKS?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                product.BAR_CODE?.toLowerCase().includes(searchTerm.toLowerCase())
+                product.CONT3?.toLowerCase().includes(searchTerm.toLowerCase())
             );
 
             const matchesType = !selectedProdType || selectedProdType === 'all' || product.PROD_TYPE === selectedProdType;
@@ -163,11 +164,6 @@ export default function EcountProductTable({ products }: ProductTableProps) {
         setCurrentPage(1);
     };
 
-    const formatNumber = (value: string | number) => {
-        const num = typeof value === 'string' ? parseFloat(value) : value;
-        return isNaN(num) ? '0' : num.toLocaleString();
-    };
-
     const formatStockQuantity = (balQty: string | number) => {
         const qty = typeof balQty === 'string' ? parseFloat(balQty) : balQty;
         if (isNaN(qty)) return <span className="text-gray-500">0</span>;
@@ -237,7 +233,7 @@ export default function EcountProductTable({ products }: ProductTableProps) {
                         <div className="flex-1 w-full">
                             <Input
                                 type="text"
-                                placeholder="품목코드, 품목명, 비고로 검색..."
+                                placeholder="품목코드,DS코드, 품목명, 비고로 검색..."
                                 value={searchTerm}
                                 onChange={(e) => handleSearchChange(e.target.value)}
                                 className="w-full"
@@ -294,16 +290,16 @@ export default function EcountProductTable({ products }: ProductTableProps) {
             {/* 통계 요약 */}
             {filteredAndSortedProducts.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                    <Card>
+                    <Card className={'bg-blue-300'}>
                         <CardContent className="p-6">
-                            <div className="text-sm font-medium text-muted-foreground">총 품목수</div>
+                            <div className="flex flex-row gap-2 itmes-center text-md text-black/70 font-jalnan text-muted-foreground">총 품목수<FaBoxOpen className={'w-6 h-6 text-white'}/></div>
                             <div className="text-2xl font-bold">{filteredAndSortedProducts.length}개</div>
                         </CardContent>
                     </Card>
-                    <Card>
+                    <Card className={'bg-green-300'}>
                         <CardContent className="p-6">
-                            <div className="text-sm font-medium text-muted-foreground">재고 충분 (5개 이상)</div>
-                            <div className="text-2xl font-bold text-green-600">
+                            <div className="text-md font-jalnan text-black/70 text-muted-foreground">재고 충분 (5개 이상)</div>
+                            <div className="text-2xl font-bold text-green-700">
                                 {filteredAndSortedProducts.filter(p => {
                                     const qty = parseFloat(p.BAL_QTY || '0');
                                     return qty >= 5;
@@ -311,10 +307,10 @@ export default function EcountProductTable({ products }: ProductTableProps) {
                             </div>
                         </CardContent>
                     </Card>
-                    <Card>
+                    <Card className={'bg-orange-300'}>
                         <CardContent className="p-6">
-                            <div className="text-sm font-medium text-muted-foreground">재고 부족 (1-4개)</div>
-                            <div className="text-2xl font-bold text-orange-600">
+                            <div className="text-md text-red-500 font-jalnan text-muted-foreground">재고 부족 (1-4개)</div>
+                            <div className="text-2xl font-bold text-orange-700">
                                 {filteredAndSortedProducts.filter(p => {
                                     const qty = parseFloat(p.BAL_QTY || '0');
                                     return qty > 0 && qty < 5;
@@ -322,9 +318,9 @@ export default function EcountProductTable({ products }: ProductTableProps) {
                             </div>
                         </CardContent>
                     </Card>
-                    <Card>
+                    <Card className={'bg-purple-300'}>
                         <CardContent className="p-6">
-                            <div className="text-sm font-medium text-muted-foreground">재고 없음</div>
+                            <div className="text-md text-red-500 font-jalnan text-muted-foreground">재고 없음</div>
                             <div className="text-2xl font-bold text-red-600">
                                 {filteredAndSortedProducts.filter(p => {
                                     const qty = parseFloat(p.BAL_QTY || '0');
@@ -333,9 +329,10 @@ export default function EcountProductTable({ products }: ProductTableProps) {
                             </div>
                         </CardContent>
                     </Card>
-                    <Card>
+                    <Card className={'bg-yellow-300'}>
                         <CardContent className="p-6">
-                            <div className="text-sm font-medium text-muted-foreground">음수 재고</div>
+                            <div className="flex flex-row gap-1 items-center text-md font-jalnan text-muted-foreground">인건비 품목<TiSpanner className={'w-6 h-6'}/></div>
+
                             <div className="text-2xl font-bold text-gray-600">
                                 {filteredAndSortedProducts.filter(p => {
                                     const qty = parseFloat(p.BAL_QTY || '0');
@@ -355,12 +352,25 @@ export default function EcountProductTable({ products }: ProductTableProps) {
                             <thead>
                             <tr className="border-b">
                                 <th
-                                    className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors"
+                                    className="h-12 px-2 text-left align-middle font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors"
                                     onClick={() => handleSort('PROD_CD')}
                                 >
                                     <div className="flex items-center">
                                         품목코드
                                         {sortField === 'PROD_CD' && (
+                                            <span className="ml-1 text-primary">
+                                                {sortDirection === 'asc' ? '↑' : '↓'}
+                                            </span>
+                                        )}
+                                    </div>
+                                </th>
+                                <th
+                                    className="h-12 px-4 text-left align-middle font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors"
+                                    onClick={() => handleSort('CONT3')}
+                                >
+                                    <div className="flex items-center">
+                                        DS품번
+                                        {sortField === 'CONT3' && (
                                             <span className="ml-1 text-primary">
                                                 {sortDirection === 'asc' ? '↑' : '↓'}
                                             </span>
@@ -419,8 +429,11 @@ export default function EcountProductTable({ products }: ProductTableProps) {
                                 const stockBadge = getStockStatusBadge(product.BAL_QTY || 0);
                                 return (
                                     <tr key={`${product.PROD_CD}-${index}`} className="border-b hover:bg-muted/50 transition-colors">
-                                        <td className="p-4 align-middle">
+                                        <td className="p-2 align-middle">
                                             <div className="font-mono text-sm font-medium">{product.PROD_CD}</div>
+                                        </td>
+                                        <td className="p-4 align-middle">
+                                            <div className="font-mono text-sm font-medium">{product.CONT3}</div>
                                         </td>
                                         <td className="p-4 align-middle">
                                             <div className="font-medium max-w-xs">{product.PROD_DES}</div>

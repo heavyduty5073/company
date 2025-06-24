@@ -30,30 +30,11 @@ async function fetchInventoryData(): Promise<ProductWithInventory[]> {
 export default async function EcountInventoryPage() {
     const products = await fetchInventoryData();
 
-    // 재고 상태별 통계
-    const stockStats = {
-        total: products.length,
-        safe: products.filter(p => p.STOCK_STATUS === 'SAFE').length,
-        low: products.filter(p => p.STOCK_STATUS === 'LOW').length,
-        out: products.filter(p => p.STOCK_STATUS === 'OUT').length
-    };
-
     return (
         <div className="container mx-auto p-6">
             <div className="mb-6">
                 <h1 className="text-3xl font-jalnan text-gray-900">재고현황 관리</h1>
                 <p className="mt-2 text-gray-600 font-jalnan">Ecount ERP 연동 실시간 재고현황 시스템</p>
-                <div className="mt-3 flex gap-4 text-sm">
-                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full">
-                        재고충분: {stockStats.safe}개
-                    </span>
-                    <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full">
-                        재고부족: {stockStats.low}개
-                    </span>
-                    <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full">
-                        재고없음: {stockStats.out}개
-                    </span>
-                </div>
             </div>
             <EcountProductTable products={products || []} />
         </div>

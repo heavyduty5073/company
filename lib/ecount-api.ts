@@ -245,7 +245,6 @@ class EcountInventoryApiClient {
         ZERO_FLAG?: string;
     }): Promise<ProductWithInventory[]> {
         try {
-            console.log('=== 제품정보 + 재고현황 조회 시작 ===');
 
             // 1. 제품 기본정보 조회
             const products = await this.getProducts({
