@@ -1,7 +1,29 @@
-// weekly-schedule/route.ts (디버깅 로그 추가)
+// weekly-schedule/route.ts (네트워크 재시도 및 오류 처리 개선)
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { getKakaoWorkClient } from '@/utils/kakaowork';
+
+// 재시도 유틸리티 함수
+async function retryWithBackoff<T>(
+    fn: () => Promise<T>,
+    maxRetries: number = 3,
+    baseDelay: number = 1000
+): Promise<T> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            return await fn();
+        } catch (error) {
+            if (attempt === maxRetries) {
+                throw error;
+            }
+
+            const delay = baseDelay * Math.pow(2, attempt - 1); // 지수 백오프
+            console.log(`재시도 ${attempt}/${maxRetries} - ${delay}ms 후 재시도`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+    throw new Error('재시도 실패');
+}
 
 export async function GET(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
@@ -12,10 +34,22 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const supabase = await createClient();
-
-        // 🕘 한국 시간대로 이번 주 계산
+        // 한국 시간 기준으로 현재 시간 확인
         const koreaTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Seoul"}));
+        const currentDay = koreaTime.getDay(); // 0: 일요일, 1: 월요일, ...
+
+        console.log(`현재 한국 시간: ${koreaTime.toISOString()}, 요일: ${currentDay}`);
+
+        // 월요일(1)이 아닌 경우 실행하지 않음
+        if (currentDay !== 1) {
+            return NextResponse.json({
+                success: false,
+                message: `월요일이 아님 (현재: ${currentDay}). 주간 알림은 월요일에만 발송됩니다.`,
+                koreaTime: koreaTime.toISOString()
+            });
+        }
+
+        const supabase = await createClient();
 
         // 이번 주 일요일부터 토요일까지 (한국 시간 기준)
         const startOfWeek = new Date(koreaTime);
@@ -25,6 +59,8 @@ export async function GET(request: NextRequest) {
 
         const startDate = startOfWeek.toISOString().split('T')[0];
         const endDate = endOfWeek.toISOString().split('T')[0];
+
+        console.log(`주간 스케줄 조회: ${startDate} ~ ${endDate}`);
 
         // 이번 주 스케줄 조회
         const { data: weekSchedules, error } = await supabase
@@ -39,9 +75,9 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: 'Database error' }, { status: 500 });
         }
 
-        if (weekSchedules && weekSchedules.length > 0) {
-            const kakaoWork = getKakaoWorkClient();
+        const kakaoWork = getKakaoWorkClient();
 
+        if (weekSchedules && weekSchedules.length > 0) {
             // 날짜별로 그룹화
             const schedulesByDate = weekSchedules.reduce((acc, schedule) => {
                 const date = schedule.schedule_date;
@@ -89,7 +125,10 @@ export async function GET(request: NextRequest) {
                 }
             ];
 
-            await kakaoWork.sendMessage('이번 주 스케줄을 확인하세요!', blocks);
+            // 재시도 로직으로 메시지 전송
+            await retryWithBackoff(async () => {
+                return kakaoWork.sendMessage('이번 주 스케줄을 확인하세요!', blocks);
+            });
 
             return NextResponse.json({
                 success: true,
@@ -99,8 +138,6 @@ export async function GET(request: NextRequest) {
                 koreaTime: koreaTime.toISOString()
             });
         } else {
-            const kakaoWork = getKakaoWorkClient();
-
             // 스케줄이 없을 때도 블록 형식
             const noScheduleBlocks = [
                 {
@@ -120,8 +157,10 @@ export async function GET(request: NextRequest) {
                 }
             ];
 
-
-            await kakaoWork.sendMessage('이번 주 스케줄 확인', noScheduleBlocks);
+            // 재시도 로직으로 메시지 전송
+            await retryWithBackoff(async () => {
+                return kakaoWork.sendMessage('이번 주 스케줄 확인', noScheduleBlocks);
+            });
 
             return NextResponse.json({
                 success: true,
@@ -135,14 +174,10 @@ export async function GET(request: NextRequest) {
     } catch (error) {
         console.error('주간 스케줄 알림 오류:', error);
 
-        // 블록 전송 실패 시 간단한 텍스트로 폴백
-        try {
-            const kakaoWork = getKakaoWorkClient();
-            await kakaoWork.sendMessage(`📋 이번 주 스케줄 요약\n스케줄 조회 중 오류가 발생했습니다.`);
-        } catch (fallbackError) {
-            console.error('폴백 메시지도 실패:', fallbackError);
-        }
-
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        // 에러 발생 시 알림을 보내지 않고 로그만 남김
+        return NextResponse.json({
+            error: 'Internal server error',
+            details: error instanceof Error ? error.message : '알 수 없는 오류'
+        }, { status: 500 });
     }
 }
