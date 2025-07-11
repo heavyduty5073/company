@@ -5,6 +5,7 @@ import {BubbleMessage, ChatbotButton, InquiryBubble} from "@/components/ui/Chatb
 // 상수 분리
 const BUBBLE_SHOW_DELAY = 3000;
 const BUBBLE_AUTO_HIDE_DELAY = 5000;
+const GREETING_REPEAT_DELAY = 10000; // 10초마다 인사 말풍선 반복
 
 type InquiryType = '부품문의' | '출장문의' | '기술문의';
 type ChatStep = 'greeting' | 'inquiry-type' | 'form' | 'success';
@@ -26,6 +27,7 @@ function Chatbot() {
         equipment: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [greetingTimer, setGreetingTimer] = useState<NodeJS.Timeout | null>(null);
 
     // useCallback으로 함수 메모이제이션
     const handleChatbotClick = useCallback(() => {
@@ -33,6 +35,11 @@ function Chatbot() {
             // 말풍선이 안 보이는 상태면 문의 시작
             setShowBubble(true);
             setChatStep('inquiry-type');
+            // 인사 타이머 정리
+            if (greetingTimer) {
+                clearInterval(greetingTimer);
+                setGreetingTimer(null);
+            }
         } else {
             // 말풍선이 보이는 상태면 닫기
             setShowBubble(false);
@@ -45,9 +52,11 @@ function Chatbot() {
                     contact: '',
                     equipment: ''
                 });
+                // 인사 타이머 재시작
+                startGreetingTimer();
             }, 300);
         }
-    }, [showBubble]);
+    }, [showBubble, greetingTimer]);
 
     const handleCloseBubble = useCallback(() => {
         setShowBubble(false);
@@ -60,6 +69,8 @@ function Chatbot() {
                 contact: '',
                 equipment: ''
             });
+            // 인사 타이머 재시작
+            startGreetingTimer();
         }, 300);
     }, []);
 
@@ -105,16 +116,41 @@ function Chatbot() {
         }
     }, [inquiryData, handleCloseBubble]);
 
-    // 말풍선 표시 타이머 (자동 인사)
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (chatStep === 'greeting') {
+    // 인사 타이머 시작 함수
+    const startGreetingTimer = useCallback(() => {
+        // 기존 타이머 정리
+        if (greetingTimer) {
+            clearInterval(greetingTimer);
+        }
+
+        // 첫 번째 인사 (2초 후)
+        const firstTimer = setTimeout(() => {
+            if (chatStep === 'greeting' && !showBubble) {
                 setShowBubble(true);
             }
         }, BUBBLE_SHOW_DELAY);
 
-        return () => clearTimeout(timer);
-    }, [chatStep]);
+        // 반복 인사 타이머 (10초마다)
+        const repeatTimer = setInterval(() => {
+            if (chatStep === 'greeting' && !showBubble) {
+                setShowBubble(true);
+            }
+        }, GREETING_REPEAT_DELAY);
+
+        setGreetingTimer(repeatTimer);
+
+        // 컴포넌트 언마운트 시 정리
+        return () => {
+            clearTimeout(firstTimer);
+            clearInterval(repeatTimer);
+        };
+    }, [chatStep, showBubble, greetingTimer]);
+
+    // 컴포넌트 마운트 시 인사 타이머 시작
+    useEffect(() => {
+        const cleanup = startGreetingTimer();
+        return cleanup;
+    }, []);
 
     // 말풍선 자동 숨김 타이머 (greeting 단계에서만)
     useEffect(() => {
@@ -126,6 +162,15 @@ function Chatbot() {
 
         return () => clearTimeout(hideTimer);
     }, [showBubble, chatStep]);
+
+    // 컴포넌트 언마운트 시 타이머 정리
+    useEffect(() => {
+        return () => {
+            if (greetingTimer) {
+                clearInterval(greetingTimer);
+            }
+        };
+    }, [greetingTimer]);
 
     return (
         <div className="fixed bottom-5 md:bottom-10 right-5 md:right-8 z-10">

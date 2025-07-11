@@ -1,6 +1,7 @@
-import React, {memo} from "react";
+import React, {memo, useState, useEffect} from "react";
 import Image from "next/image";
 import { HiMiniXMark } from "react-icons/hi2";
+
 type InquiryType = '부품문의' | '출장문의' | '기술문의';
 type ChatStep = 'greeting' | 'inquiry-type' | 'form' | 'success';
 
@@ -11,27 +12,44 @@ interface InquiryData {
     equipment: string;
 }
 
-export const BubbleMessage = memo(({ onClose }: { onClose: () => void }) => (
-    <div className="absolute bottom-24 right-0 mb-2 animate-fade-in">
-        <div className="relative bg-white rounded-lg shadow-lg px-4 py-3 w-72 md:w-80">
-            <p className="text-sm text-gray-800 font-medium pr-4 font-jalnan">
-                안녕하세요! 궁금한 것이 있으시면 언제든 물어보세요 👋
-            </p>
-            {/* 말풍선 꼬리 */}
-            <div className="absolute bottom-0 right-4 transform translate-y-full">
-                <div className="w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white" />
+const messageList = [
+    '안녕하세요! 궁금한 것이 있으시면 문의해 주세요👋',
+    '어떤 문제가 발생하셨나요? 문의해주세요 📞',
+    '도움이 필요하시면 언제든지 연락주세요!😊',
+    '장비가 고장나셨나요? 출동이 필요하시면 문의주세요!'
+];
+
+export const BubbleMessage = memo(({ onClose }: { onClose: () => void }) => {
+    const [randomMessage, setRandomMessage] = useState('');
+
+    // 컴포넌트가 마운트될 때마다 랜덤 메시지 선택
+    useEffect(() => {
+        const randomIndex = Math.floor(Math.random() * messageList.length);
+        setRandomMessage(messageList[randomIndex]);
+    }, []);
+
+    return (
+        <div className="absolute bottom-24 right-0 mb-2 animate-fade-in">
+            <div className="relative bg-white rounded-lg shadow-lg px-4 py-3 w-72 md:w-80">
+                <p className="text-sm text-gray-800 font-medium pr-4 font-jalnan">
+                    {randomMessage}
+                </p>
+                {/* 말풍선 꼬리 */}
+                <div className="absolute bottom-0 right-4 transform translate-y-full">
+                    <div className="w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white" />
+                </div>
+                {/* 닫기 버튼 */}
+                <button
+                    onClick={onClose}
+                    className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-lg leading-none w-5 h-5 flex items-center justify-center"
+                    aria-label="말풍선 닫기"
+                >
+                    <HiMiniXMark className={'w-5 h-5'}/>
+                </button>
             </div>
-            {/* 닫기 버튼 */}
-            <button
-                onClick={onClose}
-                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-lg leading-none w-5 h-5 flex items-center justify-center"
-                aria-label="말풍선 닫기"
-            >
-                <HiMiniXMark className={'w-5 h-5'}/>
-            </button>
         </div>
-    </div>
-));
+    );
+});
 
 BubbleMessage.displayName = 'BubbleMessage';
 
@@ -183,7 +201,7 @@ export const ChatbotButton = memo(({ onClick }: { onClick: () => void }) => (
             alt="chatbot"
             width={100}
             height={100}
-            className="animate-bounce-subtle"
+            className="animate-bounce-subtle drop-shadow-lg"
             priority={false}
             loading="lazy"
         />
