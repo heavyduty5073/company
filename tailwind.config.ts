@@ -18,6 +18,7 @@ const config: Config = {
             },
             animation: {
                 fadeIn: 'fadeIn 1s ease-in-out forwards',
+                "bounce-subtle":'bounce-subtle 1s infinite',
             },
             keyframes: {
                 fadeIn: {

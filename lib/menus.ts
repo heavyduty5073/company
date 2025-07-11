@@ -100,10 +100,3 @@ export const menus: MenuItem[] = [
         type: 'link'
     },
 ];
-
-export const truckList =['벤츠','볼보','스카니아','현대','대우','MAN']
-export const workList=[
-    {
-        category:'벤츠'
-    }
-]
