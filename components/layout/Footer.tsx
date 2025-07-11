@@ -48,21 +48,28 @@ function Footer() {
                             <h3 className="font-Rix text-sm text-center md:text-left">소셜 미디어</h3>
                             <div className="flex gap-3 justify-center md:justify-start">
                                 <Link
-                                    href="https://www.youtube.com/@DS_Heavyduty"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="bg-secondary-foreground bg-opacity-10 p-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-red-500 rounded-xl"
-                                    aria-label="유튜브 채널"
+                                    href={'https://www.youtube.com/@DS_Heavyduty'}
+                                    target={'_blank'}
+                                    rel={'noopener noreferrer'}
+                                    className={'flex justify-center items-center bg-secondary-foreground bg-opacity-10 p-2 hover:bg-primary transition-colors rounded-xl'}
                                 >
-                                    <IoLogoYoutube size={22} />
+                                    <Image src={'/footer/youtube.png'} alt={'youtube'} width={27} height={27} className={'rounded-md'}/>
                                 </Link>
                                 <Link
                                     href={'https://www.band.us/@dsce'}
                                     target={'_blank'}
                                     rel={'noopener noreferrer'}
-                                    className={'flex justify-center items-center bg-secondary-foreground bg-opacity-10 p-2 rounded-full hover:bg-primary transition-colors rounded-xl'}
+                                    className={'flex justify-center items-center bg-secondary-foreground bg-opacity-10 p-2 hover:bg-primary transition-colors rounded-xl'}
                                 >
-                                    <Image src={'/footer/band.svg'} alt={'band'} width={22} height={22}/>
+                                    <Image src={'/footer/band.svg'} alt={'band'} width={25} height={25}/>
+                                </Link>
+                                <Link
+                                    href={'https://www.tiktok.com/@ds_corp'}
+                                    target={'_blank'}
+                                    rel={'noopener noreferrer'}
+                                    className={'flex justify-center items-center bg-secondary-foreground bg-opacity-10 p-2 hover:bg-primary transition-colors rounded-full'}
+                                >
+                                    <Image src={'/footer/tictok.jpg'} alt={'tictok'} width={25} height={25} className={'rounded-md'}/>
                                 </Link>
                             </div>
                         </div>
