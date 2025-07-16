@@ -34,12 +34,12 @@ const NaverBandSection = dynamic(
 
 // SEO 메타데이터
 export const metadata: Metadata = {
-    title: 'DS 건설기계 | 전문 건설기계 정비 서비스',
-    description: '군산, 김제, 전주, 서천, 전라북도 전 지역 최고의 건설기계 정비 전문업체. 굴삭기, 로더, 덤프트럭 등 모든 건설기계 정비 서비스를 제공합니다.',
-    keywords: '건설기계, 정비, 수리, 군산, 김제, 굴삭기, 로더, 덤프트럭, 굴착기, VGT, 요소수인젝터, 요소수펌프, DPF경고등, DPF',
+    title: 'DS 건설기계 | 전문 건설기계 정비 및 후처리클리닝 서비스',
+    description: '굴삭기, 로더, 덤프트럭 최고의 건설기계 정비 전문업체 DOC,DPF,SCR 후처리 클리닝 전문업체 모든 건설기계 정비 서비스를 제공합니다. 얀마, 케타, 볼보, 현대, 두산 벤츠등 모든 진단기 보유 및 정밀진단',
+    keywords: '건설기계, 정비, 수리, 굴삭기, 로더, 덤프트럭, 굴착기, 굴삭기, HX145, 6w, 8w, 3w, VGT, 요소수인젝터, 요소수펌프, DPF경고등, DPF, SCR, DOC, 얀마, 케타, 볼보, 두산, 현대, 벤츠, ',
     openGraph: {
         title: 'DS 건설기계 | 전문 건설기계 정비 서비스',
-        description: '군산, 김제 지역 최고의 건설기계 정비 전문업체',
+        description: '최고의 건설기계 정비 후처리클리닝 전문업체',
         type: 'website',
     },
 };
