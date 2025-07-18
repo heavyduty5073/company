@@ -36,9 +36,13 @@ export default function ScheduleDayModal({
            notify.failure(formState.message);
        }
     };
+
+    const handleBackdropClick=(e:React.MouseEvent<HTMLDivElement>)=>{
+        if(e.target===e.currentTarget) onClose()
+    }
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40" onClick={handleBackdropClick}>
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-5xl w-full mx-4 max-h-[80vh] overflow-y-auto">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold">
                         {formatScheduleDate(date)} 스케줄
@@ -55,7 +59,7 @@ export default function ScheduleDayModal({
                 <div className="mb-4">
                     <button
                         onClick={onNewSchedule}
-                        className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                        className="w-full font-jalnan bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     >
                         + 이 날짜에 새 스케줄 등록
                     </button>
@@ -85,7 +89,7 @@ export default function ScheduleDayModal({
                                         </div>
                                         <div className="flex items-center mb-2">
                                             <span className="text-lg">👤</span>
-                                            <span className="text-gray-700 ml-2">
+                                            <span className="text-gray-700 ml-2 font-bold">
                         {schedule.driver_name}
                       </span>
                                         </div>

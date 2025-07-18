@@ -18,7 +18,7 @@ export default function ScheduleForm({ schedule, defaultDate, onSuccess, onCance
     const isEditMode = !!schedule;
 
     return (
-        <div className="max-w-md mx-auto">
+        <div className="max-w-xl mx-auto">
             <FormContainer
                 action={isEditMode ? updateSchedule : createSchedule}
                 onResult={(result) => {
@@ -98,7 +98,7 @@ export default function ScheduleForm({ schedule, defaultDate, onSuccess, onCance
                         <textarea
                             name="notes"
                             id="notes"
-                            rows={4}
+                            rows={12}
                             defaultValue={schedule?.notes || ''}
                             className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
                             placeholder="스케줄에 대한 메모사항을 입력하세요 (선택사항)&#10;예: 오전 10시 출발, 특이사항 있음"
