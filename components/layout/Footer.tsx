@@ -77,7 +77,7 @@ function Footer() {
 
                     {/* 중앙: 군산본점 정보 */}
                     <div className="space-y-3">
-                        <p className="font-Rix text-base sm:text-lg text-foreground font-bold text-center md:text-left">DS 건설기계 군산본점</p>
+                        <p className="font-Rix text-base sm:text-lg text-foreground font-SCore text-center md:text-left">DS 건설기계 군산본점</p>
                         <div className="flex items-start gap-2">
                             <MapPin size={16} className="flex-shrink-0 mt-0.5" />
                             <p className="break-words text-sm">전북특별자치도 군산시 해망로 663 선우플랜트</p>
@@ -94,7 +94,7 @@ function Footer() {
 
                     {/* 오른쪽: 김제점 정보 */}
                     <div className="space-y-3">
-                        <p className="font-Rix text-base sm:text-lg text-foreground font-bold text-center md:text-left">DS 건설기계 김제점</p>
+                        <p className="font-Rix text-base sm:text-lg text-foreground font-SCore text-center md:text-left">DS 건설기계 김제점</p>
                         <div className="flex items-start gap-2">
                             <MapPin size={16} className="flex-shrink-0 mt-0.5" />
                             <p className="break-words text-sm">전북 김제시 황토로 919 1동</p>

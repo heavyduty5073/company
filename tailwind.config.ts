@@ -9,12 +9,14 @@ const config: Config = {
     theme: {
         extend: {
             fontFamily: {
+                'sans': ['SCore', 'ui-sans-serif', 'system-ui', 'sans-serif'],
                 'Rix':['Rix', 'sans-serif'],
                 'Gangwon':['Gangwon', 'sans-serif'],
                 'Batang':['Batang', 'sans-serif'],
                 'ONE':['ONE', 'sans-serif'],
                 'Paperlogy':['"Paperlogy"', 'sans-serif'],
                 'jalnan':['"jalnan"', 'sans-serif'],
+                'SCore':['SCore', 'sans-serif'],
             },
             animation: {
                 fadeIn: 'fadeIn 1s ease-in-out forwards',

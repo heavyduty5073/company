@@ -13,9 +13,9 @@ import CountView from "@/components/home/CountView";
 import InAppButton from "@/components/home/inApp/InAppButton";
 import WorkTime from "@/components/home/WorkTime";
 import UreaPopup from '@/components/home/popup/UreaPopup';
-import ContactBanner from "@/components/home/ContactBanner";
 import ScheduleCalendarPopup from "@/components/home/popup/ScheduleCalendarPopup";
 import {getAllSchedules} from "@/app/(admin)/admin/schedule/actions";
+import ScrollVelocity from "@/components/ui/scrollVelocity";
 
 // 동적 임포트 (서버 컴포넌트에서는 ssr: false 옵션 제거)
 const RepairCaseCarousel = dynamic(
@@ -43,6 +43,11 @@ export const metadata: Metadata = {
         type: 'website',
     },
 };
+
+const diagnosticBrands = [
+    '볼보', '현대', '케타', '얀마', '두산', '벤츠', '커민스',
+    '히타치', '코마츠', '캐터필러'
+];
 
 async function Page() {
     // 서버에서 데이터 프리페치
@@ -121,7 +126,7 @@ async function Page() {
                                 <KakaoMap address="전북특별자치도 군산시 해망로 663" />
                             </div>
                             <div className="mt-4 text-center text-white">
-                                <p className="text-lg font-medium">DS 건설기계 군산본점</p>
+                                <p className="text-lg font-SCore">DS 건설기계 군산본점</p>
                                 <p className="text-sm mt-1">전북특별자치도 군산시 해망로 663 선우플랜트</p>
                                 <p className="text-sm mt-1">대표번호: 010-2036-5073</p>
                             </div>
@@ -131,7 +136,7 @@ async function Page() {
                                 <KakaoMap address="전북특별자치도 김제시 황토로 919" />
                             </div>
                             <div className="mt-4 text-center text-white">
-                                <p className="text-lg font-medium">DS 건설기계 김제점</p>
+                                <p className="text-lg font-SCore">DS 건설기계 김제점</p>
                                 <p className="text-sm mt-1">전북특별자치도 김제시 황토로 919 1동</p>
                                 <p className="text-sm mt-1">대표번호: 010-9590-1232</p>
                             </div>
@@ -139,6 +144,62 @@ async function Page() {
                     </div>
                 </div>
             </section>
+            {/* 진단기 보유 섹션 - 개선된 버전 */}
+            <section className="bg-gradient-to-b from-[#003247] to-[#1E3269]/80 py-16 md:py-24 overflow-hidden">
+                <div className="container mx-auto px-4 mb-8">
+                    <div className="text-center mb-12">
+                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-jalnan text-white mb-4">
+                            모든 종류 진단기 보유
+                        </h2>
+                        <p className="text-md md:text-xl text-white/80 max-w-2xl mx-auto">
+                            국내외 모든 브랜드의 전용 진단기를 보유하여<br/> 정확한 진단과 정비를 제공합니다
+                        </p>
+                    </div>
+                </div>
+
+                {/* 첫 번째 스크롤 - 오른쪽으로 이동 */}
+                <div className="mb-6 flex justify-center">
+                    <ScrollVelocity
+                        texts={diagnosticBrands.slice(0, 6)}
+                        velocity={50}
+                        className="text-white/90 text-2xl md:text-3xl lg:text-4xl font-SCore px-6 py-3 bg-black/20 rounded-lg backdrop-blur-sm border border-white/10"
+                        damping={50}
+                        stiffness={400}
+                        numCopies={10}
+                        parallaxClassName="flex justify-center"
+                        scrollerClassName="gap-8 justify-center"
+                    />
+                </div>
+
+                {/* 두 번째 스크롤 - 왼쪽으로 이동 */}
+                <div className="mb-6 flex justify-center">
+                    <ScrollVelocity
+                        texts={diagnosticBrands.slice(6)}
+                        velocity={-40}
+                        className="text-white/90 text-2xl md:text-3xl lg:text-4xl font-SCore px-6 py-3 bg-black/20 rounded-lg backdrop-blur-sm border border-white/10"
+                        damping={50}
+                        stiffness={400}
+                        numCopies={10}
+                        parallaxClassName="flex justify-center"
+                        scrollerClassName="gap-2 justify-center"
+                    />
+                </div>
+
+                {/* 세 번째 스크롤 - 다시 오른쪽으로 */}
+                <div className="flex justify-center">
+                    <ScrollVelocity
+                        texts={['전문 진단', '정확한 수리', '신속한 서비스', '합리적 가격', '품질 보증']}
+                        velocity={60}
+                        className="text-white text-xl md:text-2xl lg:text-3xl font-SCore px-6 py-3 bg-black/30 rounded-lg backdrop-blur-sm border border-yellow-300/20"
+                        damping={40}
+                        stiffness={300}
+                        numCopies={8}
+                        parallaxClassName="flex justify-center"
+                        scrollerClassName="gap-2 justify-center"
+                    />
+                </div>
+            </section>
+
         </main>
     );
 }

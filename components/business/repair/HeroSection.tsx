@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FaTools, FaCar, FaShieldAlt, FaClock } from 'react-icons/fa';
@@ -21,7 +21,7 @@ const HeroSection = () => {
     ];
 
     // 각 이미지의 애니메이션 설정
-    const imageAnimationVariants = {
+    const imageAnimationVariants: Variants = {
         hidden: {
             opacity: 0,
             x: 100,
@@ -46,7 +46,7 @@ const HeroSection = () => {
     };
 
     // 배경 떠다니는 이미지들을 위한 변형
-    const floatingVariants = {
+    const floatingVariants: Variants = {
         floating: (i: number) => ({
             y: [0, -30, 0],
             x: [0, 20, 0],
@@ -54,7 +54,7 @@ const HeroSection = () => {
             transition: {
                 duration: 4 + i,
                 repeat: Infinity,
-                ease: "easeInOut"
+                ease: "easeInOut" as any
             }
         })
     };
@@ -269,7 +269,8 @@ const HeroSection = () => {
                                     transition={{
                                         duration: 5 + index,
                                         repeat: Infinity,
-                                        delay: index * 0.5
+                                        delay: index * 0.5,
+                                        ease: "easeInOut"
                                     }}
                                 >
                                     <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center shadow-lg opacity-80">

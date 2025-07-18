@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 interface SlideImage {
     id: number;
@@ -62,7 +62,7 @@ const ImageSlider: React.FC = () => {
     };
 
     // 슬라이드 애니메이션 효과
-    const slideVariants = {
+    const slideVariants: Variants = {
         hidden: (direction: number) => ({
             x: direction > 0 ? 1000 : -1000,
             opacity: 0,
@@ -71,7 +71,7 @@ const ImageSlider: React.FC = () => {
             x: 0,
             opacity: 1,
             transition: {
-                type: "spring",
+                type: "spring" as const,
                 stiffness: 80,
                 damping: 30,
             },
@@ -80,7 +80,7 @@ const ImageSlider: React.FC = () => {
             x: direction > 0 ? -1000 : 1000,
             opacity: 0,
             transition: {
-                type: "spring",
+                type: "spring" as const,
                 stiffness: 80,
                 damping: 30,
             },
