@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useMemo, useState, useCallback} from 'react';
+import React, {useEffect, useMemo, useState, useCallback, ReactElement} from 'react';
 import { createClient } from '@/utils/supabase/client';
 
 import ScheduleDayModal from './ScheduleDayModal';
@@ -10,7 +10,7 @@ import {updateReservationStatus} from "@/app/(admin)/admin/schedule/actions";
 import {useScheduleStore} from "@/lib/store/useScheduleStore";
 import {generateCalendar} from "@/utils/utils";
 import {dayNames, monthNames} from "@/lib/store/calenderData";
-
+import { HiMiniXCircle } from "react-icons/hi2";
 interface AdminScheduleCalendarProps {
     initialSchedules: Schedules[];
 }
@@ -18,7 +18,6 @@ interface AdminScheduleCalendarProps {
 export default function AdminScheduleCalendar({ initialSchedules }: AdminScheduleCalendarProps) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
-    const [showForm, setShowForm] = useState(false);
     const [editingSchedule, setEditingSchedule] = useState<Schedules | null>(null);
 
     // 실시간 스케줄 데이터 상태
@@ -36,6 +35,8 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
     const reservationStatusMap = useScheduleStore((state) => state.reservationStatus);
     const setReservationStatus = useScheduleStore((state) => state.setReservationStatus);
     const bulkSetReservationStatus = useScheduleStore((state) => state.bulkSetReservationStatus);
+    const showForm = useScheduleStore((state) => state.showForm);
+    const setShowForm = useScheduleStore((state) => state.setShowForm);
 
     // 클라이언트 사이드 감지
     useEffect(() => {
@@ -293,17 +294,20 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
         setSelectedDate(dateString);
     };
 
+    //새 스케줄 생성
     const handleNewSchedule = () => {
         if (!selectedDate) return;
         setEditingSchedule(null);
         setShowForm(true);
     };
 
+    //스케줄 수정
     const handleEditSchedule = (schedule: Schedules) => {
         setEditingSchedule(schedule);
         setShowForm(true);
     };
 
+    //스케줄 닫기
     const handleCloseForm = () => {
         setShowForm(false);
         setEditingSchedule(null);
@@ -311,6 +315,7 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
         setTimeout(() => manualRefresh(), 500);
     };
 
+    //날짜 모달닫기
     const handleCloseModal = () => {
         setSelectedDate(null);
     };
@@ -346,6 +351,9 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
         }
     };
 
+    const handleBackdropClick=(e:React.MouseEvent<HTMLDivElement>)=>{
+        if(e.target===e.currentTarget) setShowForm(false)
+    }
     return (
         <div className="p-6">
             {/* 상태 표시 패널 */}
@@ -514,7 +522,7 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
 
             {/* 스케줄 폼 모달 */}
             {showForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={handleCloseForm}>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={handleBackdropClick}>
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-semibold">
@@ -522,9 +530,9 @@ export default function AdminScheduleCalendar({ initialSchedules }: AdminSchedul
                             </h3>
                             <button
                                 onClick={handleCloseForm}
-                                className="text-gray-500 hover:text-gray-700"
+                                className="text-red-300 hover:text-red-500"
                             >
-                                ✕
+                                <HiMiniXCircle className={'w-10 h-10'}/>
                             </button>
                         </div>
 

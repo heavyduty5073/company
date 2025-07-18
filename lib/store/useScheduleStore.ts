@@ -8,11 +8,14 @@ interface ScheduleStore {
     bulkSetReservationStatus: (bulkMap: ReservationMap) => void;
     getDateStatus: (date: string) => boolean;
     reset: () => void;
+    showForm:boolean;
+    setShowForm:(show:boolean)=>void;
+    toggleShowForm:()=>void;
 }
 
 export const useScheduleStore = create<ScheduleStore>((set, get) => ({
     reservationStatus: new Map(),
-
+    showForm:false,
     setReservationStatus: (date, isFull) =>
         set((state) => {
             const updated = new Map(state.reservationStatus);
@@ -30,6 +33,14 @@ export const useScheduleStore = create<ScheduleStore>((set, get) => ({
         return status === undefined ? true : !status;
         // status === true -> 예약 마감 -> false 반환
     },
+    setShowForm: (show: boolean) =>
+        set(() => ({ showForm: show })),
 
-    reset: () => set(() => ({ reservationStatus: new Map() })),
+    toggleShowForm: () =>
+        set((state) => ({ showForm: !state.showForm })),
+    reset: () => set(() => ({
+        reservationStatus: new Map(),
+        showForm: false
+    })),
 }));
+
