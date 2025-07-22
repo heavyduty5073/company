@@ -337,3 +337,477 @@ input[type="number"]::-webkit-inner-spin-button {
   transform: rotateY(180deg);
 }
 
+/* global.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 텍스트 채우기 애니메이션 키프레임 */
+@keyframes text-fill-horizontal {
+  0% {
+    background-size: 0 100%;
+  }
+  100% {
+    background-size: 100% 100%;
+  }
+}
+
+@keyframes text-fill-vertical {
+  0% {
+    background-size: 100% 0;
+  }
+  100% {
+    background-size: 100% 100%;
+  }
+}
+
+@keyframes text-fill-wave {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+@layer utilities {
+  /* 기본 텍스트 채우기 스타일 */
+  .text-fill-base {
+    color: #666;
+    background: linear-gradient(to right, white 0%, white 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-size: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 2s ease-in-out;
+  }
+
+  /* 호버 시 좌→우 채우기 */
+  .text-fill-hover:hover {
+    background-size: 100% 100%;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* 자동 좌→우 채우기 애니메이션 */
+  .text-fill-auto {
+    animation: text-fill-horizontal 2s ease-in-out forwards;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* 무한 반복 애니메이션 */
+  .text-fill-infinite {
+    animation: text-fill-horizontal 3s ease-in-out infinite alternate;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* 아래→위 채우기 */
+  .text-fill-vertical {
+    background: linear-gradient(to top, white 0%, white 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-size: 100% 0;
+    background-repeat: no-repeat;
+    transition: background-size 2s ease-in-out;
+  }
+
+  .text-fill-vertical:hover {
+    background-size: 100% 100%;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* 파도 효과 */
+  .text-fill-wave {
+    background: linear-gradient(90deg, #666 0%, white 50%, #666 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-size: 200% 100%;
+    background-position: -100% 0;
+    -webkit-text-fill-color: transparent;
+    animation: text-fill-wave 2s ease-in-out infinite;
+  }
+
+  /* 지연된 애니메이션 (각 글자별로 순차적으로) */
+  .text-fill-stagger {
+    background: linear-gradient(to right, white 0%, white 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-size: 0 100%;
+    background-repeat: no-repeat;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* 커스텀 지속시간 */
+  .text-fill-fast {
+    transition-duration: 0.8s;
+    animation-duration: 0.8s;
+  }
+
+  .text-fill-slow {
+    transition-duration: 4s;
+    animation-duration: 4s;
+  }
+
+  /* 다른 색상 조합 */
+  .text-fill-blue {
+    color: #64748b;
+    background: linear-gradient(to right, #3b82f6 0%, #3b82f6 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+
+  .text-fill-green {
+    color: #64748b;
+    background: linear-gradient(to right, #10b981 0%, #10b981 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+  .text-fill-white {
+    color: #64748b;
+    background: linear-gradient(to right, #FFFFFF 50%, #FFFFFF 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+
+  /* 조합 클래스들 */
+  .text-fill-hover-fast:hover {
+    background-size: 100% 100%;
+    -webkit-text-fill-color: transparent;
+    transition-duration: 0.8s;
+  }
+
+  .text-fill-hover-slow:hover {
+    background-size: 100% 100%;
+    -webkit-text-fill-color: transparent;
+    transition-duration: 4s;
+  }
+}
+
+
+@layer utilities {
+  /* 카드 글로우 효과 */
+  .border-electronic-glow {
+    box-shadow:
+            0 0 20px rgba(0, 255, 255, 0.3),
+            inset 0 0 20px rgba(0, 255, 255, 0.1);
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+  }
+
+  /* 스캔라인 오버레이 */
+  .border-electronic-scan::after {
+    animation: electronic-scanline 2s ease-in-out infinite;
+  }
+
+  @keyframes electronic-scanline {
+    0%, 100% {
+      top: -2px;
+      opacity: 0;
+    }
+    10%, 90% {
+      opacity: 1;
+    }
+    50% {
+      top: 100%;
+      opacity: 0.8;
+    }
+  }
+
+  /* 텍스트 글리치 효과 */
+  .text-glitch {
+    position: relative;
+  }
+
+  .text-glitch::before,
+  .text-glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+  }
+
+  .text-glitch:hover::before {
+    animation: glitch-1 0.3s ease-in-out infinite;
+    color: #ff00ff;
+    opacity: 0.8;
+  }
+
+  .text-glitch:hover::after {
+    animation: glitch-2 0.3s ease-in-out infinite;
+    color: #00ffff;
+    opacity: 0.8;
+  }
+
+  @keyframes glitch-1 {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-1px, 1px); }
+    40% { transform: translate(-1px, -1px); }
+    60% { transform: translate(1px, 1px); }
+    80% { transform: translate(1px, -1px); }
+  }
+
+  @keyframes glitch-2 {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(1px, -1px); }
+    40% { transform: translate(1px, 1px); }
+    60% { transform: translate(-1px, -1px); }
+    80% { transform: translate(-1px, 1px); }
+  }
+}
+/* 기존 global.css 내용 유지하고 아래 내용 추가 */
+
+@layer utilities {
+  /* 일렉트로닉 보더 효과들 */
+
+  /* 기본 일렉트로닉 보더 스타일 */
+  .border-electronic {
+    position: relative;
+    border: 2px solid transparent;
+    background: linear-gradient(#000, #000) padding-box,
+    linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff) border-box;
+    transition: all 0.3s ease;
+  }
+
+  /* 간단한 박스 섀도우 방식 */
+  .border-electronic-simple {
+    position: relative;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .border-electronic-simple::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .border-electronic-simple:hover::before {
+    opacity: 1;
+    animation: electronic-glow 2s ease-in-out infinite;
+  }
+
+  /* 움직이는 그라디언트 보더 */
+  .border-electronic-moving {
+    position: relative;
+    padding: 2px;
+    background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff);
+    background-size: 300% 300%;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .border-electronic-moving::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: inherit;
+    border-radius: 6px;
+    z-index: 1;
+  }
+
+  .border-electronic-moving:hover {
+    animation: electronic-gradient-move 3s ease infinite;
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.6));
+  }
+
+  /* 네온 펄스 효과 */
+  .border-electronic-pulse {
+    position: relative;
+    border: 2px solid #00ffff;
+    box-shadow:
+            0 0 5px #00ffff,
+            inset 0 0 5px #00ffff;
+  }
+
+  .border-electronic-pulse:hover {
+    border-color: #ff00ff;
+    box-shadow:
+            0 0 20px #ff00ff,
+            0 0 40px #ff00ff,
+            inset 0 0 20px rgba(255, 0, 255, 0.1);
+    animation: electronic-pulse 1.5s ease-in-out infinite alternate;
+  }
+
+  /* 스캔라인 효과 */
+  .border-electronic-scan {
+    position: relative;
+    border: 2px solid rgba(0, 255, 255, 0.5);
+    overflow: hidden;
+  }
+
+  .border-electronic-scan::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ffff, transparent);
+    transition: left 0.6s ease;
+  }
+
+  .border-electronic-scan:hover::after {
+    left: 100%;
+  }
+
+  /* 다중 레이어 박스 섀도우 */
+  .border-electronic-layers {
+    position: relative;
+    border: 2px solid #00ffff;
+    transition: all 0.3s ease;
+  }
+
+  .border-electronic-layers:hover {
+    border-color: #ff00ff;
+    box-shadow:
+            0 0 10px #ff00ff,
+            inset 0 0 10px rgba(255, 0, 255, 0.1),
+            0 0 20px rgba(255, 0, 255, 0.3),
+            0 0 40px rgba(255, 0, 255, 0.1);
+    animation: electronic-color-shift 2s ease-in-out infinite;
+  }
+
+  /* 글리치 효과 */
+  .border-electronic-glitch {
+    position: relative;
+    border: 2px solid #00ffff;
+  }
+
+  .border-electronic-glitch:hover {
+    animation: electronic-glitch 0.3s ease-in-out infinite;
+  }
+
+  /* 카드 전용 일렉트로닉 효과 */
+  .card-electronic-glow {
+    box-shadow:
+            0 0 20px rgba(0, 255, 255, 0.3),
+            inset 0 0 20px rgba(0, 255, 255, 0.1);
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+  }
+
+  /* 일렉트로닉 오버레이 */
+  .electronic-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .electronic-overlay.active {
+    opacity: 1;
+  }
+}
+
+/* 일렉트로닉 애니메이션 키프레임들 */
+@keyframes electronic-glow {
+  0%, 100% {
+    filter: brightness(1) hue-rotate(0deg);
+  }
+  50% {
+    filter: brightness(1.2) hue-rotate(180deg);
+  }
+}
+
+@keyframes electronic-gradient-move {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+@keyframes electronic-pulse {
+  0% {
+    box-shadow:
+            0 0 5px #ff00ff,
+            inset 0 0 5px rgba(255, 0, 255, 0.1);
+  }
+  100% {
+    box-shadow:
+            0 0 30px #ff00ff,
+            0 0 60px #ff00ff,
+            inset 0 0 30px rgba(255, 0, 255, 0.2);
+  }
+}
+
+@keyframes electronic-color-shift {
+  0% {
+    border-color: #00ffff;
+    box-shadow: 0 0 10px #00ffff;
+  }
+  33% {
+    border-color: #ff00ff;
+    box-shadow: 0 0 10px #ff00ff;
+  }
+  66% {
+    border-color: #ffff00;
+    box-shadow: 0 0 10px #ffff00;
+  }
+  100% {
+    border-color: #00ffff;
+    box-shadow: 0 0 10px #00ffff;
+  }
+}
+
+@keyframes electronic-glitch {
+  0%, 100% {
+    border-color: #00ffff;
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    border-color: #ff00ff;
+    filter: hue-rotate(90deg);
+  }
+  50% {
+    border-color: #ffff00;
+    filter: hue-rotate(180deg);
+  }
+  75% {
+    border-color: #ff0000;
+    filter: hue-rotate(270deg);
+  }
+}
+
+@layer utilities {
+  /* 텍스트 섀도우 유틸리티 */
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .text-shadow-md {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  /* 네온 텍스트 섀도우 */
+  .text-shadow-neon {
+    text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+  }
+
+  .text-shadow-neon-strong {
+    text-shadow:
+            0 0 5px rgba(34, 211, 238, 0.8),
+            0 0 10px rgba(34, 211, 238, 0.6),
+            0 0 15px rgba(34, 211, 238, 0.4);
+  }
+}

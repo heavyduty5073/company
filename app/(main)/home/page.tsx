@@ -16,6 +16,7 @@ import UreaPopup from '@/components/home/popup/UreaPopup';
 import ScheduleCalendarPopup from "@/components/home/popup/ScheduleCalendarPopup";
 import {getAllSchedules} from "@/app/(admin)/admin/schedule/actions";
 import ScrollVelocity from "@/components/ui/scrollVelocity";
+import Dialogsics from "@/components/home/Dialog";
 
 // 동적 임포트 (서버 컴포넌트에서는 ssr: false 옵션 제거)
 const RepairCaseCarousel = dynamic(
@@ -80,9 +81,11 @@ async function Page() {
                     </div>
                 </div>
             </section>
-            {/* 정비 사례 캐러셀 섹션 */}
+            <Suspense fallback={null}>
+            <Dialogsics/>
+            </Suspense>
             <section className="bg-main w-full">
-                <div className="container mx-auto px-4 py-8 md:py-12 lg:py-24">
+                <div className="container mx-auto px-4 py-8 md:py-10 lg:py-20">
                     <Suspense fallback={<div className="w-full flex justify-center py-12"><GlobalLoader /></div>}>
                         <RepairCaseCarousel cases={data} />
                     </Suspense>
@@ -148,12 +151,15 @@ async function Page() {
             <section className="bg-gradient-to-b from-[#003247] to-[#1E3269]/80 py-16 md:py-24 overflow-hidden">
                 <div className="container mx-auto px-4 mb-8">
                     <div className="text-center mb-12">
-                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-jalnan text-white mb-4">
-                            모든 종류 진단기 보유
-                        </h2>
-                        <p className="text-md md:text-xl text-white/80 max-w-2xl mx-auto">
+                        <div className="flex flex-col gap-3 font-jalnan text-white mb-4">
+                            <h2 className={'text-2xl md:text-3xl lg:text-4xl'}>모든 종류 진단기 보유</h2>
+                            ·
+                            <h3 className={'text-xl md:text-2xl lg:text-3xl text-fill-base text-fill-wave'}>진단 프로그램 판매</h3>
+                        <span/>
+                        <p className="text-md md:text-xl text-white/80 max-w-2xl mx-auto text-fillbase text-fill-wave">
                             국내외 모든 브랜드의 전용 진단기를 보유하여<br/> 정확한 진단과 정비를 제공합니다
                         </p>
+                        </div>
                     </div>
                 </div>
 

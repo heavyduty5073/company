@@ -2,136 +2,14 @@
 
 import React, { useCallback, useEffect, useRef, useState, memo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Posts } from "@/utils/supabase/types";
-import { FaTools, FaArrowRight } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { extractFirstImage, getCompanyStyle } from "@/utils/utils";
-import { categoryMap } from "@/lib/store/company";
-import { TiSpanner } from "react-icons/ti";
+import RepairCard from './RepairCard';
 
 interface RepairCaseCarouselProps {
     cases: Posts[];
 }
-
-// 개별 카드 컴포넌트를 메모화하여 불필요한 리렌더링 방지
-const RepairCard = memo(({
-                             repairCase,
-                             cardWidth,
-                             isHovered,
-                             onMouseEnter,
-                             onMouseLeave
-                         }: {
-    repairCase: Posts;
-    cardWidth: number;
-    isHovered: boolean;
-    onMouseEnter: () => void;
-    onMouseLeave: () => void;
-}) => {
-    const imageUrl = extractFirstImage(repairCase.contents || '');
-    const categoryStyle = categoryMap[repairCase.category] || {
-        icon: <FaTools className="w-3 h-3 mr-1" />,
-        name: repairCase.category || '기타',
-        bgColor: 'bg-gray-500',
-        textColor: 'text-white'
-    };
-    const companyStyle = getCompanyStyle(repairCase.company || '');
-
-    return (
-        <motion.div
-            className="flex-shrink-0"
-            style={{ width: `${cardWidth}px` }}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            transition={{ duration: 0.3 }}
-        >
-            <Link href={`/repair/${repairCase.id}`} className="block h-full">
-                <Card className="h-full bg-gradient-to-b from-gray-800 to-gray-900 border border-gray-700 hover:border-blue-500 transition-all duration-300 overflow-hidden">
-                    <CardHeader className="p-3 pb-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                            <Badge
-                                className={`flex items-center text-xs ${categoryStyle.bgColor} ${categoryStyle.textColor} px-2 py-1 font-medium rounded-md`}
-                            >
-                                <TiSpanner className="w-5 h-5" />
-                                {categoryStyle.name}
-                            </Badge>
-                            <Badge
-                                className={`text-xs ${companyStyle.bgColor} ${companyStyle.textColor} px-2 py-1 font-medium rounded-md`}
-                            >
-                                {repairCase.company || '기타 제조사'}
-                            </Badge>
-                        </div>
-                    </CardHeader>
-
-                    <CardContent className="p-3 pt-2">
-                        <h3 className="text-base sm:text-lg font-bold text-white mb-3 line-clamp-1">
-                            {repairCase.title}
-                        </h3>
-
-                        <div className="relative w-full h-40 sm:h-48 lg:h-56 mb-3 overflow-hidden rounded-md bg-gray-700">
-                            {imageUrl ? (
-                                <Image
-                                    src={imageUrl}
-                                    alt={repairCase.title || '정비 사례 이미지'}
-                                    fill
-                                    loading="lazy"
-                                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                                    className={`object-cover transition-transform duration-500 ${isHovered ? 'scale-110' : 'scale-100'}`}
-                                    placeholder="blur"
-                                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                                />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center">
-                                    <FaTools className="w-12 h-12 text-gray-500" />
-                                </div>
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-40" />
-                        </div>
-
-                        <div className="h-12 overflow-hidden text-xs sm:text-sm text-gray-300">
-                            {repairCase.contents ? (
-                                <div
-                                    className="line-clamp-2"
-                                    dangerouslySetInnerHTML={{
-                                        __html: repairCase.contents
-                                            .replace(/<[^>]*>/g, ' ')
-                                            .slice(0, 180) + '...'
-                                    }}
-                                />
-                            ) : (
-                                <p>자세한 내용은 클릭하여 확인하세요.</p>
-                            )}
-                        </div>
-                    </CardContent>
-
-                    <CardFooter className="p-3 pt-0">
-                        <div className="flex items-center justify-between w-full">
-              <span className="text-xs text-gray-400">
-                {new Date(repairCase.created_at).toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                })}
-              </span>
-                            <motion.span
-                                className={`text-xs text-blue-400 flex items-center gap-1 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
-                                animate={{ x: isHovered ? 0 : -10 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                자세히 보기
-                                <FaArrowRight size={10} />
-                            </motion.span>
-                        </div>
-                    </CardFooter>
-                </Card>
-            </Link>
-        </motion.div>
-    );
-});
-
-RepairCard.displayName = 'RepairCard';
 
 const RepairCaseCarousel: React.FC<RepairCaseCarouselProps> = ({ cases }) => {
     const carouselRef = useRef<HTMLDivElement>(null);
