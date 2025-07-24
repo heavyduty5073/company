@@ -154,7 +154,7 @@ async function Page() {
                         <div className="flex flex-col gap-3 font-jalnan text-white mb-4">
                             <h2 className={'text-2xl md:text-3xl lg:text-4xl'}>모든 종류 진단기 보유</h2>
                             ·
-                            <h3 className={'text-xl md:text-2xl lg:text-3xl text-fill-base text-fill-wave'}>진단 프로그램 판매</h3>
+                            <h3 className={'text-xl md:text-2xl lg:text-3xl text-fill-base text-fill-wave'}>진단 프로그램 판매중</h3>
                         <span/>
                         <p className="text-md md:text-xl text-white/80 max-w-2xl mx-auto text-fillbase text-fill-wave">
                             국내외 모든 브랜드의 전용 진단기를 보유하여<br/> 정확한 진단과 정비를 제공합니다
