@@ -129,22 +129,6 @@ export class KakaoWorkClient {
                 {
                     "type": "divider"
                 },
-                {
-                    "type": "text",
-                    "text": `등록 시간: ${new Date().toLocaleString('ko-KR')}`,
-                    "inlines": [
-                        {
-                            "type": "styled",
-                            "text": "등록 시간: ",
-                            "color": "grey"
-                        },
-                        {
-                            "type": "styled",
-                            "text": `${new Date().toLocaleString('ko-KR')}`,
-                            "color": "grey"
-                        }
-                    ]
-                }
             ]
         };
     }
@@ -234,22 +218,6 @@ export class KakaoWorkClient {
                 {
                     "type": "divider"
                 },
-                {
-                    "type": "text",
-                    "text": `수정 시간: ${new Date().toLocaleString('ko-KR')}`,
-                    "inlines": [
-                        {
-                            "type": "styled",
-                            "text": "수정 시간: ",
-                            "color": "grey"
-                        },
-                        {
-                            "type": "styled",
-                            "text": `${new Date().toLocaleString('ko-KR')}`,
-                            "color": "grey"
-                        }
-                    ]
-                }
             ]
         };
     }
